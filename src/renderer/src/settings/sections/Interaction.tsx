@@ -100,7 +100,14 @@ export function InteractionSection(): React.JSX.Element {
             desc={t('interaction.permission.accessibilityDesc')}
           >
             {accStatus.trusted ? (
-              <span className="at-badge at-badge--success">{t('interaction.permission.granted')}</span>
+              <div className="form-actions">
+                <span className="at-badge at-badge--success">
+                  {t('interaction.permission.granted')}
+                </span>
+                <Button size="sm" onClick={() => window.api.app.relaunch()}>
+                  {t('interaction.permission.relaunch')}
+                </Button>
+              </div>
             ) : (
               <div className="form-actions">
                 <Button size="sm" variant="primary" onClick={() => window.api.app.promptAccessibility()}>

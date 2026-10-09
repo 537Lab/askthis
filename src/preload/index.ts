@@ -30,6 +30,7 @@ const configRead = {
 const appCommon = {
   openSettings: (): void => ipcRenderer.send(IPC.AppOpenSettings),
   openExternal: (url: string): void => ipcRenderer.send(IPC.AppOpenExternal, url),
+  relaunch: (): void => ipcRenderer.send(IPC.AppRelaunch),
   platformInfo: (): Promise<PlatformInfo> => ipcRenderer.invoke(IPC.AppPlatformInfo),
   accessibilityStatus: () => ipcRenderer.invoke(IPC.AppAccessibilityStatus),
   promptAccessibility: (): void => ipcRenderer.send(IPC.AppPromptAccessibility),

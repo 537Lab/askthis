@@ -118,7 +118,7 @@ const zh: Record<string, string> = {
   'providers.empty.message': '还没有配置任何服务，点击"添加服务"开始。',
   'providers.custom': '自定义',
   'providers.welcome':
-    '欢迎使用 AskThis：选择下方任一服务，填入你的 API 密钥，即可开始使用。',
+    '欢迎使用 AskThis：先为下方任一服务填入 API 密钥，然后在任意应用里选中文本、按 {keys} 即可查询。',
   'providers.security.noEncryption':
     '此系统不支持安全密钥存储（系统钥匙串不可用），API 密钥将仅保存在内存中，重启后需重新输入。如确需保存到磁盘，可允许明文存储（不推荐）：',
 
@@ -169,10 +169,12 @@ const zh: Record<string, string> = {
   'shortcut.current': '当前：{keys}',
   'interaction.permission': '系统权限',
   'interaction.permission.accessibility': '辅助功能',
-  'interaction.permission.accessibilityDesc': '读取选中文本需要「辅助功能」权限（macOS）',
+  'interaction.permission.accessibilityDesc':
+    '读取选中文本需要「辅助功能」权限（macOS）。授权后若功能仍无效，请点「重启 AskThis」。',
   'interaction.permission.grant': '授权…',
   'interaction.permission.granted': '已授权',
   'interaction.permission.openSettings': '打开系统设置',
+  'interaction.permission.relaunch': '重启 AskThis',
 
   /* about */
   'about.version': '版本',
@@ -328,7 +330,7 @@ const en: Record<string, string> = {
   'providers.empty.message': 'No services yet — click "Add service" to start.',
   'providers.custom': 'Custom',
   'providers.welcome':
-    'Welcome to AskThis: choose a service below, add your API key, and you are ready to go.',
+    'Welcome to AskThis: add an API key for one of the services below, then select text in any app and press {keys}.',
   'providers.security.noEncryption':
     'Secure key storage is unavailable on this system. API keys will be kept in memory only (re-enter after restart). To persist them anyway (not recommended), allow plaintext storage:',
 
@@ -376,10 +378,12 @@ const en: Record<string, string> = {
   'shortcut.current': 'Current: {keys}',
   'interaction.permission': 'System permissions',
   'interaction.permission.accessibility': 'Accessibility',
-  'interaction.permission.accessibilityDesc': 'Reading selected text requires Accessibility permission (macOS)',
+  'interaction.permission.accessibilityDesc':
+    'Reading selected text requires Accessibility permission (macOS). If it still does not work after granting, click "Restart AskThis".',
   'interaction.permission.grant': 'Grant…',
   'interaction.permission.granted': 'Granted',
   'interaction.permission.openSettings': 'Open System Settings',
+  'interaction.permission.relaunch': 'Restart AskThis',
 
   'about.version': 'Version',
   'about.checkUpdates': 'See latest release',

@@ -103,6 +103,12 @@ export class AskThisApp {
       }
     }, 1200)
 
+    // Fresh install: open Settings so new users immediately see the app and
+    // where to configure their API key (the popup itself is a tray-only app).
+    if (this.store.isFirstRun) {
+      setTimeout(() => this.openSettings(), 900)
+    }
+
     // Pre-warm the popup so the first hotkey press feels instant.
     setTimeout(() => {
       if (!this.quitting) {
@@ -391,6 +397,11 @@ export class AskThisApp {
     ipcMain.on(IPC.AppOpenExternal, (e, url: unknown) => {
       if (!this.guardSender(e)) return
       if (typeof url === 'string' && /^https?:\/\//i.test(url)) void shell.openExternal(url)
+    })
+    ipcMain.on(IPC.AppRelaunch, (e) => {
+      if (!this.guardSender(e)) return
+      app.relaunch()
+      app.exit(0)
     })
     ipcMain.handle(IPC.AppPlatformInfo, (e): PlatformInfo => {
       if (!this.guardSender(e)) {

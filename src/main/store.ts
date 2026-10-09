@@ -79,6 +79,7 @@ export class ConfigStore {
   private load(): void {
     ensureDir(this.dir)
     const raw = readJsonSafe<Partial<AppConfig>>(this.configPath)
+    if (!raw) this.firstRun = true
     this.config = raw ? this.sanitize({ ...createDefaultConfig(), ...raw }) : this.seed()
     this.persistConfig() // normalise + migrate on disk
     // NOTE: secrets are NOT loaded here — see initSecrets(). Deferring the
@@ -105,6 +106,12 @@ export class ConfigStore {
 
   private secretsInitialized = false
   private encryptionAvailable: boolean | null = null
+  private firstRun = false
+
+  /** True when the config file did not exist yet (fresh install). */
+  get isFirstRun(): boolean {
+    return this.firstRun
+  }
 
   /** First run: seed with built-in prompts and two ready-to-configure providers. */
   private seed(): AppConfig {

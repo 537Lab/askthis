@@ -26,6 +26,7 @@ export const IPC = {
   /* app */
   AppOpenSettings: 'app:open-settings',
   AppOpenExternal: 'app:open-external',
+  AppRelaunch: 'app:relaunch',
   AppPlatformInfo: 'app:platform-info',
   AppAccessibilityStatus: 'app:accessibility-status',
   AppPromptAccessibility: 'app:prompt-accessibility',

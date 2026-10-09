@@ -318,6 +318,9 @@ function PermissionCard(): React.JSX.Element {
         <Button size="sm" onClick={() => window.api.app.openAccessibilitySettings()}>
           {t('interaction.permission.openSettings')}
         </Button>
+        <Button size="sm" onClick={() => window.api.app.relaunch()}>
+          {t('interaction.permission.relaunch')}
+        </Button>
       </div>
     </div>
   )

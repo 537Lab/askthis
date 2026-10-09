@@ -34,6 +34,7 @@ export interface PopupApi {
   app: {
     openSettings(): void
     openExternal(url: string): void
+    relaunch(): void
     platformInfo(): Promise<PlatformInfo>
     accessibilityStatus(): Promise<AccessibilityStatus>
     promptAccessibility(): void
@@ -54,6 +55,7 @@ export interface SettingsApi {
   app: {
     openSettings(): void
     openExternal(url: string): void
+    relaunch(): void
     platformInfo(): Promise<PlatformInfo>
     accessibilityStatus(): Promise<AccessibilityStatus>
     promptAccessibility(): void

@@ -1,7 +1,7 @@
 import { useMemo, useState } from 'react'
 import type { ModelInfo, ProviderConfig, ProviderPreset, PublicProvider, ReasoningStyle } from '@shared/types'
 import { PROVIDER_PRESETS, providerFromPreset } from '@shared/presets'
-import { useT, Section, Row, Button, Field, NumberField, Switch, IconButton, Spinner } from '../../shared/ui'
+import { useT, Section, Row, Button, Field, NumberField, Switch, IconButton, Spinner, prettyAccelerator } from '../../shared/ui'
 import { TrashIcon, RefreshIcon, ExternalIcon, CheckIcon } from '../../shared/icons'
 import { useSettingsStore } from '../store'
 
@@ -34,7 +34,9 @@ export function ProvidersSection(): React.JSX.Element {
         </div>
       ) : null}
       {!hasAnyKey && config.providers.length > 0 ? (
-        <div className="banner">{t('providers.welcome')}</div>
+        <div className="banner">
+          {t('providers.welcome', { keys: prettyAccelerator(config.shortcut) })}
+        </div>
       ) : null}
 
       <Section title={t('providers.section.active')}>
