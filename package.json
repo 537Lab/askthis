@@ -1,6 +1,6 @@
 {
   "name": "askthis",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "Ask AI about anything you select — a lightweight quick-look lens for your desktop.",
   "main": "./out/main/index.js",
   "author": "AskThis Contributors",

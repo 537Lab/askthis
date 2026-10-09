@@ -48,6 +48,10 @@ Download the latest release for your platform from the **Releases** page.
 > - macOS: right-click the app → Open, or run
 >   `xattr -dr com.apple.quarantine /Applications/AskThis.app` once.
 > - Windows: if SmartScreen warns, choose "More info" → "Run anyway".
+> - **Upgrade note (macOS):** after installing a new version, if the hotkey
+>   can't read selected text, re-enable AskThis once in System Settings →
+>   Privacy & Security → Accessibility (unsigned-app limitation: each new
+>   build needs a one-time re-authorization).
 
 ## Quick start
 

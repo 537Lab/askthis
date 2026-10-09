@@ -103,9 +103,12 @@ export class AskThisApp {
       }
     }, 1200)
 
-    // Fresh install: open Settings so new users immediately see the app and
-    // where to configure their API key (the popup itself is a tray-only app).
-    if (this.store.isFirstRun) {
+    // Surface the Settings window when the user launched the app manually
+    // (double-click, Dock, `open` …) so it never looks like "nothing happened".
+    // A login-item start stays silent in the background. (Fresh installs are
+    // always manual launches, so this also covers the first-run case.)
+    const openedAtLogin = app.getLoginItemSettings().wasOpenedAtLogin
+    if (this.store.isFirstRun || !openedAtLogin) {
       setTimeout(() => this.openSettings(), 900)
     }
 

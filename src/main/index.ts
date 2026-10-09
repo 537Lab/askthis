@@ -7,8 +7,22 @@ const gotLock = app.requestSingleInstanceLock()
 if (!gotLock) {
   app.quit()
 } else {
+  // Re-launching the app (double-click, a second `open`, …) surfaces the
+  // settings window instead of doing nothing visible.
   app.on('second-instance', () => {
-    void askthis?.openQuickLook()
+    void askthis?.openSettings()
+  })
+
+  // macOS: re-opening the running app (Dock / Finder) fires `activate`.
+  // The first one fires as part of the normal launch sequence — skip it so a
+  // login-item start stays silent; later ones mean the user clicked the icon.
+  let launchActivate = true
+  app.on('activate', () => {
+    if (launchActivate) {
+      launchActivate = false
+      return
+    }
+    void askthis?.openSettings()
   })
 
   app.whenReady()

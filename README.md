@@ -42,6 +42,9 @@ AskThis 是一个随时待命的 AI 小助手：在任意应用里选中一段�
 > - macOS：右键点应用 →「打开」，或执行一次
 >   `xattr -dr com.apple.quarantine /Applications/AskThis.app`。
 > - Windows：若 SmartScreen 提示，选择「更多信息」→「仍要运行」。
+> - **升级提示（macOS）**：安装新版本后，若快捷键无法读取选中文本，请到
+>   「系统设置 → 隐私与安全性 → 辅助功能」把 AskThis 的开关重新打开一次
+>   （未签名应用的系统限制：每个新构建需重新授权一次）。
 
 ## 快速上手
 

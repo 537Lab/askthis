@@ -6,6 +6,18 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.1.1] - 2026-10-10
+
+### Fixed
+
+- Launching the app manually now surfaces the settings window instead of appearing to do nothing; login-item starts stay silent in the background
+- macOS: re-opening the app from the Dock/Finder brings the settings window to front
+
+### Changed
+
+- Security hardening: all renderer permission requests are denied; raw server error details stay in the local log only
+- e2e default trigger synced to the default shortcut (Alt+Shift+D)
+
 ## [0.1.0] - 2026-10-09
 
 ### Added
