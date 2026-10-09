@@ -1,0 +1,126 @@
+/* ============================================================
+   AskThis design tokens — light & dark, follows the system theme.
+   ============================================================ */
+
+:root {
+  color-scheme: light dark;
+
+  --font-sans: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'PingFang SC', 'Hiragino Sans GB',
+    'Microsoft YaHei', 'Helvetica Neue', Arial, sans-serif;
+  --font-mono: ui-monospace, 'SF Mono', SFMono-Regular, Menlo, 'Cascadia Code', Consolas,
+    'Liberation Mono', monospace;
+
+  --bg: #ffffff;
+  --bg-soft: #f6f7f9;
+  --bg-softer: #fafbfc;
+  --bg-hover: rgba(0, 0, 0, 0.045);
+  --bg-active: rgba(0, 0, 0, 0.08);
+  --text: #191c1f;
+  --text-2: #575f6a;
+  --text-3: #8d95a0;
+  --border: rgba(0, 0, 0, 0.09);
+  --border-2: rgba(0, 0, 0, 0.17);
+  --accent: #3574f0;
+  --accent-hover: #2b63d4;
+  --accent-text: #ffffff;
+  --accent-soft: rgba(53, 116, 240, 0.1);
+  --accent-border: rgba(53, 116, 240, 0.35);
+  --danger: #d9484f;
+  --danger-soft: rgba(217, 72, 79, 0.1);
+  --success: #2c9e63;
+  --warn: #b7791f;
+  --code-bg: rgba(127, 127, 127, 0.12);
+  --scrollbar: rgba(0, 0, 0, 0.18);
+
+  --shadow-card: 0 0 0 0.5px rgba(0, 0, 0, 0.06), 0 10px 34px -6px rgba(0, 0, 0, 0.22),
+    0 4px 12px -4px rgba(0, 0, 0, 0.12);
+  --shadow-pop: 0 6px 22px -8px rgba(0, 0, 0, 0.25);
+  --radius-s: 6px;
+  --radius-m: 10px;
+  --radius-l: 14px;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --bg: #1e1f22;
+    --bg-soft: #26282c;
+    --bg-softer: #232428;
+    --bg-hover: rgba(255, 255, 255, 0.06);
+    --bg-active: rgba(255, 255, 255, 0.1);
+    --text: #e8eaed;
+    --text-2: #a2a9b4;
+    --text-3: #6f7680;
+    --border: rgba(255, 255, 255, 0.1);
+    --border-2: rgba(255, 255, 255, 0.18);
+    --accent: #4a86f7;
+    --accent-hover: #6398f8;
+    --accent-soft: rgba(74, 134, 247, 0.16);
+    --accent-border: rgba(74, 134, 247, 0.45);
+    --danger: #e05a61;
+    --danger-soft: rgba(224, 90, 97, 0.14);
+    --success: #3fae74;
+    --warn: #d09a3e;
+    --code-bg: rgba(255, 255, 255, 0.1);
+    --scrollbar: rgba(255, 255, 255, 0.2);
+
+    --shadow-card: 0 0 0 0.5px rgba(255, 255, 255, 0.06), 0 10px 34px -6px rgba(0, 0, 0, 0.5),
+      0 4px 12px -4px rgba(0, 0, 0, 0.3);
+    --shadow-pop: 0 6px 22px -8px rgba(0, 0, 0, 0.55);
+  }
+}
+
+/* ============================== base ============================== */
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  font-family: var(--font-sans);
+  font-size: 14px;
+  line-height: 1.6;
+  color: var(--text);
+  background: var(--bg);
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+
+::selection {
+  background: var(--accent-soft);
+}
+
+/* thin, unobtrusive scrollbars */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+::-webkit-scrollbar-thumb {
+  background: var(--scrollbar);
+  border-radius: 4px;
+  border: 2px solid transparent;
+  background-clip: padding-box;
+}
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+a {
+  color: var(--accent);
+  text-decoration: none;
+}
+a:hover {
+  text-decoration: underline;
+}
+
+code,
+pre {
+  font-family: var(--font-mono);
+}

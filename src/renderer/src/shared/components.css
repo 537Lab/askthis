@@ -1,0 +1,315 @@
+/* ============================================================
+   Shared UI components (buttons, inputs, rows, switches…)
+   ============================================================ */
+
+/* ---------- buttons ---------- */
+
+.at-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  border: 1px solid var(--border-2);
+  background: var(--bg);
+  color: var(--text);
+  font-family: inherit;
+  font-size: 12.5px;
+  font-weight: 500;
+  line-height: 1;
+  padding: 7px 12px;
+  border-radius: var(--radius-s);
+  cursor: pointer;
+  user-select: none;
+  white-space: nowrap;
+  transition: background 0.12s ease, border-color 0.12s ease, opacity 0.12s ease;
+}
+.at-btn:hover {
+  background: var(--bg-hover);
+}
+.at-btn:active {
+  background: var(--bg-active);
+}
+.at-btn:disabled {
+  opacity: 0.45;
+  cursor: default;
+  pointer-events: none;
+}
+.at-btn--primary {
+  background: var(--accent);
+  border-color: var(--accent);
+  color: var(--accent-text);
+}
+.at-btn--primary:hover {
+  background: var(--accent-hover);
+  border-color: var(--accent-hover);
+}
+.at-btn--ghost {
+  border-color: transparent;
+  background: transparent;
+}
+.at-btn--ghost:hover {
+  background: var(--bg-hover);
+}
+.at-btn--danger {
+  border-color: transparent;
+  background: transparent;
+  color: var(--danger);
+}
+.at-btn--danger:hover {
+  background: var(--danger-soft);
+}
+.at-btn--sm {
+  font-size: 12px;
+  padding: 5px 9px;
+}
+
+.at-iconbtn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 26px;
+  height: 26px;
+  padding: 0;
+  border: none;
+  border-radius: var(--radius-s);
+  background: transparent;
+  color: var(--text-3);
+  cursor: pointer;
+}
+.at-iconbtn:hover {
+  background: var(--bg-hover);
+  color: var(--text);
+}
+.at-iconbtn:active {
+  background: var(--bg-active);
+}
+
+/* ---------- inputs ---------- */
+
+.at-input,
+.at-textarea,
+.at-select {
+  width: 100%;
+  font-family: inherit;
+  font-size: 13px;
+  color: var(--text);
+  background: var(--bg);
+  border: 1px solid var(--border-2);
+  border-radius: var(--radius-s);
+  padding: 7px 10px;
+  outline: none;
+  transition: border-color 0.12s ease, box-shadow 0.12s ease;
+}
+.at-input:focus,
+.at-textarea:focus,
+.at-select:focus {
+  border-color: var(--accent);
+  box-shadow: 0 0 0 3px var(--accent-soft);
+}
+.at-input::placeholder,
+.at-textarea::placeholder {
+  color: var(--text-3);
+}
+.at-input:disabled,
+.at-textarea:disabled {
+  opacity: 0.55;
+  background: var(--bg-soft);
+}
+.at-textarea {
+  resize: vertical;
+  min-height: 68px;
+  line-height: 1.55;
+  font-size: 12.5px;
+}
+.at-textarea--mono {
+  font-family: var(--font-mono);
+  font-size: 12px;
+}
+.at-select {
+  appearance: none;
+  -webkit-appearance: none;
+  padding-right: 30px;
+  background-image: url("data:image/svg+xml;charset=utf-8,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%238d95a0' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 9px center;
+  cursor: pointer;
+}
+
+/* ---------- switch ---------- */
+
+.at-switch {
+  position: relative;
+  flex: none;
+  width: 38px;
+  height: 22px;
+  border: none;
+  border-radius: 11px;
+  background: var(--bg-active);
+  cursor: pointer;
+  transition: background 0.15s ease;
+  padding: 0;
+}
+.at-switch::after {
+  content: '';
+  position: absolute;
+  top: 2px;
+  left: 2px;
+  width: 18px;
+  height: 18px;
+  border-radius: 9px;
+  background: #ffffff;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.25);
+  transition: transform 0.15s ease;
+}
+.at-switch--on {
+  background: var(--accent);
+}
+.at-switch--on::after {
+  transform: translateX(16px);
+}
+
+/* ---------- setting rows / sections ---------- */
+
+.at-section {
+  margin-bottom: 26px;
+}
+.at-section__title {
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  color: var(--text-3);
+  text-transform: none;
+  margin: 0 0 8px 2px;
+}
+.at-card {
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-m);
+  overflow: hidden;
+}
+.at-row {
+  display: flex;
+  align-items: flex-start;
+  gap: 16px;
+  padding: 11px 14px;
+}
+.at-row + .at-row {
+  border-top: 1px solid var(--border);
+}
+.at-row__text {
+  flex: 1;
+  min-width: 0;
+}
+.at-row__label {
+  font-size: 13.5px;
+  font-weight: 500;
+  color: var(--text);
+}
+.at-row__desc {
+  font-size: 12px;
+  color: var(--text-3);
+  margin-top: 2px;
+  line-height: 1.5;
+}
+.at-row__control {
+  flex: none;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding-top: 1px;
+}
+.at-row--stack {
+  flex-direction: column;
+  gap: 8px;
+}
+.at-row--stack .at-row__control {
+  width: 100%;
+}
+
+/* ---------- misc ---------- */
+
+.at-kbd {
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
+  font-family: var(--font-sans);
+  font-size: 12px;
+  color: var(--text-2);
+}
+.at-kbd kbd {
+  display: inline-block;
+  min-width: 18px;
+  text-align: center;
+  font-family: var(--font-sans);
+  font-size: 11.5px;
+  line-height: 1;
+  padding: 3px 5px;
+  border: 1px solid var(--border-2);
+  border-bottom-width: 2px;
+  border-radius: 5px;
+  background: var(--bg-soft);
+  color: var(--text);
+}
+
+.at-spinner {
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  border: 2px solid var(--accent-soft);
+  border-top-color: var(--accent);
+  animation: at-spin 0.8s linear infinite;
+  flex: none;
+}
+@keyframes at-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.at-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 11px;
+  line-height: 1;
+  padding: 3px 7px;
+  border-radius: 999px;
+  background: var(--bg-hover);
+  color: var(--text-2);
+}
+.at-badge--accent {
+  background: var(--accent-soft);
+  color: var(--accent);
+}
+.at-badge--danger {
+  background: var(--danger-soft);
+  color: var(--danger);
+}
+.at-badge--success {
+  background: rgba(44, 158, 99, 0.12);
+  color: var(--success);
+}
+
+.at-link {
+  color: var(--accent);
+  cursor: pointer;
+  font-size: 12px;
+}
+.at-link:hover {
+  text-decoration: underline;
+}
+
+.at-hint {
+  font-size: 12px;
+  color: var(--text-3);
+  line-height: 1.5;
+}
+.at-hint--ok {
+  color: var(--success);
+}
+.at-hint--err {
+  color: var(--danger);
+}
+.at-hint--warn {
+  color: var(--warn);
+}

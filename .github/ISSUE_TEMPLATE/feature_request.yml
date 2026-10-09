@@ -1,0 +1,31 @@
+name: Feature request
+description: Suggest an idea for AskThis
+labels: [enhancement]
+body:
+  - type: textarea
+    id: problem
+    attributes:
+      label: What problem would this solve?
+      description: A clear description of the need or friction point.
+    validations:
+      required: true
+  - type: textarea
+    id: proposal
+    attributes:
+      label: Proposed solution
+      description: How you imagine it working.
+    validations:
+      required: false
+  - type: dropdown
+    id: area
+    attributes:
+      label: Area
+      options:
+        - Popup / interaction
+        - Providers / models
+        - Prompts
+        - Settings
+        - Platforms (Windows / Linux)
+        - Other
+    validations:
+      required: false

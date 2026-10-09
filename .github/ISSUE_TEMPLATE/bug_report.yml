@@ -1,0 +1,55 @@
+name: Bug report
+description: Something isn't working as expected
+labels: [bug]
+body:
+  - type: markdown
+    attributes:
+      value: Thanks for taking the time to file a bug! Please fill in the details below.
+  - type: input
+    id: version
+    attributes:
+      label: AskThis version
+      description: Settings → About shows the version.
+      placeholder: '0.1.0'
+    validations:
+      required: true
+  - type: input
+    id: os
+    attributes:
+      label: OS version
+      placeholder: 'macOS 26.0 (arm64) / Windows 11 / Ubuntu 24.04'
+    validations:
+      required: true
+  - type: dropdown
+    id: provider
+    attributes:
+      label: Which provider/model were you using?
+      options:
+        - OpenAI
+        - Anthropic
+        - DeepSeek
+        - Google Gemini
+        - OpenRouter
+        - Moonshot / Zhipu / SiliconFlow / xAI
+        - Local (Ollama / LM Studio)
+        - Custom endpoint
+        - Not related to a provider
+    validations:
+      required: false
+  - type: textarea
+    id: what-happened
+    attributes:
+      label: What happened?
+      description: What did you do, what did you expect, what happened instead?
+    validations:
+      required: true
+  - type: textarea
+    id: steps
+    attributes:
+      label: Steps to reproduce
+      placeholder: |
+        1. Select text in ...
+        2. Press the shortcut
+        3. ...
+    validations:
+      required: false

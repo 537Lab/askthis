@@ -1,0 +1,75 @@
+appId: com.askthis.app
+productName: AskThis
+
+directories:
+  buildResources: build
+  output: release
+
+# Ad-hoc sign with the right entitlements after packing (see the script for why)
+afterPack: scripts/after-pack.js
+
+files:
+  - out/**/*
+  - resources/**/*
+  - package.json
+
+asar: true
+
+# Only ship the locales we actually support (smaller bundles)
+electronLanguages:
+  - en
+  - zh_CN
+
+mac:
+  category: public.app-category.productivity
+  icon: build/icon.png
+  identity: null # unsigned open-source build — see README for Gatekeeper notes
+  hardenedRuntime: false
+  gatekeeperAssess: false
+  extendInfo:
+    NSAppleEventsUsageDescription: >-
+      AskThis uses Apple Events to read the text you select in other apps when
+      you press the global shortcut.
+  target:
+    - target: dmg
+      arch: [arm64, x64]
+    - target: zip
+      arch: [arm64, x64]
+
+dmg:
+  artifactName: ${productName}-${version}-${arch}.${ext}
+
+win:
+  icon: build/icon.png
+  target:
+    - target: nsis
+      arch: [x64, arm64]
+    - target: portable
+      arch: [x64]
+
+nsis:
+  oneClick: false
+  perMachine: false
+  allowToChangeInstallationDirectory: true
+  createDesktopShortcut: true
+  createStartMenuShortcut: true
+  shortcutName: AskThis
+  artifactName: ${productName}-${version}-setup-${arch}.${ext}
+
+portable:
+  artifactName: ${productName}-${version}-portable-${arch}.${ext}
+
+linux:
+  icon: build/icon.png
+  category: Utility
+  synopsis: Select it. Ask it.
+  description: >-
+    A lightweight quick-look lens: select any text, press the shortcut, and get
+    instant explanations, translations or answers — with follow-up questions.
+  maintainer: AskThis contributors
+  target:
+    - target: AppImage
+      arch: [x64]
+    - target: deb
+      arch: [x64]
+  artifactName: ${productName}-${version}-${arch}.${ext}
