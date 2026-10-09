@@ -1,4 +1,4 @@
-import { app } from 'electron'
+import { app, session } from 'electron'
 import { AskThisApp } from './app'
 
 let askthis: AskThisApp | null = null
@@ -13,6 +13,13 @@ if (!gotLock) {
 
   app.whenReady()
     .then(() => {
+      // Security: AskThis needs no renderer permissions — deny all requests (camera, mic,
+      // notifications, geolocation, …) and all synchronous permission checks.
+      session.defaultSession.setPermissionRequestHandler((_wc, _permission, callback) =>
+        callback(false)
+      )
+      session.defaultSession.setPermissionCheckHandler(() => false)
+
       askthis = new AskThisApp()
       askthis.start()
     })

@@ -128,7 +128,9 @@ export class QuerySession {
     this.reasoning = ''
 
     const fail = (message: string, detail?: string): void => {
-      this.deps.emit({ type: 'error', requestId: reqId, message, detail })
+      // Keep the raw server detail in the local log only; renderer gets the friendly code.
+      if (detail) console.error('[askthis] ai error detail:', detail)
+      this.deps.emit({ type: 'error', requestId: reqId, message })
     }
 
     if (!provider || !provider.baseUrl) {

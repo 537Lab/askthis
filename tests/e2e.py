@@ -187,7 +187,7 @@ def wait_turn_answer(cdp, turn_index, contains, timeout=25):
 def main():
     parser = argparse.ArgumentParser()
     parser.add_argument('--packaged', action='store_true', help='test the packaged app instead of dev build')
-    parser.add_argument('--trigger', default=f'"{HS}" -c \'hs.eventtap.keyStroke({{"alt","shift"}},"f",0)\'',
+    parser.add_argument('--trigger', default=f'"{HS}" -c \'hs.eventtap.keyStroke({{"alt","shift"}},"d",0)\'',
                         help='shell command that presses the global shortcut')
     args = parser.parse_args()
 

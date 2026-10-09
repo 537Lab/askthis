@@ -168,7 +168,7 @@ export type QueryEvent =
   | { type: 'start'; requestId: string; model: string }
   | { type: 'delta'; requestId: string; channel: 'text' | 'reasoning'; delta: string }
   | { type: 'done'; requestId: string; elapsedMs: number; usage?: UsageInfo }
-  | { type: 'error'; requestId: string; message: string; detail?: string }
+  | { type: 'error'; requestId: string; message: string }
   | { type: 'aborted'; requestId: string }
 
 export interface TestResult {
