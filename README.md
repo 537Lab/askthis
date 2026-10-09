@@ -2,6 +2,8 @@
 
 > Select it. Ask it. — a lightweight quick-look lens for your desktop.
 
+**English** | [简体中文](README.zh-CN.md) · [Quick start guide](docs/quick-start.md)
+
 AskThis is a tiny, always-available AI companion. Select any text in any app,
 press a global shortcut (default `⌥⇧D` on macOS / `Alt+Shift+D` elsewhere), and
 get an instant, ultra-concise explanation, translation or answer in a floating
