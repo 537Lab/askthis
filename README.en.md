@@ -40,7 +40,7 @@ Download the latest release for your platform from the **Releases** page.
 | Platform | Package | Status |
 | --- | --- | --- |
 | macOS (Apple Silicon / Intel) | `.dmg` | ✅ Tested |
-| Windows | `.exe` (NSIS installer / portable) | 🧪 Install & launch verified on real hardware (2026-10); full shortcut flow community feedback welcome |
+| Windows | `.exe` (NSIS installer / portable) | ✅ Install, launch & shortcut verified on real hardware (2026-10) |
 | Linux | `.AppImage` / `.deb` | 🧪 Built, not yet verified on real hardware |
 
 > **Note:** release builds are unsigned (this is an open-source project without
