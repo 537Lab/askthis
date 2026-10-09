@@ -1,6 +1,12 @@
 appId: com.askthis.app
 productName: AskThis
 
+# GitHub Releases publishing (used by `electron-builder --publish always` in CI)
+publish:
+  provider: github
+  owner: 537Lab
+  repo: askthis
+
 directories:
   buildResources: build
   output: release
