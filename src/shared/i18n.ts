@@ -67,6 +67,7 @@ const zh: Record<string, string> = {
   'general.history.limit': '保留条数',
   'general.history.clear': '清空历史',
   'general.history.cleared': '已清空',
+  'general.history.clearConfirm': '确定清空全部查询历史？此操作不可撤销。',
 
   /* providers */
   'providers.section.active': '当前使用',
@@ -280,6 +281,7 @@ const en: Record<string, string> = {
   'general.history.limit': 'Entries to keep',
   'general.history.clear': 'Clear history',
   'general.history.cleared': 'Cleared',
+  'general.history.clearConfirm': 'Clear all query history? This cannot be undone.',
 
   'providers.section.active': 'Active',
   'providers.section.active.desc': 'Service and model used for queries',

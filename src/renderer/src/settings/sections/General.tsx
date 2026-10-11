@@ -9,6 +9,7 @@ export function GeneralSection(): React.JSX.Element {
   const [cleared, setCleared] = useState(false)
 
   const clearHistory = async (): Promise<void> => {
+    if (!window.confirm(t('general.history.clearConfirm'))) return
     await window.api.history.clear()
     setCleared(true)
     window.setTimeout(() => setCleared(false), 1600)

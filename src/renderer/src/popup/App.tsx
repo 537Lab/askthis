@@ -93,10 +93,12 @@ function PopupCard(): React.JSX.Element {
     return undefined
   }, [store.activationSeq])
 
-  /* Esc always closes the card */
+  /* Esc closes the card — but never while an IME composition is active
+     (e.g. pinyin input): Esc in that state must only cancel the candidate. */
   useEffect(() => {
     const onKey = (e: KeyboardEvent): void => {
-      if (e.key === 'Escape') window.api.popup.close()
+      if (e.key !== 'Escape' || e.isComposing || e.keyCode === 229) return
+      window.api.popup.close()
     }
     window.addEventListener('keydown', onKey)
     return () => window.removeEventListener('keydown', onKey)
@@ -108,9 +110,10 @@ function PopupCard(): React.JSX.Element {
   const modelLabel =
     (store.model || cfg?.activeModelId || t('app.name')) + (level && level !== 'off' ? ` · ${level}` : '')
   const last = store.turns[store.turns.length - 1]
+  const reasoningVisible = (cfg?.showReasoning ?? true) && !!last?.reasoning
   const waiting =
     store.status === 'waiting' ||
-    (store.status === 'streaming' && !!last && !last.a && !last.reasoning && !last.error)
+    (store.status === 'streaming' && !!last && !last.a && !last.error && !reasoningVisible)
 
   const submit = (): void => {
     const text = draft.trim()
@@ -155,6 +158,9 @@ function PopupCard(): React.JSX.Element {
             <>
               {store.turns.length === 0 && !waiting ? (
                 <div className="empty">{t('popup.hint.empty')}</div>
+              ) : null}
+              {store.truncated && store.turns.length > 0 ? (
+                <div className="turn__note turn__note--truncated">{t('popup.truncated')}</div>
               ) : null}
               {store.turns.map((turn, i) => (
                 <TurnView

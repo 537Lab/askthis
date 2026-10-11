@@ -1,4 +1,4 @@
-import { useMemo, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import type { ModelInfo, ProviderConfig, ProviderPreset, PublicProvider, ReasoningStyle } from '@shared/types'
 import { PROVIDER_PRESETS, providerFromPreset } from '@shared/presets'
 import { useT, Section, Row, Button, Field, NumberField, Switch, IconButton, Spinner, prettyAccelerator } from '../../shared/ui'
@@ -469,6 +469,15 @@ function AddProviderModal({
   const t = useT()
   const config = useSettingsStore((s) => s.config)!
   const patch = useSettingsStore((s) => s.patch)
+
+  /* Esc closes the modal (unless an IME composition is active). */
+  useEffect(() => {
+    const onKey = (e: KeyboardEvent): void => {
+      if (e.key === 'Escape' && !e.isComposing && e.keyCode !== 229) onClose()
+    }
+    window.addEventListener('keydown', onKey)
+    return () => window.removeEventListener('keydown', onKey)
+  }, [onClose])
 
   const add = async (preset: ProviderPreset): Promise<void> => {
     const provider = providerFromPreset(preset)

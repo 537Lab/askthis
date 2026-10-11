@@ -381,3 +381,9 @@ body {
   display: flex;
   gap: 8px;
 }
+
+/* ---------- truncated notice ---------- */
+
+.turn__note--truncated {
+  margin: 0 0 9px;
+}
