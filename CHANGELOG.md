@@ -6,6 +6,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.1.2] - 2026-10-11
+
+### Fixed
+
+- Popup: Esc no longer closes the card while an IME composition is active (e.g. pinyin candidate selection)
+- Popup: with "Show reasoning" off, the thinking phase keeps showing the progress indicator instead of a blank card
+- Popup: a notice is now shown when captured text was truncated, avoiding silent cut-offs
+- Settings: clearing query history asks for confirmation first
+- Settings: Esc closes the "Add provider" modal
+
 ## [0.1.1] - 2026-10-10
 
 ### Fixed
