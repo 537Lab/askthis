@@ -55,7 +55,9 @@ export class PopupWindow {
     })
 
     if (process.platform === 'darwin') {
-      win.setAlwaysOnTop(true, 'floating')
+      // 'screen-saver' level is required for the popup to float above macOS
+      // fullscreen Spaces — 'floating' gets buried underneath fullscreen apps.
+      win.setAlwaysOnTop(true, 'screen-saver')
       win.setVisibleOnAllWorkspaces(true, { visibleOnFullScreen: true })
     }
 
@@ -137,6 +139,11 @@ export class PopupWindow {
     if (!this.win) return
     if (!existingPosition || !this.userMoved) this.position()
     if (process.platform === 'darwin') {
+      // Re-assert overlay behaviour before every reveal: macOS can reset the
+      // window's collection behaviour after hide/show cycles or Space changes,
+      // which silently breaks "show over fullscreen apps" until reapplied.
+      this.win.setAlwaysOnTop(true, 'screen-saver')
+      this.win.setVisibleOnAllWorkspaces(true, { visibleOnFullScreen: true })
       this.win.showInactive()
     } else {
       this.win.show()

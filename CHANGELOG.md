@@ -6,6 +6,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.1.3] - 2026-10-12
+
+### Fixed
+
+- Popup: the quick-look card now appears over macOS fullscreen apps — the window level was raised to `screen-saver` and the overlay behaviour is re-asserted on every reveal (previously the card stayed hidden when the current app was in a fullscreen Space)
+
 ## [0.1.2] - 2026-10-11
 
 ### Fixed
