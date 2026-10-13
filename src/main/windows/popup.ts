@@ -45,6 +45,9 @@ export class PopupWindow {
       alwaysOnTop: true,
       hasShadow: false, // CSS draws the shadow inside the transparent window
       acceptFirstMouse: true, // first click interacts instead of just focusing
+      // macOS: NSPanel — the only window type that reliably joins fullscreen
+      // Spaces (Raycast/Alfred-class tools all use panels for this).
+      ...(process.platform === 'darwin' ? { type: 'panel' as const } : {}),
       webPreferences: {
         preload,
         sandbox: true,
@@ -55,9 +58,10 @@ export class PopupWindow {
     })
 
     if (process.platform === 'darwin') {
-      // 'screen-saver' level is required for the popup to float above macOS
-      // fullscreen Spaces — 'floating' gets buried underneath fullscreen apps.
-      win.setAlwaysOnTop(true, 'screen-saver')
+      // 'screen-saver' + relativeLevel 1 is the combination that reliably
+      // floats above fullscreen Spaces on macOS — 'floating' gets buried,
+      // and level alone (without +1) can still sit below fullscreen apps.
+      win.setAlwaysOnTop(true, 'screen-saver', 1)
       win.setVisibleOnAllWorkspaces(true, { visibleOnFullScreen: true })
     }
 
@@ -142,9 +146,12 @@ export class PopupWindow {
       // Re-assert overlay behaviour before every reveal: macOS can reset the
       // window's collection behaviour after hide/show cycles or Space changes,
       // which silently breaks "show over fullscreen apps" until reapplied.
-      this.win.setAlwaysOnTop(true, 'screen-saver')
+      this.win.setAlwaysOnTop(true, 'screen-saver', 1)
       this.win.setVisibleOnAllWorkspaces(true, { visibleOnFullScreen: true })
       this.win.showInactive()
+      // Pull the window to the front of the current Space (incl. fullscreen
+      // Spaces) — without this, re-shown windows can stay behind.
+      this.win.moveTop()
     } else {
       this.win.show()
     }

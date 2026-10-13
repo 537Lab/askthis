@@ -6,11 +6,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
-## [0.1.3] - 2026-10-12
+## [0.1.3] - 2026-10-13
 
 ### Fixed
 
-- Popup: the quick-look card now appears over macOS fullscreen apps — the window level was raised to `screen-saver` and the overlay behaviour is re-asserted on every reveal (previously the card stayed hidden when the current app was in a fullscreen Space)
+- Popup: the quick-look card now appears over macOS fullscreen apps — verified end-to-end in a real fullscreen Space. The fix combines: an NSPanel window type (`type: 'panel'`), the `screen-saver` level with `relativeLevel` 1, re-asserting the overlay behaviour on every reveal, and `moveTop()` after showing. Previously the card only ever appeared on the desktop Space while a fullscreen app was active
 
 ## [0.1.2] - 2026-10-11
 
