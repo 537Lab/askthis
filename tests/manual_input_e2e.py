@@ -86,8 +86,15 @@ def main():
         settings.ev('window.close()')
         settings.close()
         settings = None
-        hs('hs.application.get("com.apple.finder"):activate(); hs.eventtap.keyStroke({}, "escape", 0); return "Finder foreground"')
+        # Finder can retain a selected file even after Esc; use a known editable
+        # fixture with its caret at the end to guarantee there is no selection.
+        fixture = Path(tmp, 'askthis-selection-fixture.txt')
+        fixture.write_text('entropy selected term', encoding='utf-8')
+        subprocess.run(['open', '-a', 'TextEdit', str(fixture)], check=True)
+        time.sleep(0.8)
+        hs('hs.application.get("com.apple.TextEdit"):activate(); return "TextEdit foreground"')
         time.sleep(0.25)
+        hs('hs.eventtap.keyStroke({"cmd"}, "right", 0); return "empty selection"')
         subprocess.run(['pbcopy'], input='STALE_CLIPBOARD_MUST_NOT_BE_QUERIED', text=True, check=True)
         t0 = time.monotonic()
         hs('hs.eventtap.keyStroke({"alt","shift"}, "d", 0); return "triggered"')
@@ -118,7 +125,7 @@ def main():
             count = cdp.ev('document.querySelectorAll(".turn").length')
             request_count = CountingHandler.requests
             cdp.ev('''(() => { const i=document.querySelector('.composer__input');
-              Object.getOwnPropertyDescriptor(HTMLInputElement.prototype,'value').set.call(i,'中文术语');
+              Object.getOwnPropertyDescriptor(Object.getPrototypeOf(i),'value').set.call(i,'中文术语');
               i.dispatchEvent(new Event('input',{bubbles:true}));
               i.dispatchEvent(new KeyboardEvent('keydown',{key:'Enter',isComposing:true,bubbles:true})); })()''')
             time.sleep(0.2)

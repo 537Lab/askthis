@@ -107,6 +107,13 @@ class MockHandler(BaseHTTPRequestHandler):
         self.end_headers()
         reply = f'MOCK-REPLY: {last_user[:40]}'
         try:
+            if last_user in ('EMPTY', 'REASONING_ONLY'):
+                if last_user == 'REASONING_ONLY':
+                    chunk = {'choices': [{'delta': {'reasoning_content': 'Only reasoning, no answer.'}, 'index': 0}]}
+                    self.wfile.write(f'data: {json.dumps(chunk)}\n\n'.encode())
+                self.wfile.write(b'data: [DONE]\n\n')
+                self.wfile.flush()
+                return
             for i in range(0, len(reply), 8):
                 chunk = {'choices': [{'delta': {'content': reply[i:i + 8]}, 'index': 0}]}
                 self.wfile.write(f'data: {json.dumps(chunk)}\n\n'.encode())
@@ -255,7 +262,7 @@ def run_tests(args, target):
         print('5. follow-up')
         cdp.ev('''(() => {
           const input = document.querySelector('.composer__input');
-          const setter = Object.getOwnPropertyDescriptor(HTMLInputElement.prototype, 'value').set;
+          const setter = Object.getOwnPropertyDescriptor(Object.getPrototypeOf(input), 'value').set;
           setter.call(input, 'second question');
           input.dispatchEvent(new Event('input', { bubbles: true }));
           input.dispatchEvent(new KeyboardEvent('keydown', { key: 'Enter', bubbles: true }));
@@ -268,22 +275,27 @@ def run_tests(args, target):
         print('6. stop mid-stream')
         cdp.ev('''(() => {
           const input = document.querySelector('.composer__input');
-          const setter = Object.getOwnPropertyDescriptor(HTMLInputElement.prototype, 'value').set;
+          const setter = Object.getOwnPropertyDescriptor(Object.getPrototypeOf(input), 'value').set;
           setter.call(input, 'SLOW please');
           input.dispatchEvent(new Event('input', { bubbles: true }));
           input.dispatchEvent(new KeyboardEvent('keydown', { key: 'Enter', bubbles: true }));
           return 'sent';
         })()''')
         time.sleep(1.5)
-        cdp.ev('Array.from(document.querySelectorAll(".foot .at-btn")).find(b=>b.textContent.includes("停止"))?.click()')
+        cdp.ev('document.querySelector("button[aria-label=停止],button[aria-label=Stop]")?.click()')
         time.sleep(1.2)
         stopped = cdp.ev('!!document.querySelector(".turn__note")')
         check('stop button aborts the request', bool(stopped))
+        check('stopped before first text retains regenerate without an empty copy action', cdp.ev('''(() => {
+          const last = Array.from(document.querySelectorAll('.turn')).at(-1);
+          return !!last?.querySelector('[aria-label="重新生成"],[aria-label="Regenerate"]') &&
+            !last?.querySelector('[aria-label="复制结果"],[aria-label="Copy"]');
+        })()''') is True)
 
         print('7. error handling (HTTP 500)')
         cdp.ev('''(() => {
           const input = document.querySelector('.composer__input');
-          const setter = Object.getOwnPropertyDescriptor(HTMLInputElement.prototype, 'value').set;
+          const setter = Object.getOwnPropertyDescriptor(Object.getPrototypeOf(input), 'value').set;
           setter.call(input, 'ERROR case');
           input.dispatchEvent(new Event('input', { bubbles: true }));
           input.dispatchEvent(new KeyboardEvent('keydown', { key: 'Enter', bubbles: true }));
@@ -297,6 +309,28 @@ def run_tests(args, target):
                 break
             time.sleep(0.6)
         check('error from provider is shown', bool(err_text and 'mock internal error' in err_text), (err_text or '')[:60])
+
+        for case in ('EMPTY', 'REASONING_ONLY'):
+            cdp.ev('''(() => {
+              const input = document.querySelector('.composer__input');
+              Object.getOwnPropertyDescriptor(Object.getPrototypeOf(input), 'value').set.call(input, ''' + json.dumps(case) + ''');
+              input.dispatchEvent(new Event('input', { bubbles: true }));
+              input.dispatchEvent(new KeyboardEvent('keydown', { key: 'Enter', bubbles: true }));
+            })()''')
+            deadline = time.monotonic() + 5
+            complete = False
+            while time.monotonic() < deadline:
+                complete = cdp.ev('''(() => {
+                  const turn = Array.from(document.querySelectorAll('.turn')).at(-1);
+                  return document.querySelector('.popup-shell').dataset.status === 'done' &&
+                    turn?.querySelector('.turn__q-text')?.textContent === ''' + json.dumps(case) + ''' &&
+                    !!turn.querySelector('[aria-label="重新生成"],[aria-label="Regenerate"]') &&
+                    !turn.querySelector('.turn__a,[aria-label="复制结果"],[aria-label="Copy"]');
+                })()''') is True
+                if complete:
+                    break
+                time.sleep(0.1)
+            check(case + ' completion retains regenerate without an empty copy action', complete)
 
         cdp.close()
 
