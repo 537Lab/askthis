@@ -1,0 +1,47 @@
+{
+  "dark-minimum-320": {
+    "native": {
+      "y": 220,
+      "w": 320,
+      "x": 466,
+      "h": 200
+    },
+    "layout": {
+      ".head": {
+        "height": 45,
+        "top": 11,
+        "bottom": 56
+      },
+      ".body": {
+        "height": 59,
+        "top": 56,
+        "bottom": 115
+      },
+      ".turn__q": {
+        "height": 33.375,
+        "top": -51.5,
+        "bottom": -18.125
+      },
+      ".turn__a": {
+        "height": 72.234375,
+        "top": -6.125,
+        "bottom": 66.109375
+      },
+      ".turn__actions": {
+        "height": 28,
+        "top": 76.109375,
+        "bottom": 104.109375
+      },
+      ".composer": {
+        "height": 74,
+        "top": 115,
+        "bottom": 189
+      },
+      ".composer__hints": {
+        "height": 23,
+        "top": 160,
+        "bottom": 183
+      }
+    }
+  }
+}

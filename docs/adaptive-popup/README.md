@@ -69,6 +69,7 @@ The 68 px reduction comes from source context (24 px), its following gap (2 px) 
 - [打包版连续追问 / Packaged follow-up](packaged/follow-up.png)
 - [打包版长内容历史阅读＋多行草稿 / Long history and multiline draft](packaged/long-reading.png)
 - [打包版深色英文 340×200 / Dark English 340×200](packaged/dark-minimum.png)
+- [定点补验实际下限 320×200 / Targeted schema-minimum check at 320×200](minimum-320/dark-minimum-320.png)
 - 逐区域测量 / Per-region geometry: [before](before/metrics.json), [packaged after](packaged/metrics.json)
 
 ## 验证 / Verification
@@ -83,6 +84,7 @@ The 68 px reduction comes from source context (24 px), its following gap (2 px) 
 | `npx electron-builder --dir --mac --arm64 --publish never` | 通过，afterPack ad-hoc 签名成功 / Built and ad-hoc signed |
 | `codesign --verify --deep --strict release/mac-arm64/AskThis.app` | 通过 / Passed |
 | `python3 tests/adaptive_popup_e2e.py --packaged --screenshots <dir>` | 扩充后的打包版 20/20 / Expanded packaged suite 20/20 |
+| 同上加 `--minimum-only` / With `--minimum-only` | 320×200 定点补验 2/2 / Targeted 320×200 check 2/2 |
 
 打包版聚焦回归包含：空白输入焦点与零请求、空态可读性、无草稿轻量入口、原文同行、正文字号行距不变、聚焦不跳高、草稿提示、生成期间 Enter 防并发、完成保留草稿和焦点、assistant 上下文、复制不关窗、重新生成不增轮/不丢草稿、正文前停止与再生成入口、长内容上限与滚动、多行草稿不拉走历史位置、“回到最新”不遮挡并能恢复跟随、短回答无空白撑高、340×200 深色英文控件不裁切。
 
@@ -91,6 +93,14 @@ The focused packaged regression covers input focus/no accidental requests, conte
 避免重复已充分覆盖且代码未改的测试：沿用上轮全屏 Space、真实系统拼音、选区读取及完整错误流程的证据。本轮保留 IME-aware handlers、主进程、请求与滚动跟随逻辑；没有声称再次完整执行这些原生测试。Windows/Linux、第三方输入法未真机复测。
 
 Existing fullscreen-Space, real Pinyin, selection-capture and full error-path evidence is reused because those paths were not changed. No claim is made that they were all rerun. Windows/Linux and third-party IMEs were not device-tested this round.
+
+独立源码复审指出原生测试使用的 340 px 不是配置最小宽度；已回查 `main/store.ts` 确认实际下限为 320 px，并只补跑该缺口，没有重复整个原生套件。真实打包版 320×200 下，多行草稿、发送、提示均在卡片内且无水平溢出，原生尺寸也与设置一致（2/2）。测试脚本新增 `--minimum-only`，以后可单独复跑。此前完整原生回归的 20/20 是对应当时脚本的实际记录，不将后加断言冒充已在整套执行。
+
+Independent source review identified that 340 px was not the configuration minimum. `main/store.ts` confirms 320 px; only this missing boundary was run. The packaged 320×200 multiline draft, controls and help fit without horizontal overflow, and native bounds match (2/2). `--minimum-only` makes this independently repeatable. The earlier full 20/20 remains the actual result of that earlier run, not a claim that later-added assertions were run in the full suite.
+
+复审对长原文展开/折叠的建议未在本轮引入：避免在没有相应新交互验收的情况下增加阅读锚点与焦点风险。高配置上限配矮显示器工作区是原生窗口代码的既有待查风险，本轮没有原生复现或改动，不将其描述为本轮已确认缺陷。
+
+Long-source expansion/collapse was not introduced, avoiding new anchor/focus behavior outside the verified scope. A high configured cap on a short display remains an existing, unverified native-window edge case; it was neither reproduced nor changed here.
 
 ## 交付与恢复 / Delivery and recovery
 
