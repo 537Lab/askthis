@@ -13,6 +13,11 @@ release/
 .env.*
 *.local
 
+
+# Python test caches
+__pycache__/
+*.pyc
+
 # Logs & OS junk
 *.log
 npm-debug.log*

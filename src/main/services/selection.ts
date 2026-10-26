@@ -11,7 +11,7 @@ export interface CaptureResult {
   source: CaptureSource
 }
 
-export async function captureText(mode: SelectionMode, clipboardFallback = true): Promise<CaptureResult> {
+export async function captureText(mode: SelectionMode, clipboardFallback = false): Promise<CaptureResult> {
   if (mode === 'manual') return { text: '', source: 'none' }
 
   if (mode === 'clipboard') {
@@ -42,28 +42,40 @@ async function readSelectedText(): Promise<string | null> {
 
 /* ------------------------------ macOS ------------------------------ */
 
+// Native AX avoids a System Events Automation prompt on the fast path.
+// An unsupported attribute/error is UNKNOWN, not proof of an empty selection:
+// those apps still need the copy fallback (PDF readers, terminals, etc.).
 const MAC_AX_SCRIPT = `
-tell application "System Events"
-	tell (first application process whose frontmost is true)
-		try
-			set focusedEl to value of attribute "AXFocusedUIElement"
-			set sel to value of attribute "AXSelectedText" of focusedEl
-			if sel is missing value then return ""
-			return sel
-		on error
-			return ""
-		end try
-	end tell
-end tell`
+ObjC.import('Cocoa');
+ObjC.import('ApplicationServices');
+ObjC.bindFunction('AXUIElementCreateApplication', ['id', ['int']]);
+ObjC.bindFunction('AXUIElementCopyAttributeValue', ['int', ['id', 'id', 'id*']]);
+function run() {
+  try {
+    const app = $.NSWorkspace.sharedWorkspace.frontmostApplication;
+    const root = $.AXUIElementCreateApplication(app.processIdentifier);
+    const focused = Ref();
+    if ($.AXUIElementCopyAttributeValue(root, $('AXFocusedUIElement'), focused) !== 0)
+      return 'ASKTHIS_UNKNOWN';
+    const selected = Ref();
+    if ($.AXUIElementCopyAttributeValue(focused[0], $('AXSelectedText'), selected) !== 0)
+      return 'ASKTHIS_UNKNOWN';
+    const text = ObjC.unwrap(selected[0]);
+    if (typeof text !== 'string') return 'ASKTHIS_UNKNOWN';
+    return text.length ? 'ASKTHIS_TEXT\\n' + text : 'ASKTHIS_EMPTY';
+  } catch (_) {
+    return 'ASKTHIS_UNKNOWN';
+  }
+}`
 
 async function readSelectedMac(): Promise<string | null> {
   // Path A: read the selection via the Accessibility API (no side effects).
   try {
-    const { stdout } = await pExecFile('/usr/bin/osascript', ['-e', MAC_AX_SCRIPT], {
+    const { stdout } = await pExecFile('/usr/bin/osascript', ['-l', 'JavaScript', '-e', MAC_AX_SCRIPT], {
       timeout: 1500
     })
-    const text = stdout.trim()
-    if (text) return text
+    if (stdout.trim() === 'ASKTHIS_EMPTY') return null
+    if (stdout.startsWith('ASKTHIS_TEXT\n')) return stdout.slice('ASKTHIS_TEXT\n'.length).trim() || null
   } catch {
     /* fall through to the copy-based path */
   }
@@ -137,18 +149,15 @@ async function readSelectedWindows(): Promise<string | null> {
 /* ------------------------------ Linux (best effort) ------------------------------ */
 
 async function readSelectedLinux(): Promise<string | null> {
-  // xdotool only works on X11; on Wayland we fall back to the clipboard.
-  if (process.env.XDG_SESSION_TYPE === 'wayland') {
-    const t = (await clipboard.readText().catch(() => '')).trim()
-    return t || null
-  }
+  // X11 synthetic copy is unavailable on Wayland. Only captureText may read
+  // existing clipboard contents, and only after an explicit user opt-in.
+  if (process.env.XDG_SESSION_TYPE === 'wayland') return null
   try {
     return await readViaCopy(async () => {
       await pExecFile('xdotool', ['key', '--clearmodifiers', 'ctrl+c'], { timeout: 1500 })
     })
   } catch {
-    const t = (await clipboard.readText().catch(() => '')).trim()
-    return t || null
+    return null
   }
 }
 

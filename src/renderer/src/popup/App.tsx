@@ -86,7 +86,7 @@ function PopupCard(): React.JSX.Element {
   useEffect(() => {
     setDraft('')
     const s = usePopupStore.getState()
-    if (!s.needsPermission && !s.question) {
+    if (!s.question) {
       const id = window.setTimeout(() => inputRef.current?.focus(), 80)
       return () => window.clearTimeout(id)
     }
@@ -152,62 +152,55 @@ function PopupCard(): React.JSX.Element {
         </header>
 
         <div className="body">
-          {store.needsPermission ? (
-            <PermissionCard />
-          ) : (
-            <>
-              {store.turns.length === 0 && !waiting ? (
-                <div className="empty">{t('popup.hint.empty')}</div>
-              ) : null}
-              {store.truncated && store.turns.length > 0 ? (
-                <div className="turn__note turn__note--truncated">{t('popup.truncated')}</div>
-              ) : null}
-              {store.turns.map((turn, i) => (
-                <TurnView
-                  key={i}
-                  index={i}
-                  q={turn.q}
-                  a={turn.a}
-                  reasoning={turn.reasoning}
-                  error={turn.error}
-                  stopped={turn.stopped}
-                  elapsedMs={turn.elapsedMs}
-                  first={i === 0}
-                  source={i === 0 ? store.questionSource : null}
-                  isLast={i === store.turns.length - 1}
-                  status={store.status}
-                  waiting={waiting}
-                  showReasoning={cfg?.showReasoning ?? true}
-                />
-              ))}
-              {waiting ? (
-                <div className="waiting">
-                  <Spinner size={12} />
-                  <span>{t('popup.thinking')}</span>
-                </div>
-              ) : null}
-            </>
-          )}
+          {store.needsPermission ? <PermissionCard /> : null}
+          {store.turns.length === 0 && !waiting ? (
+            <div className="empty">{t('popup.hint.empty')}</div>
+          ) : null}
+          {store.truncated && store.turns.length > 0 ? (
+            <div className="turn__note turn__note--truncated">{t('popup.truncated')}</div>
+          ) : null}
+          {store.turns.map((turn, i) => (
+            <TurnView
+              key={i}
+              index={i}
+              q={turn.q}
+              a={turn.a}
+              reasoning={turn.reasoning}
+              error={turn.error}
+              stopped={turn.stopped}
+              elapsedMs={turn.elapsedMs}
+              first={i === 0}
+              source={i === 0 ? store.questionSource : null}
+              isLast={i === store.turns.length - 1}
+              status={store.status}
+              waiting={waiting}
+              showReasoning={cfg?.showReasoning ?? true}
+            />
+          ))}
+          {waiting ? (
+            <div className="waiting">
+              <Spinner size={12} />
+              <span>{t('popup.thinking')}</span>
+            </div>
+          ) : null}
         </div>
 
-        {!store.needsPermission ? (
-          <div className="composer">
-            <input
-              ref={inputRef}
-              className="composer__input"
-              value={draft}
-              placeholder={store.question ? t('popup.ask.placeholder') : t('popup.placeholder')}
-              onChange={(e) => setDraft(e.target.value)}
-              onKeyDown={(e) => {
-                if (e.key === 'Enter' && !e.nativeEvent.isComposing) {
-                  e.preventDefault()
-                  submit()
-                }
-              }}
-              disabled={store.status === 'streaming' || store.status === 'waiting'}
-            />
-          </div>
-        ) : null}
+        <div className="composer">
+          <input
+            ref={inputRef}
+            className="composer__input"
+            value={draft}
+            placeholder={store.question ? t('popup.ask.placeholder') : t('popup.placeholder')}
+            onChange={(e) => setDraft(e.target.value)}
+            onKeyDown={(e) => {
+              if (e.key === 'Enter' && !e.nativeEvent.isComposing && e.nativeEvent.keyCode !== 229) {
+                e.preventDefault()
+                submit()
+              }
+            }}
+            disabled={store.status === 'streaming' || store.status === 'waiting'}
+          />
+        </div>
 
         <footer className="foot">
           <div className="foot__left">
@@ -227,7 +220,7 @@ function PopupCard(): React.JSX.Element {
                 </Button>
               </>
             ) : null}
-            {store.status === 'error' && !store.needsPermission ? (
+            {store.status === 'error' ? (
               <>
                 <Button size="sm" variant="primary" onClick={() => window.api.popup.regenerate()}>
                   {t('popup.retry')}

@@ -21,6 +21,7 @@ import shutil
 import subprocess
 import sys
 import threading
+import tempfile
 import time
 import urllib.request
 from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
@@ -28,8 +29,6 @@ from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 import websocket
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-USER_DATA = os.path.expanduser('~/Library/Application Support/askthis')
-CONFIG = os.path.join(USER_DATA, 'config.json')
 MOCK_PORT = 8788
 CDP_PORT = 9222
 
@@ -122,7 +121,11 @@ class MockHandler(BaseHTTPRequestHandler):
 def start_mock():
     server = ThreadingHTTPServer(('127.0.0.1', MOCK_PORT), MockHandler)
     t = threading.Thread(target=server.serve_forever, daemon=True)
-    t.start()
+    try:
+        t.start()
+    except BaseException:
+        server.server_close()
+        raise
     return server
 
 
@@ -197,41 +200,45 @@ def main():
         [os.path.join(ROOT, 'node_modules/.bin/electron'), '.']
     )
 
+    mock = test_dir = proc = None
+    clipboard_saved = False
     print('== AskThis e2e ==')
-    print('1. starting mock server on', MOCK_PORT)
-    mock = start_mock()
-
-    print('2. pointing config at the mock provider')
-    backup = CONFIG + '.e2e-backup'
-    if os.path.exists(CONFIG):
-        shutil.copy(CONFIG, backup)
-    cfg = json.load(open(CONFIG)) if os.path.exists(CONFIG) else {}
-    providers = [p for p in cfg.get('providers', []) if p.get('id') != 'e2e-mock']
-    providers.insert(0, {
-        'id': 'e2e-mock', 'name': 'E2E Mock', 'kind': 'openai-compatible',
-        'baseUrl': f'http://127.0.0.1:{MOCK_PORT}/v1',
-        'models': [{'id': 'mock-1', 'reasoning': False}], 'reasoningStyle': 'none',
-    })
-    cfg['providers'] = providers
-    cfg['activeProviderId'] = 'e2e-mock'
-    cfg['activeModelId'] = 'mock-1'
-    cfg['selectionMode'] = 'clipboard'
-    json.dump(cfg, open(CONFIG, 'w'), ensure_ascii=False, indent=2)
-
-    print('3. launching app:', ' '.join(app_cmd))
-    env = dict(os.environ)
-    proc = subprocess.Popen(
-        app_cmd + [f'--remote-debugging-port={CDP_PORT}', '--remote-allow-origins=*'],
-        cwd=ROOT, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL, env=env,
-    )
-
     try:
+        print('1. starting mock server on', MOCK_PORT)
+        mock = start_mock()
+
+        print('2. creating isolated test configuration (no user keys)')
+        test_dir = tempfile.mkdtemp(prefix='askthis-e2e-', dir=os.environ.get('TMPDIR'))
+        cfg = {
+            'version': 2,
+            'shortcut': 'Alt+Shift+D',
+            'providers': [{
+                'id': 'e2e-mock', 'name': 'E2E Mock', 'kind': 'openai-compatible',
+                'baseUrl': f'http://127.0.0.1:{MOCK_PORT}/v1',
+                'models': [{'id': 'mock-1', 'reasoning': False}], 'reasoningStyle': 'none',
+            }],
+            'activeProviderId': 'e2e-mock',
+            'activeModelId': 'mock-1',
+            'selectionMode': 'clipboard',
+        }
+        with open(os.path.join(test_dir, 'config.json'), 'w') as config_file:
+            json.dump(cfg, config_file, ensure_ascii=False, indent=2)
+        subprocess.run([HS, '-c', '_askthisE2EClipboard = hs.pasteboard.readAllData(); return "clipboard saved"'], check=True, capture_output=True, timeout=10)
+        clipboard_saved = True
+
+        print('3. launching app:', ' '.join(app_cmd))
+        proc = subprocess.Popen(
+            app_cmd + [f'--user-data-dir={test_dir}', f'--remote-debugging-port={CDP_PORT}', '--remote-allow-origins=*'],
+            cwd=ROOT, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL, env=dict(os.environ),
+        )
         target = find_popup_target()
         if check('popup target appears (pre-warm)', bool(target)):
             run_tests(args, target)
     except Exception as exc:
         check('e2e run completed without exceptions', False, str(exc))
-    return finish(mock, backup, proc)
+    finally:
+        result = finish(mock, test_dir, proc, clipboard_saved)
+    return result
 
 
 def run_tests(args, target):
@@ -294,17 +301,36 @@ def run_tests(args, target):
         cdp.close()
 
 
-def finish(mock, backup, proc):
+def finish(mock, test_dir, proc, clipboard_saved):
     print('8. cleanup')
-    proc.terminate()
-    try:
-        proc.wait(timeout=5)
-    except Exception:
-        proc.kill()
-    mock.shutdown()
-    if os.path.exists(backup):
-        shutil.move(backup, CONFIG)
-        print('   config restored')
+    if proc is not None:
+        try:
+            proc.terminate()
+            try:
+                proc.wait(timeout=5)
+            except subprocess.TimeoutExpired:
+                proc.kill()
+                proc.wait(timeout=5)
+        except Exception as exc:
+            check('app process cleanup', False, str(exc))
+    if mock is not None:
+        try:
+            try:
+                mock.shutdown()
+            finally:
+                mock.server_close()
+        except Exception as exc:
+            check('mock server cleanup', False, str(exc))
+    if test_dir is not None:
+        try:
+            shutil.rmtree(test_dir)
+        except Exception as exc:
+            check('isolated config cleanup', False, str(exc))
+    if clipboard_saved:
+        try:
+            subprocess.run([HS, '-c', 'if _askthisE2EClipboard then hs.pasteboard.writeAllData(_askthisE2EClipboard); _askthisE2EClipboard=nil end; return "clipboard restored"'], check=True, capture_output=True, timeout=10)
+        except Exception as exc:
+            check('clipboard restoration', False, str(exc))
     passed = sum(1 for _, ok, _ in RESULTS if ok)
     total = len(RESULTS)
     print(f'== RESULT: {passed}/{total} passed ==')

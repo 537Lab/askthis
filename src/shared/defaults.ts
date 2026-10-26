@@ -1,6 +1,6 @@
 import type { AppConfig, PromptPreset } from './types'
 
-export const CONFIG_VERSION = 1
+export const CONFIG_VERSION = 2
 
 export const DEFAULT_SHORTCUT = 'Alt+Shift+D'
 
@@ -73,7 +73,7 @@ export function createDefaultConfig(): AppConfig {
 
     shortcut: DEFAULT_SHORTCUT,
     selectionMode: 'auto',
-    clipboardFallback: true,
+    clipboardFallback: false,
     hideOnBlur: false,
     windowWidth: 480,
     maxWindowHeight: 560,

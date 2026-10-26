@@ -80,6 +80,13 @@ export class ConfigStore {
     ensureDir(this.dir)
     const raw = readJsonSafe<Partial<AppConfig>>(this.configPath)
     if (!raw) this.firstRun = true
+    // v1 wrote clipboardFallback=true by default, with no record of opt-in.
+    // Migrate only auto capture; explicit clipboard/manual modes stay intact.
+    // Once versioned, a newly enabled fallback remains an explicit user choice.
+    if (raw && (typeof raw.version !== 'number' || raw.version < 2) &&
+        (raw.selectionMode === undefined || raw.selectionMode === 'auto')) {
+      raw.clipboardFallback = false
+    }
     this.config = raw ? this.sanitize({ ...createDefaultConfig(), ...raw }) : this.seed()
     this.persistConfig() // normalise + migrate on disk
     // NOTE: secrets are NOT loaded here — see initSecrets(). Deferring the
@@ -246,7 +253,7 @@ export class ConfigStore {
     cfg.requestTimeoutSec = clamp(cfg.requestTimeoutSec, 5, 600, 60)
     cfg.historyLimit = clamp(cfg.historyLimit, 0, 500, 50)
     if (typeof cfg.shortcut !== 'string' || cfg.shortcut.trim() === '') cfg.shortcut = 'Alt+Shift+D'
-    if (typeof cfg.clipboardFallback !== 'boolean') cfg.clipboardFallback = true
+    if (typeof cfg.clipboardFallback !== 'boolean') cfg.clipboardFallback = false
     if (typeof cfg.allowPlaintextSecrets !== 'boolean') cfg.allowPlaintextSecrets = false
     if (cfg.temperature != null && (typeof cfg.temperature !== 'number' || cfg.temperature < 0 || cfg.temperature > 2)) {
       cfg.temperature = null

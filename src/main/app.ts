@@ -157,7 +157,7 @@ export class AskThisApp {
       }
     }
 
-    const needsPermission = process.platform === 'darwin' && !getAccessibilityStatus().trusted
+    const needsPermission = cfg.selectionMode === 'auto' && process.platform === 'darwin' && !getAccessibilityStatus().trusted
     let capture: CaptureResult = { text: '', source: 'none' }
     if (!needsPermission) {
       try {
@@ -181,13 +181,13 @@ export class AskThisApp {
     const win = this.popup.ensureCreated(rendererEntry('popup'), preloadPath())
     const wasVisible = this.popup.isVisible()
     this.popup.show(wasVisible)
-    this.startEscMonitor()
 
     // No captured text: the user is about to type — give the window focus.
-    if (!capture.text && !needsPermission) {
+    if (!capture.text) {
       win.show()
       win.focus()
     }
+    this.startEscMonitor()
 
     const payload: ActivatePayload = {
       text: session.sourceText,
@@ -265,7 +265,9 @@ export class AskThisApp {
       cursor.y <= b.y + b.height + margin
     const focused = win.isFocused()
     const justShown = Date.now() - this.popupShownAt < 2500
-    const should = near || focused || justShown
+    // A focused renderer handles Esc itself, including IME composition guards.
+    // Global shortcuts bypass that handler and would swallow IME cancellation.
+    const should = !focused && (near || justShown)
     const why = `near=${near} focused=${focused} justShown=${justShown} cursor=(${cursor.x},${cursor.y}) bounds=(${b.x},${b.y},${b.width}x${b.height})`
     if (should && !this.escapeGuardActive) this.enableEscapeGuard(why)
     else if (!should && this.escapeGuardActive) this.disableEscapeGuard(why)
@@ -273,7 +275,11 @@ export class AskThisApp {
 
   private enableEscapeGuard(reason = ''): void {
     if (this.escapeGuardActive) return
-    this.escapeGuardActive = registerEscapeGuard(() => this.closePopup())
+    this.escapeGuardActive = registerEscapeGuard(() => {
+      // Focus may change between monitor ticks; let the renderer handle IME Esc.
+      if (this.popup.browserWindow?.isFocused()) return
+      this.closePopup()
+    })
     console.log(`[esc] guard on: ${this.escapeGuardActive} — ${reason}`)
   }
 

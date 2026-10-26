@@ -6,6 +6,20 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.1.4] - 2026-10-26
+
+### Added
+
+- No-selection input: use the same shortcut (`Alt+Shift+D` / `⌥⇧D`) to open an empty, focused input card, type a question and press Enter to send; Esc closes the card.
+- 无选区直接输入：沿用同一快捷键打开空白卡片，输入框自动聚焦，键入后按 Enter 发送，Esc 关闭。
+
+### Changed
+
+- Automatic capture now queries selected text when available and otherwise waits for typed or pasted input, rather than submitting old clipboard contents. Explicit Clipboard only mode remains available.
+- 自动模式有选区就查询，未获取选区时等待输入或手动粘贴，不再自动提交旧剪贴板；仍保留显式「仅使用剪贴板」模式。
+- Refreshed the Chinese and English homepages and beginner guides with download guidance, the two input flows, upgrade notes, privacy boundaries and platform verification scope. No OCR / screenshot recognition is included; the new interactions still need Windows / Linux hardware validation.
+- 完善中英文首页与新手教程：补充下载指引、两种提问流程、升级说明、隐私边界及平台验证范围。当前不含 OCR / 截图识字；新交互仍需 Windows / Linux 真机验证。
+
 ## [0.1.3] - 2026-10-13
 
 ### Fixed

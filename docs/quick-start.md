@@ -1,129 +1,160 @@
-# AskThis Quick Start (Absolute Beginners)
+# AskThis Beginner Guide
 
-> No programming knowledge needed. Ten minutes and you're set.
+> No programming required: install the app, connect a model, and ask with one shortcut.
 
 ## 1. What is this?
 
-AskThis is a **"select it, ask it"** tool: select text in **any application**, press one shortcut, and a small card appears next to your cursor with an AI explanation, translation or answer — with follow-ups when you need them.
+AskThis puts AI in a small card you can open whenever you need it. The default shortcut is **macOS `⌥⇧D` (Option + Shift + D) / Windows and Linux `Alt+Shift+D`**.
 
-Real examples:
+- **Have text to look up?** Select a term, passage or code → shortcut → read the explanation or translation.
+- **Have a question?** Select nothing → shortcut → type → press `Enter` to send.
+- **Have copied text?** Select nothing → shortcut → paste it yourself → press `Enter` to send.
 
-- See a term you don't know on a webpage → select it → press the shortcut → instantly explained
-- Reading a paper in a foreign language → select a paragraph → get a translation
-- A piece of code you don't understand → select it → get a plain-language walkthrough
-- Want to ask something yourself → press the shortcut with nothing selected and just type
+In v0.1.4's default automatic mode, no selection opens an empty input — **it does not automatically submit text you copied earlier**. The input gets focus automatically. Press `Esc` to close the card.
 
-It is not tied to any single AI company: you bring your own AI account (DeepSeek is a cheap and simple choice), and AskThis delivers the question and renders the answer.
+AskThis is free and open source, but does not include cloud model credits. You need your own API key or a running local model service. **A web-chat subscription does not necessarily include API credits**; check your provider's API platform.
 
-## 2. Install
+## 2. Download & install
+
+Open **[the latest release](https://github.com/537Lab/askthis/releases/latest)** and expand **Assets**. Below, `<version>` means the version shown on that page. **Do not download Source code** to install the app.
 
 ### macOS
 
-1. Download from the [Releases page](https://github.com/537Lab/askthis/releases):
-   - Apple silicon (M1/M2/M3/M4…) → `AskThis-0.1.0-arm64.dmg`
-   - Intel Macs → `AskThis-0.1.0-x64.dmg`
-2. Open the `.dmg` and drag **AskThis into your Applications folder**
-3. First launch: in Applications, **right-click AskThis → Open → Open again**
-   (AskThis is free open-source software without an Apple signing certificate — this is only needed once)
-4. It will sit quietly in the **menu bar** (top-right) and open its Settings window automatically
+1. Check **Apple menu → About This Mac**:
+   - **Apple M-series chip**: choose `AskThis-<version>-arm64.dmg`.
+   - **Intel**: choose `AskThis-<version>-x64.dmg`.
+2. Open the `.dmg` and drag **AskThis into Applications**.
+3. Launch it from Applications. A manual launch opens Settings; the app normally lives in the menu bar.
+4. If macOS blocks it, verify it came from the repository above. Try right-clicking the app → **Open**, or follow **Open Anyway** in System Settings → Privacy & Security. The exact prompts vary by macOS version.
+
+Releases do not have Apple Developer ID signing or notarization. Do not disable system-wide security protections to install them. If you have verified the source but the quarantine flag still blocks launch, you can remove that flag for this app only:
+
+```bash
+xattr -dr com.apple.quarantine /Applications/AskThis.app
+```
+
+This removes the download quarantine flag from the specified AskThis app. It is not a required routine step.
 
 ### Windows
 
-1. Download `AskThis-0.1.0-setup-x64.exe`
-2. Double-click to install. If a blue "Windows protected your PC" screen appears, click **More info → Run anyway** (normal for unsigned open-source software)
-3. AskThis starts and lives in the **system tray** (bottom-right), with Settings opening automatically
+1. For most Intel / AMD PCs, choose `AskThis-<version>-setup-x64.exe`. Windows ARM devices should use the corresponding `arm64` installer when available.
+2. Run the installer. If SmartScreen says “Windows protected your PC”, verify the source before choosing **More info → Run anyway**.
+3. For no installer, choose the `portable` build. Find the running app in the bottom-right system tray.
 
-## 3. The key step: connect an AI service (get an API key)
+### Linux
 
-AskThis has no AI of its own — it needs a "key" (**API key**) from an AI service you own.
-**Recommended: DeepSeek** — simple sign-up, very cheap, works worldwide.
+Download the appropriate `.AppImage` or `.deb`. Linux builds have not been tested on real hardware. X11 selection capture needs `xdotool`; on Wayland, use manual input / paste. Global shortcut support depends on the desktop environment.
 
-<details open>
-<summary><b>Expand: getting an API key with DeepSeek</b></summary>
+> **Platform status:** macOS is the primary validation platform. Earlier Windows releases had install, launch and shortcut checks, but **v0.1.4's new interactions still need Windows hardware re-testing**. Linux has not been tested on real hardware. A package being available does not mean every feature has been verified on that platform.
 
-1. Go to <https://platform.deepseek.com> and sign up / log in
-2. Top up a few dollars under **Top up / Billing** (a few dollars lasts a long time)
-3. Open **API keys → Create API key**
-4. Name it anything (e.g. "askthis") → **copy the key immediately** (it looks like `sk-xxxxxxxx` and is shown only once)
-5. Back in AskThis → **Providers**:
-   - Click the pre-created **DeepSeek** entry
-   - Paste the key into **API key** → click **Save**
-   - Click **Fetch models** and pick one (e.g. `DeepSeek-V4.1-Flash`)
-6. Done — head to step 4
+## 3. Connect an AI service
 
-</details>
+An API key lets AskThis call a model. It is not your website password, and you should not share it.
 
-![Settings → Providers (active model, reasoning level, services)](images/settings.png)
+Here is an example using DeepSeek; you can use another provider you already have:
+
+1. Visit <https://platform.deepseek.com> and sign up or log in.
+2. Create a key in the platform's **API keys** section and store it safely. If payment is required, review the current pricing, credits and billing rules first.
+3. In AskThis → **Settings → Providers**, select the existing DeepSeek entry, or use **Add service** if needed.
+4. Paste into **API key** and save.
+5. Click **Fetch models**, choose a model your account can access, and check that the service and model under **Active** are correct.
+6. Optionally use **Test connection**, then try a short question.
+
+The existing screenshot below shows the Chinese UI layout. Its model names and older shortcut hint are not configuration instructions; use the shortcut in this guide.
+
+![Provider settings example in Chinese; service and model names depend on your version and account](images/settings.png)
 
 <details>
-<summary><b>Using another provider?</b></summary>
+<summary><b>Another cloud service or a local model?</b></summary>
 
-If you already pay for OpenAI, Claude, Kimi, GLM, SiliconFlow, etc.:
-
-- Find the "API keys" page in that provider's console, create and copy a key
-- In AskThis → Providers → **Add service**, choose your provider and paste the key
-- Provider not listed? Choose **Custom (OpenAI-compatible)** and fill in the API base URL from its docs
+- **Other cloud services**: obtain a key from their API platform, choose the matching preset in **Add service**, save the key and select a model.
+- **Custom compatible APIs**: enter the documented API URL, interface type, model ID and key. OpenAI-compatible URLs usually end in `/v1`; a web-chat page URL will not work.
+- **Ollama / LM Studio**: start the local model and API server first, then configure its address and model in AskThis. Installing the server, downloading models and meeting resource requirements are separate steps.
+- Models change. Use **Fetch models** and your account's access rather than copying a model name from an older screenshot.
 
 </details>
 
-## 4. First use
+## 4. First question: try typing
 
-1. (macOS only) The first time you press the shortcut, macOS asks for **Accessibility** permission — this is how AskThis "sees" your selected text:
-   - Click **Grant…** → tick **AskThis** in System Settings
-   - Back in AskThis, click **Restart AskThis** (important: the grant takes effect after a restart)
-2. Select some text in any app
-3. Press the shortcut:
-   - macOS: **⌥⇧D** (Option + Shift + D)
-   - Windows: **Alt + Shift + D**
-4. The card appears and the answer streams in
+1. Clear the text selection in your current app — for example, click a normal blank area.
+2. Press **`⌥⇧D` / `Alt+Shift+D`**.
+3. When the empty card appears, type **“Explain recursion in one sentence.”**
+4. Press **`Enter`** to send. Read the streamed answer and use the bottom input for a follow-up.
+5. Press **`Esc`** to close. With an IME, confirming a composition candidate does not send the question; `Esc` during composition handles the input method first.
 
-![The quick-look card: an answer for “LoG 算子（Laplacian of Gaussian）”](images/popup.png)
+![No-selection input card, ready for a typed question](images/manual-input.png)
 
-## 5. Everyday usage
+**Try the clipboard safeguard:** copy some unrelated text, clear the selection and press the shortcut. In default automatic mode, you should see an empty input, not an answer about the old text. To ask about copied text, paste it yourself and press `Enter`.
 
-| I want to… | How |
+### Then try a selection
+
+1. Select a term or short passage in a webpage or document.
+2. Press the same shortcut. A successfully captured selection is queried automatically; no extra Send action is needed.
+3. If macOS asks for **Accessibility** access, follow the prompt to System Settings → Privacy & Security → Accessibility, add and enable AskThis, then restart the app and select the text again.
+4. If the source app does not expose a readable selection, copy manually, open the card and paste.
+
+The older answer-card example below uses a clipboard source; it does not show the new default behavior:
+
+![Older answer card explaining “LoG 算子（Laplacian of Gaussian）”, with a clipboard source](images/popup.png)
+
+## 5. Everyday usage & three capture modes
+
+| What you want | How |
 | --- | --- |
-| Look up a word / passage | Select it → press the shortcut |
-| Ask something myself | Press the shortcut with nothing selected → type → Enter |
-| Follow up | Type in the card's input → Enter |
-| Copy the answer | Click **Copy** (the card closes afterwards) |
-| Close the card | `Esc`, or click **Close** |
-| Change model / provider | Settings → Providers |
-| Change the shortcut | Settings → Shortcut & Interaction |
+| Look up a word / passage | Select → shortcut (default automatic mode) |
+| Ask a question | No selection → shortcut → type → `Enter` |
+| Query copied text | Open an empty card → paste → `Enter` |
+| Follow up | Type in the bottom input → `Enter` |
+| Copy the answer | Click **Copy**; the card then closes |
+| Close the card | `Esc`, the top-right ✕, or **Close** |
+| Change provider / model | Settings → Providers |
+| Change shortcut | Settings → Shortcut & Interaction |
 | Change language / theme | Settings → General |
+
+In **Settings → General → Text capture**:
+
+- **Auto (selection first)**: the default. Query a captured selection; otherwise wait for input. Old clipboard contents are not automatically queried.
+- **Manual input**: always open the input card, even if another app has a selection. Useful for quick questions and avoiding simulated copy actions during capture.
+- **Clipboard only**: when you explicitly choose this mode, the shortcut reads and queries clipboard text. Be careful not to leave sensitive text there and trigger it accidentally.
 
 ## 6. FAQ
 
-**Q: The shortcut does nothing?**
+### Why does the shortcut no longer query my clipboard with no selection?
 
-- It may be taken by another app → Settings → Shortcut & Interaction → pick another combo
-- macOS: check System Settings → Privacy & Security → Accessibility — is AskThis ticked? After ticking, click **Restart AskThis** in the settings page
+This changed in v0.1.4 to prevent old copied text from accidentally becoming a question. In default automatic mode, type or paste into the card. To keep a clipboard workflow, explicitly choose **Clipboard only**.
 
-**Q: "Request failed / timed out"?**
+### The shortcut does nothing
 
-- Check your network; if you use a proxy app, enable its **system proxy** mode (AskThis follows the system proxy automatically)
-- Verify the API key and that your AI account has balance
+- Check that AskThis is running: look in the macOS menu bar or Windows tray.
+- Another app may have claimed the shortcut. Change it in Settings → Shortcut & Interaction; registration failures appear there.
+- On Linux, especially Wayland, shortcut support depends on the desktop environment. Include your session type when reporting a problem.
 
-**Q: The card says "No API key configured"?**
+### macOS cannot read selections after an update
 
-- Go back to step 3 and save your key in Settings
+An update changes the app signature, so macOS may require access again. Check AskThis under System Settings → Privacy & Security → Accessibility. If toggling does not help, remove the old entry, add AskThis from Applications again, enable it and restart. Keychain prompts require your confirmation. Never paste your password or API key into an issue.
 
-**Q: Will this cost a lot?**
+### “Request failed”, “Timed out” or “No API key”
 
-- Each lookup typically costs a fraction of a cent; a few dollars on DeepSeek lasts a long time
-- To spend even less: Settings → Providers → lower **Max output tokens**
+Check the active provider and model, saved key, account balance / model access, and network. If you use a proxy, enable its **system proxy** mode. Being able to use a provider's chat website does not mean API access is enabled.
 
-**Q: Where does my text go?**
+### What does it cost?
 
-- Only to the AI service **you** configured. AskThis collects nothing — no account, no analytics, no telemetry
+AskThis is free. Cloud APIs charge according to your provider's rules and usage. Try a short query and check usage in the provider console. Lower **Max output tokens** to limit answer length. Local models usually avoid cloud API fees, but use your computer's resources.
 
-**Q: I can't find the window!**
+### Where does my text go? Is the clipboard sent automatically?
 
-- AskThis deliberately has no main window:
-  - macOS: look for its small icon in the **menu bar** (top-right)
-  - Windows: look in the **system tray** (bottom-right)
-- Or just press the shortcut — the lookup card will appear
+Requests go directly to the model service you configured, not through an AskThis relay. Captured selections are queried automatically; typed / pasted text waits for `Enter`. The default automatic mode does not send old clipboard text; explicit clipboard mode does. History is local and can be disabled or cleared in General settings.
+
+### Can it recognize screenshots, images or scanned PDFs?
+
+No. There is no OCR / screenshot recognition. Extract the text with another tool, then paste it into AskThis.
+
+### Can using it in a terminal affect a running command?
+
+Selection capture may simulate Copy. On Windows / Linux, `Ctrl+C` can interrupt a terminal process. Choose **Manual input** first, then type or paste into the card. Copy fallback also cannot guarantee complete restoration of non-text clipboard contents such as images.
 
 ---
 
-Something not covered? Open an [issue](https://github.com/537Lab/askthis/issues) — we're happy to help.
+[Project homepage](../README.en.md) · [中文教程](quick-start.zh-CN.md) · [Report an issue](https://github.com/537Lab/askthis/issues)
+
+Include your app version, OS version, capture mode and reproduction steps. Do not include API keys or sensitive text.
