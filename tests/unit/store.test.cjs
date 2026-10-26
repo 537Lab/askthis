@@ -2,11 +2,12 @@ const { test } = require('node:test')
 const assert = require('node:assert/strict')
 const fs = require('node:fs')
 const path = require('node:path')
+const os = require('node:os')
 const { loadSource } = require('./load-source.cjs')
 const { ConfigStore } = loadSource('src/main/store.ts', { electron: { safeStorage: {} } })
 
 function tempStore(t, config) {
-  const dir = fs.mkdtempSync(path.join(process.env.TMPDIR || path.join(process.env.HOME, '.hermes/cache/scratch'), 'askthis-unit-'))
+  const dir = fs.mkdtempSync(path.join(process.env.TMPDIR || os.tmpdir(), 'askthis-unit-'))
   t.after(() => fs.rmSync(dir, { recursive: true, force: true }))
   if (config) fs.writeFileSync(path.join(dir, 'config.json'), JSON.stringify(config))
   return { dir, store: new ConfigStore(dir) }
