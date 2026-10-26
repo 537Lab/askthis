@@ -151,7 +151,7 @@ function PopupCard(): React.JSX.Element {
           ) : null}
         </div>
 
-        <div className="composer">
+        <div className={`composer${hasTurns ? ' composer--conversation' : ''}${draft.length ? ' composer--draft' : ''}`}>
           {showLatest ? <button className="latest" onClick={() => {
             followingRef.current = true
             setShowLatest(false)
@@ -176,7 +176,7 @@ function PopupCard(): React.JSX.Element {
               </button>
             )}
           </div>
-          <footer className="composer__hints">
+          <footer className="composer__hints" hidden={hasTurns && !draft.length}>
             <span role="status">{busy ? t('popup.draftHint') : <><kbd>↵</kbd> {t('popup.sendHint')}<span className="hint-secondary"> · <kbd>⇧ ↵</kbd> {t('popup.newline')}</span></>}</span>
             <span><kbd>esc</kbd> {t('popup.close')}</span>
           </footer>

@@ -152,6 +152,16 @@ test('small window caps reserve room for header and controls instead of clipping
   assert.equal(h.input.props.style.maxHeight, 30)
 })
 
+test('keyboard help is on demand: empty capture or a real draft, not every answer', () => {
+  const turns = [{ q: 'term', a: 'explanation' }]
+  const idle = popupHarness({ turns, status: 'done', draft: '' })
+  assert.equal(idle.find((el) => el.props?.className === 'composer__hints').props.hidden, true)
+  const draft = popupHarness({ turns, status: 'streaming', draft: 'next question' })
+  assert.equal(draft.find((el) => el.props?.className === 'composer__hints').props.hidden, false)
+  const empty = popupHarness({ draft: '' })
+  assert.equal(empty.find((el) => el.props?.className === 'composer__hints').props.hidden, false)
+})
+
 test('streaming keeps the draft editable but never submits another request', () => {
   for (const status of ['waiting', 'streaming']) {
     const h = popupHarness({ needsPermission: false, turns: [{ q: 'first', a: '' }], status })

@@ -1,0 +1,182 @@
+{
+  "answer": {
+    "native": {
+      "y": 220,
+      "w": 480,
+      "x": 466,
+      "h": 553
+    },
+    "layout": {
+      ".head": {
+        "height": 45,
+        "top": 11,
+        "bottom": 56
+      },
+      ".body": {
+        "height": 393.4765625,
+        "top": 56,
+        "bottom": 449.4765625
+      },
+      ".turn__q": {
+        "height": 57.375,
+        "top": 61,
+        "bottom": 118.375
+      },
+      ".turn__a": {
+        "height": 233.703125,
+        "top": 164.7734375,
+        "bottom": 398.4765625
+      },
+      ".turn__actions": {
+        "height": 28,
+        "top": 408.4765625,
+        "bottom": 436.4765625
+      },
+      ".composer": {
+        "height": 91,
+        "top": 449.4765625,
+        "bottom": 540.4765625
+      },
+      ".composer__hints": {
+        "height": 23,
+        "top": 507.4765625,
+        "bottom": 530.4765625
+      }
+    }
+  },
+  "draft": {
+    "native": {
+      "y": 220,
+      "w": 480,
+      "x": 466,
+      "h": 553
+    },
+    "layout": {
+      ".head": {
+        "height": 45,
+        "top": 11,
+        "bottom": 56
+      },
+      ".body": {
+        "height": 393.4765625,
+        "top": 56,
+        "bottom": 449.4765625
+      },
+      ".turn__q": {
+        "height": 57.375,
+        "top": 61,
+        "bottom": 118.375
+      },
+      ".turn__a": {
+        "height": 233.703125,
+        "top": 164.7734375,
+        "bottom": 398.4765625
+      },
+      ".turn__actions": {
+        "height": 28,
+        "top": 408.4765625,
+        "bottom": 436.4765625
+      },
+      ".composer": {
+        "height": 91,
+        "top": 449.4765625,
+        "bottom": 540.4765625
+      },
+      ".composer__hints": {
+        "height": 23,
+        "top": 507.4765625,
+        "bottom": 530.4765625
+      }
+    }
+  },
+  "follow-up": {
+    "native": {
+      "y": 220,
+      "w": 480,
+      "x": 466,
+      "h": 560
+    },
+    "layout": {
+      ".head": {
+        "height": 45,
+        "top": 11,
+        "bottom": 56
+      },
+      ".body": {
+        "height": 402,
+        "top": 56,
+        "bottom": 458
+      },
+      ".turn__q": {
+        "height": 57.375,
+        "top": -320,
+        "bottom": -262.625
+      },
+      ".turn__a": {
+        "height": 233.703125,
+        "top": -216.2265625,
+        "bottom": 17.4765625
+      },
+      ".turn__actions": {
+        "height": 28,
+        "top": 27.4765625,
+        "bottom": 55.4765625
+      },
+      ".composer": {
+        "height": 91,
+        "top": 458,
+        "bottom": 549
+      },
+      ".composer__hints": {
+        "height": 23,
+        "top": 516,
+        "bottom": 539
+      }
+    }
+  },
+  "short": {
+    "native": {
+      "y": 220,
+      "w": 480,
+      "x": 466,
+      "h": 336
+    },
+    "layout": {
+      ".head": {
+        "height": 45,
+        "top": 11,
+        "bottom": 56
+      },
+      ".body": {
+        "height": 175.53125,
+        "top": 56,
+        "bottom": 231.53125
+      },
+      ".turn__q": {
+        "height": 57.375,
+        "top": 61,
+        "bottom": 118.375
+      },
+      ".turn__a": {
+        "height": 48.15625,
+        "top": 132.375,
+        "bottom": 180.53125
+      },
+      ".turn__actions": {
+        "height": 28,
+        "top": 190.53125,
+        "bottom": 218.53125
+      },
+      ".composer": {
+        "height": 91,
+        "top": 231.53125,
+        "bottom": 322.53125
+      },
+      ".composer__hints": {
+        "height": 23,
+        "top": 289.53125,
+        "bottom": 312.53125
+      }
+    }
+  }
+}
