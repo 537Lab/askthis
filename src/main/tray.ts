@@ -21,7 +21,8 @@ export function createTray(opts: {
 }): void {
   destroyTray()
 
-  let image = nativeImage.createFromPath(resourcePath('tray', 'trayTemplate.png'))
+  const filename = process.platform === 'darwin' ? 'trayTemplate.png' : 'tray.png'
+  let image = nativeImage.createFromPath(resourcePath('tray', filename))
   if (image.isEmpty()) {
     // fallback: build a tiny dot so the tray still appears during development
     image = nativeImage.createEmpty()

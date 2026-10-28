@@ -21,6 +21,13 @@ files:
 
 asar: true
 
+# Native tray/icon paths are resolved outside app.asar by resourcePath().
+extraResources:
+  - from: resources/tray
+    to: tray
+  - from: resources/icon.png
+    to: icon.png
+
 # Only ship the locales we actually support (smaller bundles)
 electronLanguages:
   - en
@@ -28,7 +35,7 @@ electronLanguages:
 
 mac:
   category: public.app-category.productivity
-  icon: build/icon.png
+  icon: build/icon.icns
   identity: null # unsigned open-source build — see README for Gatekeeper notes
   hardenedRuntime: false
   gatekeeperAssess: false

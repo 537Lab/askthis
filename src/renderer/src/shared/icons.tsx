@@ -1,4 +1,5 @@
 import type { SVGProps } from 'react'
+import { B2_MARK, B2_SMALL_MARK } from './brand-mark'
 
 type IconProps = SVGProps<SVGSVGElement> & { size?: number }
 
@@ -163,26 +164,22 @@ export function ChevronRightIcon(props: IconProps): React.JSX.Element {
   )
 }
 
-/** AskThis brand mark — a selection frame with a spark. */
-export function LogoIcon({ size = 18, ...props }: IconProps): React.JSX.Element {
+/** Approved B2 “Dialogue a”; use its existing optical master at small sizes. */
+export function LogoIcon({ size = 18, style, ...props }: IconProps): React.JSX.Element {
+  const mark = size <= 32 ? B2_SMALL_MARK : B2_MARK
   return (
     <svg
       width={size}
       height={size}
-      viewBox="0 0 24 24"
-      fill="none"
+      viewBox={mark.viewBox}
+      fill="currentColor"
+      aria-hidden="true"
       {...props}
+      style={{ color: 'var(--text)', ...style }}
     >
-      <path
-        d="M4 8V6a2 2 0 0 1 2-2h2M16 4h2a2 2 0 0 1 2 2v2M20 16v2a2 2 0 0 1-2 2h-2M8 20H6a2 2 0 0 1-2-2v-2"
-        stroke="currentColor"
-        strokeWidth="2"
-        strokeLinecap="round"
-      />
-      <path
-        d="M12 8.2l1.05 2.75L15.8 12l-2.75 1.05L12 15.8l-1.05-2.75L8.2 12l2.75-1.05z"
-        fill="currentColor"
-      />
+      <g transform={mark.transform}>
+        <path fillRule="evenodd" d={mark.path} />
+      </g>
     </svg>
   )
 }

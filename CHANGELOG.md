@@ -6,6 +6,18 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.1.5] - 2026-10-28
+
+### Changed
+
+- Adopted the approved B2 “Dialogue a” identity for the application icon, popup header, settings branding and tray. Kept the approved SVG geometry and the existing UI layout and interactions unchanged.
+- 正式采用已确认的 B2「对话 a」图标，统一应用图标、弹窗标题栏、设置页品牌标志与托盘；保持已确认 SVG 的设计及现有界面布局、交互不变。
+
+### Fixed
+
+- Ship native tray/icon resources at their runtime paths; use the macOS template mark and the matching full-color tray icon on Windows/Linux.
+- 修正原生托盘与图标资源的打包路径；macOS 使用单色模板标志，Windows/Linux 使用同款彩色应用图标。
+
 ## [0.1.4] - 2026-10-26
 
 ### Added
