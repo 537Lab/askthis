@@ -8,6 +8,7 @@ html, body { background: transparent; overflow: hidden; }
   box-shadow: var(--shadow-card); overflow: hidden;
   /* Popup-specific readable secondary ink; shared Settings tokens stay intact. */
   --popup-muted: #697380;
+  --popup-focus: color-mix(in srgb, var(--text) 55%, transparent);
 }
 @media (prefers-color-scheme: dark) { .popup-card { --popup-muted: #a0a8b5; } }
 
@@ -21,10 +22,11 @@ html, body { background: transparent; overflow: hidden; }
 .body { flex: 1 1 auto; min-height: 0; overflow-y: auto; overflow-x: hidden; padding: 5px 18px 16px; overflow-anchor: none; }
 .body[hidden] { display: none; }
 .turn + .turn { margin-top: 18px; padding-top: 17px; border-top: 1px solid var(--border); }
-.turn__q { display: flex; align-items: baseline; gap: 8px; margin-bottom: 12px; padding: 7px 10px; border-radius: 9px; background: var(--bg-soft); border-left: 2px solid var(--accent-border); }
+/* Source is context, not a callout. Keep it on the reading edge without a
+   box, accent rail or replacement ornament; long questions wrap naturally. */
+.turn__q { display: flex; align-items: baseline; gap: 8px; margin-bottom: 12px; }
 .turn__q-badge { flex: none; font-size: 10px; font-weight: 550; color: var(--popup-muted); }
 .turn__q-text { color: var(--text-2); font-size: 12.5px; line-height: 1.55; white-space: pre-wrap; overflow-wrap: anywhere; }
-.turn:not(.turn--first) .turn__q { background: none; padding: 0 0 0 10px; }
 .turn__a { font-size: 14px; line-height: 1.72; color: var(--text); overflow-wrap: anywhere; user-select: text; -webkit-user-select: text; }
 .turn__a p { margin: 0 0 .65em; }
 .turn__a p:last-child { margin-bottom: 0; }
@@ -65,14 +67,14 @@ html, body { background: transparent; overflow: hidden; }
 .composer { position: relative; flex: none; padding: 11px 12px 10px; border-top: 1px solid var(--border); background: var(--bg-softer); }
 .popup-shell--empty .composer { border-top: 0; padding-top: 4px; background: none; }
 .composer__field { display: flex; align-items: flex-end; gap: 7px; padding: 8px 8px 8px 11px; border: 1px solid var(--border-2); border-radius: 10px; background: var(--bg); transition: border-color .12s ease; }
-.composer__field:focus-within { border-color: var(--accent-border); }
+.composer__field:focus-within { border-color: var(--popup-focus); }
 /* Keep a discoverable, keyboard-accessible follow-up entry. Focus changes only
    its ink/border, not its geometry; a draft reveals help and grows naturally. */
 .composer--conversation { padding: 6px 12px; }
 .composer--conversation .composer__field { padding: 3px 5px 3px 9px; border-color: transparent; background: none; }
 .composer--conversation .composer__field:hover { border-color: var(--border); background: var(--bg); }
 .composer--conversation .composer__field:focus-within,
-.composer--draft .composer__field { border-color: var(--accent-border); background: var(--bg); }
+.composer--draft .composer__field { border-color: var(--popup-focus); background: var(--bg); }
 .composer__input { display: block; flex: 1; min-width: 0; width: 100%; max-height: 108px; resize: none; padding: 2px 0; border: none; outline: none; background: none; color: var(--text); font-family: inherit; font-size: 13px; line-height: 22px; }
 .popup-shell--empty .composer__input { font-size: 15px; }
 .composer__input::placeholder { color: var(--popup-muted); }
