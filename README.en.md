@@ -11,7 +11,7 @@ While reading, writing or browsing code, press **`⌥⇧D` (macOS) / `Alt+Shift+
 
 In the default automatic mode, no selection means waiting for your input — **not automatically sending old clipboard contents to AI**.
 
-**[Download the latest release](https://github.com/537Lab/askthis/releases/latest)** · [Beginner guide](docs/quick-start.md) · [Changelog](CHANGELOG.md) · [Report an issue](https://github.com/537Lab/askthis/issues)
+**[Product website](https://537lab.github.io/askthis/en/) · [Download the latest release](https://github.com/537Lab/askthis/releases/latest)** · [Beginner guide](docs/quick-start.md) · [Changelog](CHANGELOG.md) · [Report an issue](https://github.com/537Lab/askthis/issues)
 
 ![AskThis v0.1.5 light quick-look card](docs/images/v0.1.5/lookup-light.png)
 

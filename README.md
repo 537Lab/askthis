@@ -11,7 +11,7 @@
 
 默认自动模式下，没有选区就等待你输入，**不会把旧剪贴板内容自动发给 AI**。
 
-**[下载最新版本](https://github.com/537Lab/askthis/releases/latest)** · [零基础上手](docs/quick-start.zh-CN.md) · [更新日志](CHANGELOG.md) · [反馈问题](https://github.com/537Lab/askthis/issues)
+**[产品官网](https://537lab.github.io/askthis/) · [下载最新版本](https://github.com/537Lab/askthis/releases/latest)** · [零基础上手](docs/quick-start.zh-CN.md) · [更新日志](CHANGELOG.md) · [反馈问题](https://github.com/537Lab/askthis/issues)
 
 ![AskThis v0.1.5 浅色速查卡片](docs/images/v0.1.5/lookup-light.png)
 
