@@ -70,6 +70,7 @@ function Shell({
 
   return (
     <div className="settings-root">
+      <div className="settings-dragbar" aria-hidden="true" />
       <aside className="sidebar">
         <div className="sidebar__title">{t('settings.title')}</div>
         <nav className="sidebar__nav">

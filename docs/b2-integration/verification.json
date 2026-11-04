@@ -1,5 +1,5 @@
 {
-  "tested_package": "/Users/usagi/Documents/AskThis/release/b2-local/mac-arm64/AskThis.app",
+  "tested_package": "release/b2-local/mac-arm64/AskThis.app",
   "runtime_identity_isolated": true,
   "themes": {
     "light": {

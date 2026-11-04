@@ -58,10 +58,10 @@ export class PopupWindow {
     })
 
     if (process.platform === 'darwin') {
-      // 'screen-saver' + relativeLevel 1 is the combination that reliably
-      // floats above fullscreen Spaces on macOS — 'floating' gets buried,
-      // and level alone (without +1) can still sit below fullscreen apps.
-      win.setAlwaysOnTop(true, 'screen-saver', 1)
+      // NSPanel + fullscreen collection behaviour provide Space membership.
+      // Keep the level below native IME candidate panels (level 20): using
+      // screen-saver (1000+) hides Chinese candidates behind our own card.
+      win.setAlwaysOnTop(true, 'floating')
       win.setVisibleOnAllWorkspaces(true, { visibleOnFullScreen: true })
     }
 
@@ -146,7 +146,7 @@ export class PopupWindow {
       // Re-assert overlay behaviour before every reveal: macOS can reset the
       // window's collection behaviour after hide/show cycles or Space changes,
       // which silently breaks "show over fullscreen apps" until reapplied.
-      this.win.setAlwaysOnTop(true, 'screen-saver', 1)
+      this.win.setAlwaysOnTop(true, 'floating')
       this.win.setVisibleOnAllWorkspaces(true, { visibleOnFullScreen: true })
       this.win.showInactive()
       // Pull the window to the front of the current Space (incl. fullscreen
