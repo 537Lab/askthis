@@ -10,9 +10,15 @@ AskThis puts AI in a small card you can open whenever you need it. The default s
 - **Have a question?** Select nothing → shortcut → type → press `Enter` to send.
 - **Have copied text?** Select nothing → shortcut → paste it yourself → press `Enter` to send.
 
-In v0.1.4's default automatic mode, no selection opens an empty input — **it does not automatically submit text you copied earlier**. The input gets focus automatically. Press `Esc` to close the card.
+Since v0.1.4, the default automatic mode opens an empty input with no selection — **it does not automatically submit text you copied earlier**. The input gets focus automatically. Press `Esc` to close. This already existed; v0.1.5 improves reading and follow-ups on top of it.
 
-AskThis is free and open source, but does not include cloud model credits. You need your own API key or a running local model service. **A web-chat subscription does not necessarily include API credits**; check your provider's API platform.
+AskThis is free and open source, but does not include cloud model credits. You need your own API key or a running local model service. **There is no built-in ChatGPT / Codex subscription sign-in; a ChatGPT Plus / Pro or other web-chat subscription cannot be used as an API key.** Check the provider's API platform for credits and billing.
+
+### What is different in v0.1.5?
+
+The follow-up composer stays single-line without a draft and grows for multiline input. Source text wraps naturally without a decorative box. Draft your next question while an answer streams, use `Shift+Enter` for a new line, and send with `Enter` / Send after completion or stopping. Copy controls belong to each answer, and **copying keeps the card open**. Scrolling up preserves your reading position; **Back to latest** resumes following. The new “Dialogue a” identity is consistent across app and tray, with Mac fixes for hidden IME candidates and Settings dragging.
+
+This guide covers v0.1.5; check Releases for the available download version. See the [bilingual release notes](releases/v0.1.5.md) for changes and verification limits.
 
 ## 2. Download & install
 
@@ -45,7 +51,7 @@ This removes the download quarantine flag from the specified AskThis app. It is 
 
 Download the appropriate `.AppImage` or `.deb`. Linux builds have not been tested on real hardware. X11 selection capture needs `xdotool`; on Wayland, use manual input / paste. Global shortcut support depends on the desktop environment.
 
-> **Platform status:** macOS is the primary validation platform. Earlier Windows releases had install, launch and shortcut checks, but **v0.1.4's new interactions still need Windows hardware re-testing**. Linux has not been tested on real hardware. A package being available does not mean every feature has been verified on that platform.
+> **Platform status:** macOS is the primary validation platform. Earlier Windows releases had install, launch and shortcut checks, but **v0.1.4–v0.1.5 interactions still need Windows hardware re-testing**. Linux has not been tested on real hardware. This round's separate packaged Mac candidate-window checks cover system Pinyin / Shuangpin, not all third-party IMEs. A package being available does not mean every feature has been verified on that platform.
 
 ## 3. Connect an AI service
 
@@ -60,9 +66,7 @@ Here is an example using DeepSeek; you can use another provider you already have
 5. Click **Fetch models**, choose a model your account can access, and check that the service and model under **Active** are correct.
 6. Optionally use **Test connection**, then try a short question.
 
-The existing screenshot below shows the Chinese UI layout. Its model names and older shortcut hint are not configuration instructions; use the shortcut in this guide.
-
-![Provider settings example in Chinese; service and model names depend on your version and account](images/settings.png)
+Use your own service configuration and a model your account can access. Do not copy demo model names from screenshots or include your API key in a screenshot or issue.
 
 <details>
 <summary><b>Another cloud service or a local model?</b></summary>
@@ -79,10 +83,16 @@ The existing screenshot below shows the Chinese UI layout. Its model names and o
 1. Clear the text selection in your current app — for example, click a normal blank area.
 2. Press **`⌥⇧D` / `Alt+Shift+D`**.
 3. When the empty card appears, type **“Explain recursion in one sentence.”**
-4. Press **`Enter`** to send. Read the streamed answer and use the bottom input for a follow-up.
+4. Press **`Enter`** or Send to submit and read the streamed answer. Use `Shift+Enter` for a new line.
 5. Press **`Esc`** to close. With an IME, confirming a composition candidate does not send the question; `Esc` during composition handles the input method first.
 
-![No-selection input card, ready for a typed question](images/manual-input.png)
+![AskThis v0.1.5 empty no-selection input card](images/v0.1.5/manual-empty.png)
+
+After drafting, press `Enter` or use Send on the right:
+
+![AskThis v0.1.5 manual-input draft](images/v0.1.5/manual-draft.png)
+
+![AskThis v0.1.5 example answer after a typed question](images/v0.1.5/manual-answer.png)
 
 **Try the clipboard safeguard:** copy some unrelated text, clear the selection and press the shortcut. In default automatic mode, you should see an empty input, not an answer about the old text. To ask about copied text, paste it yourself and press `Enter`.
 
@@ -93,9 +103,18 @@ The existing screenshot below shows the Chinese UI layout. Its model names and o
 3. If macOS asks for **Accessibility** access, follow the prompt to System Settings → Privacy & Security → Accessibility, add and enable AskThis, then restart the app and select the text again.
 4. If the source app does not expose a readable selection, copy manually, open the card and paste.
 
-The older answer-card example below uses a clipboard source; it does not show the new default behavior:
+This v0.1.5 example shows the source and answer hierarchy. All screenshots show the actual macOS app UI from the current packaged build. Answers come from a local SSE demo service, and header model names are demo labels—not model-performance claims or Windows / Linux validation. A clipboard source label is an example, not automatic submission of old clipboard text by default.
 
-![Older answer card explaining “LoG 算子（Laplacian of Gaussian）”, with a clipboard source](images/popup.png)
+![AskThis v0.1.5 light quick-look answer card](images/v0.1.5/lookup-light.png)
+
+### Follow up in the same card
+
+1. Type in the bottom follow-up input and press `Enter` or Send. Multiline input is supported; focusing alone does not suddenly increase the window's height.
+2. You can edit a draft while the answer streams, but `Enter` does not send or queue it then. Wait for completion, or use Stop beside the input, then send explicitly.
+3. Click **Copy** below any existing answer without closing the card. **Regenerate** applies to the latest turn and does not clear your draft.
+4. Scroll up to read earlier content without being pulled back down. Use **Back to latest** when you are ready to resume following.
+
+![AskThis v0.1.5 follow-up conversation example](images/v0.1.5/follow-up-light.png)
 
 ## 5. Everyday usage & three capture modes
 
@@ -104,9 +123,12 @@ The older answer-card example below uses a clipboard source; it does not show th
 | Look up a word / passage | Select → shortcut (default automatic mode) |
 | Ask a question | No selection → shortcut → type → `Enter` |
 | Query copied text | Open an empty card → paste → `Enter` |
-| Follow up | Type in the bottom input → `Enter` |
-| Copy the answer | Click **Copy**; the card then closes |
-| Close the card | `Esc`, the top-right ✕, or **Close** |
+| Follow up | Bottom input → `Enter` or Send; `Shift+Enter` for a new line |
+| Draft while generating | Edit now; send explicitly after completion or stopping |
+| Copy an answer | Click **Copy** under that answer; the card stays open |
+| Read earlier content | Scroll up; **Back to latest** resumes following |
+| Close the card | `Esc` or the top-right ✕ |
+| Move Settings on Mac | Drag the top blank strip or the sidebar's **Settings** title |
 | Change provider / model | Settings → Providers |
 | Change shortcut | Settings → Shortcut & Interaction |
 | Change language / theme | Settings → General |
@@ -117,11 +139,13 @@ In **Settings → General → Text capture**:
 - **Manual input**: always open the input card, even if another app has a selection. Useful for quick questions and avoiding simulated copy actions during capture.
 - **Clipboard only**: when you explicitly choose this mode, the shortcut reads and queries clipboard text. Be careful not to leave sensitive text there and trigger it accidentally.
 
+Automatic mode also offers **Use clipboard when nothing is selected**, which is **off by default**. Enabling it queries the clipboard when no selection is captured. Leave it off to keep the empty-input workflow.
+
 ## 6. FAQ
 
 ### Why does the shortcut no longer query my clipboard with no selection?
 
-This changed in v0.1.4 to prevent old copied text from accidentally becoming a question. In default automatic mode, type or paste into the card. To keep a clipboard workflow, explicitly choose **Clipboard only**.
+This changed in v0.1.4 to prevent old copied text from accidentally becoming a question. In default automatic mode, type or paste into the card. To keep a clipboard workflow, explicitly choose **Clipboard only** or enable clipboard fallback.
 
 ### The shortcut does nothing
 
@@ -143,7 +167,7 @@ AskThis is free. Cloud APIs charge according to your provider's rules and usage.
 
 ### Where does my text go? Is the clipboard sent automatically?
 
-Requests go directly to the model service you configured, not through an AskThis relay. Captured selections are queried automatically; typed / pasted text waits for `Enter`. The default automatic mode does not send old clipboard text; explicit clipboard mode does. History is local and can be disabled or cleared in General settings.
+Requests go directly to the model service you configured, not through an AskThis relay. Captured selections are queried automatically; typed / pasted text waits for `Enter` or Send. The default automatic mode does not send old clipboard text; explicit clipboard mode or an enabled fallback does. History is local and can be disabled or cleared in General settings.
 
 ### Can it recognize screenshots, images or scanned PDFs?
 

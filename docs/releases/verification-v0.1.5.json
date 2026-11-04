@@ -1,0 +1,201 @@
+{
+  "schema_version": 1,
+  "version": "0.1.5",
+  "verified_on": "2026-11-04",
+  "application_source_commit": "f79bcacfcb2920be8bf73e9ad8ff522a92865097",
+  "automated_checks": [
+    {
+      "command": "npm run test:unit",
+      "exit_code": 0,
+      "started_at": "2026-11-04T11:33:34.815132+00:00",
+      "finished_at": "2026-11-04T11:33:35.318675+00:00",
+      "duration_seconds": 0.504,
+      "tests": 36,
+      "passed": 36,
+      "failed": 0,
+      "cancelled": 0,
+      "skipped": 0,
+      "todo": 0,
+      "includes_tracked_native_regression_file": "tests/unit/popup-window.test.cjs",
+      "log_sha256": "99ec47f867bd1eb4eb1361e88dafc36f9b8204a9e81ef57f0573c1ec2769fa4e"
+    },
+    {
+      "command": "npm run typecheck",
+      "exit_code": 0,
+      "started_at": "2026-11-04T11:33:35.318902+00:00",
+      "finished_at": "2026-11-04T11:33:36.509591+00:00",
+      "duration_seconds": 1.191,
+      "completed_subchecks": [
+        "typecheck:node",
+        "typecheck:web"
+      ],
+      "log_sha256": "07710cbc12d1c17d9a91b3faf99b6db80eb007ed21c6282fb3393505d3aa790f"
+    },
+    {
+      "command": "npm run build",
+      "exit_code": 0,
+      "started_at": "2026-11-04T11:33:36.509859+00:00",
+      "finished_at": "2026-11-04T11:33:37.262386+00:00",
+      "duration_seconds": 0.753,
+      "generated_outputs": [
+        "out/main",
+        "out/preload",
+        "out/renderer"
+      ],
+      "log_sha256": "e024aed6d6e5b4fe83b2ea9b7b27eed47dc7b625af6aaa8b9d93ec60740986a0"
+    }
+  ],
+  "native_packaged_macos": [
+    {
+      "scope": "system_pinyin_shuangpin_desktop_and_real_fullscreen",
+      "passed": 25,
+      "total": 25,
+      "checks": [
+        {
+          "name": "selection reveal stays on-screen without stealing source focus",
+          "passed": true
+        },
+        {
+          "name": "native popup owns input focus",
+          "passed": true
+        },
+        {
+          "name": "desktop-pinyin: real IME composition and candidate window exist",
+          "passed": true
+        },
+        {
+          "name": "desktop-pinyin: overlapping candidates render above popup",
+          "passed": true
+        },
+        {
+          "name": "desktop-pinyin: numeric selection commits Chinese without querying",
+          "passed": true
+        },
+        {
+          "name": "desktop-pinyin: composing Enter does not query",
+          "passed": true
+        },
+        {
+          "name": "desktop-pinyin: composing Escape keeps popup focused and visible",
+          "passed": true
+        },
+        {
+          "name": "desktop-shuangpin: real IME composition and candidate window exist",
+          "passed": true
+        },
+        {
+          "name": "desktop-shuangpin: overlapping candidates render above popup",
+          "passed": true
+        },
+        {
+          "name": "desktop-shuangpin: numeric selection commits Chinese without querying",
+          "passed": true
+        },
+        {
+          "name": "desktop-shuangpin: composing Enter does not query",
+          "passed": true
+        },
+        {
+          "name": "desktop-shuangpin: composing Escape keeps popup focused and visible",
+          "passed": true
+        },
+        {
+          "name": "selection reveal stays on-screen without stealing source focus",
+          "passed": true
+        },
+        {
+          "name": "native popup owns input focus",
+          "passed": true
+        },
+        {
+          "name": "popup is on-screen over real fullscreen Space",
+          "passed": true
+        },
+        {
+          "name": "fullscreen-pinyin: real IME composition and candidate window exist",
+          "passed": true
+        },
+        {
+          "name": "fullscreen-pinyin: overlapping candidates render above popup",
+          "passed": true
+        },
+        {
+          "name": "fullscreen-pinyin: numeric selection commits Chinese without querying",
+          "passed": true
+        },
+        {
+          "name": "fullscreen-pinyin: composing Enter does not query",
+          "passed": true
+        },
+        {
+          "name": "fullscreen-pinyin: composing Escape keeps popup focused and visible",
+          "passed": true
+        },
+        {
+          "name": "fullscreen-shuangpin: real IME composition and candidate window exist",
+          "passed": true
+        },
+        {
+          "name": "fullscreen-shuangpin: overlapping candidates render above popup",
+          "passed": true
+        },
+        {
+          "name": "fullscreen-shuangpin: numeric selection commits Chinese without querying",
+          "passed": true
+        },
+        {
+          "name": "fullscreen-shuangpin: composing Enter does not query",
+          "passed": true
+        },
+        {
+          "name": "fullscreen-shuangpin: composing Escape keeps popup focused and visible",
+          "passed": true
+        }
+      ]
+    },
+    {
+      "scope": "macos_settings_mouse_drag",
+      "passed": 6,
+      "total": 6,
+      "checks": [
+        {
+          "name": "top blank strip: real mouse drag moves native window",
+          "passed": true
+        },
+        {
+          "name": "sidebar Settings title: real mouse drag moves native window",
+          "passed": true
+        },
+        {
+          "name": "native sidebar navigation remains clickable",
+          "passed": true
+        },
+        {
+          "name": "form controls are outside the drag regions",
+          "passed": true
+        },
+        {
+          "name": "macOS top drag area spans window without layout shift",
+          "passed": true
+        },
+        {
+          "name": "non-macOS leaves native titlebar behavior unchanged",
+          "passed": true
+        }
+      ]
+    }
+  ],
+  "independent_code_review": {
+    "passed": true,
+    "security_concerns": [],
+    "logic_errors": []
+  },
+  "privacy": "Unrelated desktop window lists, local absolute paths, private configuration and runtime logs are excluded. Original evidence is retained privately.",
+  "limits": [
+    "No claim of all macOS versions, chips, or third-party IMEs",
+    "Windows v0.1.4–v0.1.5 interactions need hardware re-testing",
+    "Linux has not been hardware-validated",
+    "App screenshots use local demo answers, not online model performance evidence",
+    "CI and public package checks are verified separately from these local tests"
+  ]
+}

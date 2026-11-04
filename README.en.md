@@ -13,15 +13,39 @@ In the default automatic mode, no selection means waiting for your input — **n
 
 **[Download the latest release](https://github.com/537Lab/askthis/releases/latest)** · [Beginner guide](docs/quick-start.md) · [Changelog](CHANGELOG.md) · [Report an issue](https://github.com/537Lab/askthis/issues)
 
-![AskThis with no selection: an empty card ready for a typed question](docs/images/manual-input.png)
+![AskThis v0.1.5 light quick-look card](docs/images/v0.1.5/lookup-light.png)
 
-Bring your own API key and choose your AI service, or use local models through Ollama / LM Studio. No AskThis account or telemetry. Cloud API usage is billed separately by your provider.
+Bring your own API key and choose your AI service, or use local models through Ollama / LM Studio. No AskThis account or telemetry. **No free cloud credits or built-in ChatGPT / Codex subscription sign-in are included.** Cloud API usage is billed separately by your provider; a web-chat subscription is not API credit.
+
+## v0.1.5: a lighter lookup, smoother follow-ups
+
+> This page describes v0.1.5. Visit [Releases](https://github.com/537Lab/askthis/releases/latest) for the version actually available to download. [Full bilingual release notes](docs/releases/v0.1.5.md)
+
+- **Read first, follow up when needed**: keep a discoverable single-line composer, hide keyboard help when there is no draft, and grow with multiline input. Focusing alone does not increase the card's height.
+- **Quieter source, clearer answer**: source text aligns with the answer and wraps naturally, without decorative boxes or accent rails. Input focus uses a neutral thin border.
+- **Draft without interrupting**: use `Shift+Enter` for a new line or the explicit Send button. You can draft while an answer streams, but nothing is queued or sent concurrently; send explicitly after completion or stopping.
+- **Copy and keep talking**: copy each existing answer independently **without closing the card**. Regenerate the latest turn, even after an empty response or stopping before the first answer text.
+- **Read earlier turns without being pulled back**: scrolling up pauses stream-following; **Back to latest** resumes it.
+- **Consistent identity and Mac fixes**: the new “Dialogue a” identity across app and tray; fixes for candidates hidden behind the popup and an undraggable Settings window. This round's separate packaged checks cover macOS system Pinyin / Shuangpin only, not every IME.
+
+<details>
+<summary>See follow-up and dark-mode cards</summary>
+
+![AskThis v0.1.5 follow-up conversation](docs/images/v0.1.5/follow-up-light.png)
+
+![AskThis v0.1.5 dark quick-look card](docs/images/v0.1.5/lookup-dark.png)
+
+![AskThis v0.1.5 dark code-explanation example](docs/images/v0.1.5/code-dark.png)
+
+</details>
+
+Screenshots show the actual macOS app UI from the current packaged build. Answers come from a local SSE demo service, and header model names are demo labels—not model-performance claims or hardware validation on other platforms. A clipboard source label in a demo does not mean old clipboard text is queried automatically by default. **No-selection typing, selection lookup, multiple providers, streaming and local history already existed; they are not new in v0.1.5.**
 
 ## One shortcut, two ways to ask
 
 - **Ask about a selection**: capture text from the current app and get an answer in a floating card near your cursor, with follow-ups.
-- **Type directly (v0.1.4)**: with nothing selected, open an empty card with the input focused. Type and press `Enter` to send; press `Esc` to close.
-- **Your clipboard, your choice**: paste into the input and send, or explicitly choose **Clipboard only** in Settings → General to query clipboard text directly.
+- **Type directly (since v0.1.4)**: with nothing selected, open an empty card with the input focused. Type and press `Enter` to send, `Shift+Enter` for a new line, or `Esc` to close.
+- **Your clipboard, your choice**: paste into the input and send, or explicitly choose **Clipboard only** in Settings → General or enable automatic-mode clipboard fallback to query clipboard text directly.
 - **Read as it streams**: stop, regenerate, copy, and view collapsible reasoning when the model provides it.
 - **Choose models and prompts**: multiple providers, compatible APIs, custom prompts, and presets for lookup, translation, code explanation, summaries and polishing.
 - **Keep it on your desktop**: light / dark themes, Chinese / English UI and local history.
@@ -36,7 +60,7 @@ Open **[Releases](https://github.com/537Lab/askthis/releases/latest)**, expand *
 | --- | --- | --- |
 | macOS · Apple silicon | `.dmg` with `arm64` in its name | macOS is the primary validation platform; this does not imply coverage of every chip or OS version |
 | macOS · Intel | `.dmg` with `x64` in its name | Same scope; choose the package matching your chip |
-| Windows | `setup` installer / `portable` `.exe` | Earlier releases had install, launch and shortcut checks on real hardware; **v0.1.4 interactions still need hardware re-testing** |
+| Windows | `setup` installer / `portable` `.exe` | Earlier releases had install, launch and shortcut checks on real hardware; **v0.1.4–v0.1.5 interactions still need hardware re-testing** |
 | Linux | `.AppImage` / `.deb` | Builds provided; **not yet tested on real hardware** |
 
 ### First launch
@@ -61,9 +85,12 @@ Open **[Releases](https://github.com/537Lab/askthis/releases/latest)**, expand *
 | Query text you copied | Open an empty card → paste → `Enter` |
 | Always type; never capture a selection | Settings → General → Text capture → Manual input |
 | Explicitly read the clipboard | Settings → General → Text capture → Clipboard only |
-| Follow up | Type in the card's bottom input → `Enter` |
-| Copy an answer | Click **Copy** (the card then closes) |
-| Close the card | `Esc`, the top-right ✕, or **Close**; during IME composition, handle the candidate first |
+| Follow up | Type in the bottom input → `Enter` or Send; `Shift+Enter` for a new line |
+| Draft the next question | Type while an answer streams; send after completion or stopping, with no automatic queue |
+| Copy an answer | Click **Copy** under that answer; the card stays open |
+| Read earlier content | Scroll up; **Back to latest** resumes following |
+| Close the card | `Esc` or the top-right ✕; during IME composition, handle the candidate first |
+| Move Settings on Mac | Drag the top blank strip or the sidebar's **Settings** title |
 | Change the shortcut | Settings → Shortcut & Interaction |
 
 ## Providers & models
@@ -89,17 +116,17 @@ Supports OpenAI, Anthropic, DeepSeek, Google Gemini, OpenRouter, Moonshot (Kimi)
 
 ## Privacy & security
 
-- **What is sent**: a captured selection is queried directly. Typed / pasted text is sent when you press `Enter`. Explicit clipboard mode reads and queries clipboard text.
+- **What is sent**: a captured selection is queried directly. Typed / pasted text is sent with `Enter` or Send, with no concurrent submission while generating. Explicit clipboard mode reads and queries clipboard text.
 - **Where it goes**: requests go directly to the model service you configured, not through an AskThis relay. Check your cloud provider's data policy before sending sensitive content.
 - **Local storage**: history stays on your machine. API keys are encrypted with OS secure storage; if that storage is unavailable, keys stay in memory rather than silently falling back to plaintext.
 - **Custom request headers**: stored in `config.json`, **not encrypted**. Prefer the API key field for credentials.
-- **Clipboard and capture**: the default automatic mode does not submit old clipboard text. Selection capture may still simulate Copy and restore previous plain-text clipboard contents; complete restoration of images or other non-text formats is not guaranteed. Choose **Manual input** to avoid selection capture and copy actions.
+- **Clipboard and capture**: the default automatic mode does not submit old clipboard text. Enabling **Use clipboard when nothing is selected** opts into querying it when capture finds no selection. Selection capture may simulate Copy and restore previous plain-text clipboard contents; complete restoration of images or other non-text formats is not guaranteed. Choose **Manual input** to avoid selection capture and copy actions.
 - **Network**: requests follow the system proxy settings. There is no analytics, crash reporting or telemetry.
 
 ## Troubleshooting & platform limits
 
 - **Shortcut does nothing?** Another app may have claimed it. Change it in Settings → Shortcut & Interaction; registration failures are shown there.
-- **Empty card when nothing is selected?** This is intentional in v0.1.4. Type or paste, then press `Enter` to send. Upgrading no longer automatically queries old clipboard text.
+- **Empty card when nothing is selected?** This has been the default since v0.1.4. Type or paste, then press `Enter` to send. Old clipboard text is queried directly only if you explicitly choose clipboard mode or enable clipboard fallback.
 - **Selected text produces no answer?** The app may not expose readable text, or permission may not be active. Copy manually, open the card and paste. On macOS, also check Accessibility access.
 - **Windows / Linux capture?** Windows tries UI Automation first; Linux X11 needs `xdotool`. Copy fallback may send `Ctrl+C` to the active window, which can interrupt a terminal process; use **Manual input** in terminals. Wayland does not capture selections directly: paste manually or explicitly use clipboard mode. Global shortcuts also depend on the desktop environment.
 - **Requests fail behind a proxy?** Enable your proxy app's **system proxy** mode, and check your API key, account balance and model access.
@@ -112,6 +139,7 @@ Requirements: Node.js 20.19+ (22 LTS recommended), npm 10+.
 git clone https://github.com/537Lab/askthis.git askthis && cd askthis
 npm install
 npm run dev          # development (HMR)
+npm run test:unit    # no GUI, installed-app launch or global shortcut use
 npm run typecheck    # type-check main + renderer
 npm run build        # production build into out/
 npm run pack:mac     # macOS; use pack:win / pack:linux for Windows / Linux
@@ -136,4 +164,5 @@ src/
 
 - [Beginner guide](docs/quick-start.md) · [中文文档](README.md) · [中文新手教程](docs/quick-start.zh-CN.md)
 - [Issues](https://github.com/537Lab/askthis/issues) and [PRs](CONTRIBUTING.md) welcome. Windows / Linux hardware reports are especially useful: include your OS, app version, text capture mode and reproduction steps.
+- [v0.1.5 bilingual release notes](docs/releases/v0.1.5.md) · [Release scope and verification](docs/releases/verification-v0.1.5.json)
 - [Changelog](CHANGELOG.md) · [MIT license](LICENSE)
