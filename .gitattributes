@@ -1,0 +1,3 @@
+# Preserve approved SVG source bytes on every platform. CRLF conversion would
+# change the pinned brand digests even though the vector geometry is unchanged.
+resources/brand/*.svg text eol=lf
