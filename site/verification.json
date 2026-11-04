@@ -1,0 +1,2094 @@
+{
+  "schema_version": 1,
+  "suites": [
+    {
+      "name": "original browser acceptance",
+      "passed": 272,
+      "total": 272,
+      "failed": 0
+    },
+    {
+      "name": "independent keyboard, no-JS and asset acceptance",
+      "passed": 149,
+      "total": 149,
+      "failed": 0
+    }
+  ],
+  "independent_pages": [
+    {
+      "locale": "zh",
+      "viewport": {
+        "width": 1440,
+        "height": 1000
+      },
+      "javaScriptEnabled": true,
+      "panel_axe_violations": [
+        0,
+        0,
+        0
+      ],
+      "privacy_index_contrast": {
+        "foreground": "rgb(135, 70, 39)",
+        "background": "rgb(219, 226, 201)",
+        "ratio": 5.359820622747287
+      }
+    },
+    {
+      "locale": "zh",
+      "viewport": {
+        "width": 390,
+        "height": 844
+      },
+      "javaScriptEnabled": true,
+      "panel_axe_violations": [
+        0,
+        0,
+        0
+      ],
+      "privacy_index_contrast": {
+        "foreground": "rgb(135, 70, 39)",
+        "background": "rgb(219, 226, 201)",
+        "ratio": 5.359820622747287
+      }
+    },
+    {
+      "locale": "zh",
+      "viewport": {
+        "width": 320,
+        "height": 720
+      },
+      "javaScriptEnabled": true,
+      "panel_axe_violations": [
+        0,
+        0,
+        0
+      ],
+      "privacy_index_contrast": {
+        "foreground": "rgb(135, 70, 39)",
+        "background": "rgb(219, 226, 201)",
+        "ratio": 5.359820622747287
+      }
+    },
+    {
+      "locale": "en",
+      "viewport": {
+        "width": 1440,
+        "height": 1000
+      },
+      "javaScriptEnabled": true,
+      "panel_axe_violations": [
+        0,
+        0,
+        0
+      ],
+      "privacy_index_contrast": {
+        "foreground": "rgb(135, 70, 39)",
+        "background": "rgb(219, 226, 201)",
+        "ratio": 5.359820622747287
+      }
+    },
+    {
+      "locale": "en",
+      "viewport": {
+        "width": 390,
+        "height": 844
+      },
+      "javaScriptEnabled": true,
+      "panel_axe_violations": [
+        0,
+        0,
+        0
+      ],
+      "privacy_index_contrast": {
+        "foreground": "rgb(135, 70, 39)",
+        "background": "rgb(219, 226, 201)",
+        "ratio": 5.359820622747287
+      }
+    },
+    {
+      "locale": "en",
+      "viewport": {
+        "width": 320,
+        "height": 720
+      },
+      "javaScriptEnabled": true,
+      "panel_axe_violations": [
+        0,
+        0,
+        0
+      ],
+      "privacy_index_contrast": {
+        "foreground": "rgb(135, 70, 39)",
+        "background": "rgb(219, 226, 201)",
+        "ratio": 5.359820622747287
+      }
+    },
+    {
+      "locale": "zh",
+      "viewport": {
+        "width": 1440,
+        "height": 1000
+      },
+      "javaScriptEnabled": false,
+      "axe_violations": 0,
+      "horizontal_overflow": false
+    },
+    {
+      "locale": "zh",
+      "viewport": {
+        "width": 390,
+        "height": 844
+      },
+      "javaScriptEnabled": false,
+      "axe_violations": 0,
+      "horizontal_overflow": false
+    },
+    {
+      "locale": "zh",
+      "viewport": {
+        "width": 320,
+        "height": 720
+      },
+      "javaScriptEnabled": false,
+      "axe_violations": 0,
+      "horizontal_overflow": false
+    },
+    {
+      "locale": "en",
+      "viewport": {
+        "width": 1440,
+        "height": 1000
+      },
+      "javaScriptEnabled": false,
+      "axe_violations": 0,
+      "horizontal_overflow": false
+    },
+    {
+      "locale": "en",
+      "viewport": {
+        "width": 390,
+        "height": 844
+      },
+      "javaScriptEnabled": false,
+      "axe_violations": 0,
+      "horizontal_overflow": false
+    },
+    {
+      "locale": "en",
+      "viewport": {
+        "width": 320,
+        "height": 720
+      },
+      "javaScriptEnabled": false,
+      "axe_violations": 0,
+      "horizontal_overflow": false
+    }
+  ],
+  "nojs_accessibility_method": "Keyboard, navigation, images and downloads are exercised with browser JavaScript disabled. For axe only, a separate diagnostic context suppresses the site script and must match the real no-JS DOM exactly before scanning; the real no-JS page is never enabled.",
+  "verified_at": "2026-11-04T15:25:48.083Z",
+  "status": "passed",
+  "browser": "156.0.8078.47",
+  "deployment_target": "https://537lab.github.io/askthis/",
+  "tested_mount_path": "/askthis/",
+  "summary": {
+    "passed": 421,
+    "total": 421,
+    "failed": 0,
+    "console_errors": 0,
+    "failed_resource_requests": 0,
+    "external_runtime_requests": 0
+  },
+  "pages": [
+    {
+      "locale": "zh",
+      "viewport": {
+        "width": 1440,
+        "height": 1000
+      },
+      "screenshot": "zh-1440-full.png",
+      "axe_violations": 0,
+      "horizontal_overflow": false
+    },
+    {
+      "locale": "zh",
+      "viewport": {
+        "width": 390,
+        "height": 844
+      },
+      "screenshot": "zh-390-full.png",
+      "axe_violations": 0,
+      "horizontal_overflow": false
+    },
+    {
+      "locale": "zh",
+      "viewport": {
+        "width": 320,
+        "height": 720
+      },
+      "screenshot": "zh-320-full.png",
+      "axe_violations": 0,
+      "horizontal_overflow": false
+    },
+    {
+      "locale": "en",
+      "viewport": {
+        "width": 1440,
+        "height": 1000
+      },
+      "screenshot": "en-1440-full.png",
+      "axe_violations": 0,
+      "horizontal_overflow": false
+    },
+    {
+      "locale": "en",
+      "viewport": {
+        "width": 390,
+        "height": 844
+      },
+      "screenshot": "en-390-full.png",
+      "axe_violations": 0,
+      "horizontal_overflow": false
+    },
+    {
+      "locale": "en",
+      "viewport": {
+        "width": 320,
+        "height": 720
+      },
+      "screenshot": "en-320-full.png",
+      "axe_violations": 0,
+      "horizontal_overflow": false
+    }
+  ],
+  "checks": [
+    {
+      "name": "index.html: HTML validation",
+      "passed": true
+    },
+    {
+      "name": "en/index.html: HTML validation",
+      "passed": true
+    },
+    {
+      "name": "zh-1440: HTTP 200 at project subpath",
+      "passed": true
+    },
+    {
+      "name": "zh-1440: single h1",
+      "passed": true
+    },
+    {
+      "name": "zh-1440: language and canonical",
+      "passed": true
+    },
+    {
+      "name": "zh-1440: reciprocal language metadata",
+      "passed": true
+    },
+    {
+      "name": "zh-1440: social metadata",
+      "passed": true
+    },
+    {
+      "name": "zh-1440: four exact architecture download links",
+      "passed": true
+    },
+    {
+      "name": "zh-1440: no root-relative runtime resources",
+      "passed": true
+    },
+    {
+      "name": "zh-1440: every local anchor resolves",
+      "passed": true
+    },
+    {
+      "name": "zh-1440: no initial horizontal overflow",
+      "passed": true,
+      "detail": "{\"width\":1440,\"scrollWidth\":1440,\"offenders\":[]}"
+    },
+    {
+      "name": "zh-1440: story tab 1",
+      "passed": true
+    },
+    {
+      "name": "zh-1440: tab 1 stays within viewport",
+      "passed": true,
+      "detail": "{\"width\":1440,\"scrollWidth\":1440,\"offenders\":[]}"
+    },
+    {
+      "name": "zh-1440: story tab 2",
+      "passed": true
+    },
+    {
+      "name": "zh-1440: tab 2 stays within viewport",
+      "passed": true,
+      "detail": "{\"width\":1440,\"scrollWidth\":1440,\"offenders\":[]}"
+    },
+    {
+      "name": "zh-1440: story tab 3",
+      "passed": true
+    },
+    {
+      "name": "zh-1440: tab 3 stays within viewport",
+      "passed": true,
+      "detail": "{\"width\":1440,\"scrollWidth\":1440,\"offenders\":[]}"
+    },
+    {
+      "name": "zh-1440: keyboard arrow activates next tab",
+      "passed": true
+    },
+    {
+      "name": "zh-1440: keyboard End activates last tab",
+      "passed": true
+    },
+    {
+      "name": "zh-1440: keyboard Home activates first tab",
+      "passed": true
+    },
+    {
+      "name": "zh-1440: FAQ 1 keyboard opens",
+      "passed": true
+    },
+    {
+      "name": "zh-1440: FAQ 2 keyboard opens",
+      "passed": true
+    },
+    {
+      "name": "zh-1440: FAQ 3 keyboard opens",
+      "passed": true
+    },
+    {
+      "name": "zh-1440: FAQ 4 keyboard opens",
+      "passed": true
+    },
+    {
+      "name": "zh-1440: FAQ 5 keyboard opens",
+      "passed": true
+    },
+    {
+      "name": "zh-1440: FAQ 6 keyboard opens",
+      "passed": true
+    },
+    {
+      "name": "zh-1440: FAQ 7 keyboard opens",
+      "passed": true
+    },
+    {
+      "name": "zh-1440: FAQ 8 keyboard opens",
+      "passed": true
+    },
+    {
+      "name": "zh-1440: all FAQ answers accessible",
+      "passed": true
+    },
+    {
+      "name": "zh-1440: expanded FAQ stays within viewport",
+      "passed": true,
+      "detail": "{\"width\":1440,\"scrollWidth\":1440,\"offenders\":[]}"
+    },
+    {
+      "name": "zh-1440: axe WCAG A/AA has no detected violations",
+      "passed": true,
+      "detail": "Automated checks only; not a full accessibility certification."
+    },
+    {
+      "name": "zh-1440: FAQ closes again",
+      "passed": true
+    },
+    {
+      "name": "zh-1440: anchor how-it-works is not behind header",
+      "passed": true,
+      "detail": "{\"top\":99.765625,\"header\":84}"
+    },
+    {
+      "name": "zh-1440: anchor download is not behind header",
+      "passed": true,
+      "detail": "{\"top\":99.609375,\"header\":84}"
+    },
+    {
+      "name": "zh-1440: anchor get-started is not behind header",
+      "passed": true,
+      "detail": "{\"top\":100.234375,\"header\":84}"
+    },
+    {
+      "name": "zh-1440: anchor faq is not behind header",
+      "passed": true,
+      "detail": "{\"top\":99.984375,\"header\":84}"
+    },
+    {
+      "name": "zh-1440: hero CTA reaches download",
+      "passed": true
+    },
+    {
+      "name": "zh-1440: language switch preserves section and correct path",
+      "passed": true
+    },
+    {
+      "name": "zh-390: HTTP 200 at project subpath",
+      "passed": true
+    },
+    {
+      "name": "zh-390: single h1",
+      "passed": true
+    },
+    {
+      "name": "zh-390: language and canonical",
+      "passed": true
+    },
+    {
+      "name": "zh-390: reciprocal language metadata",
+      "passed": true
+    },
+    {
+      "name": "zh-390: social metadata",
+      "passed": true
+    },
+    {
+      "name": "zh-390: four exact architecture download links",
+      "passed": true
+    },
+    {
+      "name": "zh-390: no root-relative runtime resources",
+      "passed": true
+    },
+    {
+      "name": "zh-390: every local anchor resolves",
+      "passed": true
+    },
+    {
+      "name": "zh-390: no initial horizontal overflow",
+      "passed": true,
+      "detail": "{\"width\":390,\"scrollWidth\":390,\"offenders\":[]}"
+    },
+    {
+      "name": "zh-390: story tab 1",
+      "passed": true
+    },
+    {
+      "name": "zh-390: tab 1 stays within viewport",
+      "passed": true,
+      "detail": "{\"width\":390,\"scrollWidth\":390,\"offenders\":[]}"
+    },
+    {
+      "name": "zh-390: story tab 2",
+      "passed": true
+    },
+    {
+      "name": "zh-390: tab 2 stays within viewport",
+      "passed": true,
+      "detail": "{\"width\":390,\"scrollWidth\":390,\"offenders\":[]}"
+    },
+    {
+      "name": "zh-390: story tab 3",
+      "passed": true
+    },
+    {
+      "name": "zh-390: tab 3 stays within viewport",
+      "passed": true,
+      "detail": "{\"width\":390,\"scrollWidth\":390,\"offenders\":[]}"
+    },
+    {
+      "name": "zh-390: keyboard arrow activates next tab",
+      "passed": true
+    },
+    {
+      "name": "zh-390: keyboard End activates last tab",
+      "passed": true
+    },
+    {
+      "name": "zh-390: keyboard Home activates first tab",
+      "passed": true
+    },
+    {
+      "name": "zh-390: FAQ 1 keyboard opens",
+      "passed": true
+    },
+    {
+      "name": "zh-390: FAQ 2 keyboard opens",
+      "passed": true
+    },
+    {
+      "name": "zh-390: FAQ 3 keyboard opens",
+      "passed": true
+    },
+    {
+      "name": "zh-390: FAQ 4 keyboard opens",
+      "passed": true
+    },
+    {
+      "name": "zh-390: FAQ 5 keyboard opens",
+      "passed": true
+    },
+    {
+      "name": "zh-390: FAQ 6 keyboard opens",
+      "passed": true
+    },
+    {
+      "name": "zh-390: FAQ 7 keyboard opens",
+      "passed": true
+    },
+    {
+      "name": "zh-390: FAQ 8 keyboard opens",
+      "passed": true
+    },
+    {
+      "name": "zh-390: all FAQ answers accessible",
+      "passed": true
+    },
+    {
+      "name": "zh-390: expanded FAQ stays within viewport",
+      "passed": true,
+      "detail": "{\"width\":390,\"scrollWidth\":390,\"offenders\":[]}"
+    },
+    {
+      "name": "zh-390: axe WCAG A/AA has no detected violations",
+      "passed": true,
+      "detail": "Automated checks only; not a full accessibility certification."
+    },
+    {
+      "name": "zh-390: FAQ closes again",
+      "passed": true
+    },
+    {
+      "name": "zh-390: anchor how-it-works is not behind header",
+      "passed": true,
+      "detail": "{\"top\":99.828125,\"header\":68}"
+    },
+    {
+      "name": "zh-390: nav closes after how-it-works",
+      "passed": true
+    },
+    {
+      "name": "zh-390: anchor download is not behind header",
+      "passed": true,
+      "detail": "{\"top\":100.078125,\"header\":68}"
+    },
+    {
+      "name": "zh-390: nav closes after download",
+      "passed": true
+    },
+    {
+      "name": "zh-390: anchor get-started is not behind header",
+      "passed": true,
+      "detail": "{\"top\":99.53125,\"header\":68}"
+    },
+    {
+      "name": "zh-390: nav closes after get-started",
+      "passed": true
+    },
+    {
+      "name": "zh-390: anchor faq is not behind header",
+      "passed": true,
+      "detail": "{\"top\":99.78125,\"header\":68}"
+    },
+    {
+      "name": "zh-390: nav closes after faq",
+      "passed": true
+    },
+    {
+      "name": "zh-390: mobile menu opens",
+      "passed": true
+    },
+    {
+      "name": "zh-390: Escape closes menu and returns focus",
+      "passed": true
+    },
+    {
+      "name": "zh-390: hero CTA reaches download",
+      "passed": true
+    },
+    {
+      "name": "zh-390: language switch preserves section and correct path",
+      "passed": true
+    },
+    {
+      "name": "zh-320: HTTP 200 at project subpath",
+      "passed": true
+    },
+    {
+      "name": "zh-320: single h1",
+      "passed": true
+    },
+    {
+      "name": "zh-320: language and canonical",
+      "passed": true
+    },
+    {
+      "name": "zh-320: reciprocal language metadata",
+      "passed": true
+    },
+    {
+      "name": "zh-320: social metadata",
+      "passed": true
+    },
+    {
+      "name": "zh-320: four exact architecture download links",
+      "passed": true
+    },
+    {
+      "name": "zh-320: no root-relative runtime resources",
+      "passed": true
+    },
+    {
+      "name": "zh-320: every local anchor resolves",
+      "passed": true
+    },
+    {
+      "name": "zh-320: no initial horizontal overflow",
+      "passed": true,
+      "detail": "{\"width\":320,\"scrollWidth\":320,\"offenders\":[]}"
+    },
+    {
+      "name": "zh-320: story tab 1",
+      "passed": true
+    },
+    {
+      "name": "zh-320: tab 1 stays within viewport",
+      "passed": true,
+      "detail": "{\"width\":320,\"scrollWidth\":320,\"offenders\":[]}"
+    },
+    {
+      "name": "zh-320: story tab 2",
+      "passed": true
+    },
+    {
+      "name": "zh-320: tab 2 stays within viewport",
+      "passed": true,
+      "detail": "{\"width\":320,\"scrollWidth\":320,\"offenders\":[]}"
+    },
+    {
+      "name": "zh-320: story tab 3",
+      "passed": true
+    },
+    {
+      "name": "zh-320: tab 3 stays within viewport",
+      "passed": true,
+      "detail": "{\"width\":320,\"scrollWidth\":320,\"offenders\":[]}"
+    },
+    {
+      "name": "zh-320: keyboard arrow activates next tab",
+      "passed": true
+    },
+    {
+      "name": "zh-320: keyboard End activates last tab",
+      "passed": true
+    },
+    {
+      "name": "zh-320: keyboard Home activates first tab",
+      "passed": true
+    },
+    {
+      "name": "zh-320: FAQ 1 keyboard opens",
+      "passed": true
+    },
+    {
+      "name": "zh-320: FAQ 2 keyboard opens",
+      "passed": true
+    },
+    {
+      "name": "zh-320: FAQ 3 keyboard opens",
+      "passed": true
+    },
+    {
+      "name": "zh-320: FAQ 4 keyboard opens",
+      "passed": true
+    },
+    {
+      "name": "zh-320: FAQ 5 keyboard opens",
+      "passed": true
+    },
+    {
+      "name": "zh-320: FAQ 6 keyboard opens",
+      "passed": true
+    },
+    {
+      "name": "zh-320: FAQ 7 keyboard opens",
+      "passed": true
+    },
+    {
+      "name": "zh-320: FAQ 8 keyboard opens",
+      "passed": true
+    },
+    {
+      "name": "zh-320: all FAQ answers accessible",
+      "passed": true
+    },
+    {
+      "name": "zh-320: expanded FAQ stays within viewport",
+      "passed": true,
+      "detail": "{\"width\":320,\"scrollWidth\":320,\"offenders\":[]}"
+    },
+    {
+      "name": "zh-320: axe WCAG A/AA has no detected violations",
+      "passed": true,
+      "detail": "Automated checks only; not a full accessibility certification."
+    },
+    {
+      "name": "zh-320: FAQ closes again",
+      "passed": true
+    },
+    {
+      "name": "zh-320: anchor how-it-works is not behind header",
+      "passed": true,
+      "detail": "{\"top\":99.65625,\"header\":68}"
+    },
+    {
+      "name": "zh-320: nav closes after how-it-works",
+      "passed": true
+    },
+    {
+      "name": "zh-320: anchor download is not behind header",
+      "passed": true,
+      "detail": "{\"top\":100.40625,\"header\":68}"
+    },
+    {
+      "name": "zh-320: nav closes after download",
+      "passed": true
+    },
+    {
+      "name": "zh-320: anchor get-started is not behind header",
+      "passed": true,
+      "detail": "{\"top\":99.640625,\"header\":68}"
+    },
+    {
+      "name": "zh-320: nav closes after get-started",
+      "passed": true
+    },
+    {
+      "name": "zh-320: anchor faq is not behind header",
+      "passed": true,
+      "detail": "{\"top\":100.140625,\"header\":68}"
+    },
+    {
+      "name": "zh-320: nav closes after faq",
+      "passed": true
+    },
+    {
+      "name": "zh-320: mobile menu opens",
+      "passed": true
+    },
+    {
+      "name": "zh-320: Escape closes menu and returns focus",
+      "passed": true
+    },
+    {
+      "name": "zh-320: hero CTA reaches download",
+      "passed": true
+    },
+    {
+      "name": "zh-320: language switch preserves section and correct path",
+      "passed": true
+    },
+    {
+      "name": "en-1440: HTTP 200 at project subpath",
+      "passed": true
+    },
+    {
+      "name": "en-1440: single h1",
+      "passed": true
+    },
+    {
+      "name": "en-1440: language and canonical",
+      "passed": true
+    },
+    {
+      "name": "en-1440: reciprocal language metadata",
+      "passed": true
+    },
+    {
+      "name": "en-1440: social metadata",
+      "passed": true
+    },
+    {
+      "name": "en-1440: four exact architecture download links",
+      "passed": true
+    },
+    {
+      "name": "en-1440: no root-relative runtime resources",
+      "passed": true
+    },
+    {
+      "name": "en-1440: every local anchor resolves",
+      "passed": true
+    },
+    {
+      "name": "en-1440: no initial horizontal overflow",
+      "passed": true,
+      "detail": "{\"width\":1440,\"scrollWidth\":1440,\"offenders\":[]}"
+    },
+    {
+      "name": "en-1440: story tab 1",
+      "passed": true
+    },
+    {
+      "name": "en-1440: tab 1 stays within viewport",
+      "passed": true,
+      "detail": "{\"width\":1440,\"scrollWidth\":1440,\"offenders\":[]}"
+    },
+    {
+      "name": "en-1440: story tab 2",
+      "passed": true
+    },
+    {
+      "name": "en-1440: tab 2 stays within viewport",
+      "passed": true,
+      "detail": "{\"width\":1440,\"scrollWidth\":1440,\"offenders\":[]}"
+    },
+    {
+      "name": "en-1440: story tab 3",
+      "passed": true
+    },
+    {
+      "name": "en-1440: tab 3 stays within viewport",
+      "passed": true,
+      "detail": "{\"width\":1440,\"scrollWidth\":1440,\"offenders\":[]}"
+    },
+    {
+      "name": "en-1440: keyboard arrow activates next tab",
+      "passed": true
+    },
+    {
+      "name": "en-1440: keyboard End activates last tab",
+      "passed": true
+    },
+    {
+      "name": "en-1440: keyboard Home activates first tab",
+      "passed": true
+    },
+    {
+      "name": "en-1440: FAQ 1 keyboard opens",
+      "passed": true
+    },
+    {
+      "name": "en-1440: FAQ 2 keyboard opens",
+      "passed": true
+    },
+    {
+      "name": "en-1440: FAQ 3 keyboard opens",
+      "passed": true
+    },
+    {
+      "name": "en-1440: FAQ 4 keyboard opens",
+      "passed": true
+    },
+    {
+      "name": "en-1440: FAQ 5 keyboard opens",
+      "passed": true
+    },
+    {
+      "name": "en-1440: FAQ 6 keyboard opens",
+      "passed": true
+    },
+    {
+      "name": "en-1440: FAQ 7 keyboard opens",
+      "passed": true
+    },
+    {
+      "name": "en-1440: FAQ 8 keyboard opens",
+      "passed": true
+    },
+    {
+      "name": "en-1440: all FAQ answers accessible",
+      "passed": true
+    },
+    {
+      "name": "en-1440: expanded FAQ stays within viewport",
+      "passed": true,
+      "detail": "{\"width\":1440,\"scrollWidth\":1440,\"offenders\":[]}"
+    },
+    {
+      "name": "en-1440: axe WCAG A/AA has no detected violations",
+      "passed": true,
+      "detail": "Automated checks only; not a full accessibility certification."
+    },
+    {
+      "name": "en-1440: FAQ closes again",
+      "passed": true
+    },
+    {
+      "name": "en-1440: anchor how-it-works is not behind header",
+      "passed": true,
+      "detail": "{\"top\":100.3125,\"header\":84}"
+    },
+    {
+      "name": "en-1440: anchor download is not behind header",
+      "passed": true,
+      "detail": "{\"top\":99.75,\"header\":84}"
+    },
+    {
+      "name": "en-1440: anchor get-started is not behind header",
+      "passed": true,
+      "detail": "{\"top\":100.15625,\"header\":84}"
+    },
+    {
+      "name": "en-1440: anchor faq is not behind header",
+      "passed": true,
+      "detail": "{\"top\":100.15625,\"header\":84}"
+    },
+    {
+      "name": "en-1440: hero CTA reaches download",
+      "passed": true
+    },
+    {
+      "name": "en-1440: language switch preserves section and correct path",
+      "passed": true
+    },
+    {
+      "name": "en-390: HTTP 200 at project subpath",
+      "passed": true
+    },
+    {
+      "name": "en-390: single h1",
+      "passed": true
+    },
+    {
+      "name": "en-390: language and canonical",
+      "passed": true
+    },
+    {
+      "name": "en-390: reciprocal language metadata",
+      "passed": true
+    },
+    {
+      "name": "en-390: social metadata",
+      "passed": true
+    },
+    {
+      "name": "en-390: four exact architecture download links",
+      "passed": true
+    },
+    {
+      "name": "en-390: no root-relative runtime resources",
+      "passed": true
+    },
+    {
+      "name": "en-390: every local anchor resolves",
+      "passed": true
+    },
+    {
+      "name": "en-390: no initial horizontal overflow",
+      "passed": true,
+      "detail": "{\"width\":390,\"scrollWidth\":390,\"offenders\":[]}"
+    },
+    {
+      "name": "en-390: story tab 1",
+      "passed": true
+    },
+    {
+      "name": "en-390: tab 1 stays within viewport",
+      "passed": true,
+      "detail": "{\"width\":390,\"scrollWidth\":390,\"offenders\":[]}"
+    },
+    {
+      "name": "en-390: story tab 2",
+      "passed": true
+    },
+    {
+      "name": "en-390: tab 2 stays within viewport",
+      "passed": true,
+      "detail": "{\"width\":390,\"scrollWidth\":390,\"offenders\":[]}"
+    },
+    {
+      "name": "en-390: story tab 3",
+      "passed": true
+    },
+    {
+      "name": "en-390: tab 3 stays within viewport",
+      "passed": true,
+      "detail": "{\"width\":390,\"scrollWidth\":390,\"offenders\":[]}"
+    },
+    {
+      "name": "en-390: keyboard arrow activates next tab",
+      "passed": true
+    },
+    {
+      "name": "en-390: keyboard End activates last tab",
+      "passed": true
+    },
+    {
+      "name": "en-390: keyboard Home activates first tab",
+      "passed": true
+    },
+    {
+      "name": "en-390: FAQ 1 keyboard opens",
+      "passed": true
+    },
+    {
+      "name": "en-390: FAQ 2 keyboard opens",
+      "passed": true
+    },
+    {
+      "name": "en-390: FAQ 3 keyboard opens",
+      "passed": true
+    },
+    {
+      "name": "en-390: FAQ 4 keyboard opens",
+      "passed": true
+    },
+    {
+      "name": "en-390: FAQ 5 keyboard opens",
+      "passed": true
+    },
+    {
+      "name": "en-390: FAQ 6 keyboard opens",
+      "passed": true
+    },
+    {
+      "name": "en-390: FAQ 7 keyboard opens",
+      "passed": true
+    },
+    {
+      "name": "en-390: FAQ 8 keyboard opens",
+      "passed": true
+    },
+    {
+      "name": "en-390: all FAQ answers accessible",
+      "passed": true
+    },
+    {
+      "name": "en-390: expanded FAQ stays within viewport",
+      "passed": true,
+      "detail": "{\"width\":390,\"scrollWidth\":390,\"offenders\":[]}"
+    },
+    {
+      "name": "en-390: axe WCAG A/AA has no detected violations",
+      "passed": true,
+      "detail": "Automated checks only; not a full accessibility certification."
+    },
+    {
+      "name": "en-390: FAQ closes again",
+      "passed": true
+    },
+    {
+      "name": "en-390: anchor how-it-works is not behind header",
+      "passed": true,
+      "detail": "{\"top\":99.546875,\"header\":68}"
+    },
+    {
+      "name": "en-390: nav closes after how-it-works",
+      "passed": true
+    },
+    {
+      "name": "en-390: anchor download is not behind header",
+      "passed": true,
+      "detail": "{\"top\":99.84375,\"header\":68}"
+    },
+    {
+      "name": "en-390: nav closes after download",
+      "passed": true
+    },
+    {
+      "name": "en-390: anchor get-started is not behind header",
+      "passed": true,
+      "detail": "{\"top\":99.640625,\"header\":68}"
+    },
+    {
+      "name": "en-390: nav closes after get-started",
+      "passed": true
+    },
+    {
+      "name": "en-390: anchor faq is not behind header",
+      "passed": true,
+      "detail": "{\"top\":99.765625,\"header\":68}"
+    },
+    {
+      "name": "en-390: nav closes after faq",
+      "passed": true
+    },
+    {
+      "name": "en-390: mobile menu opens",
+      "passed": true
+    },
+    {
+      "name": "en-390: Escape closes menu and returns focus",
+      "passed": true
+    },
+    {
+      "name": "en-390: hero CTA reaches download",
+      "passed": true
+    },
+    {
+      "name": "en-390: language switch preserves section and correct path",
+      "passed": true
+    },
+    {
+      "name": "en-320: HTTP 200 at project subpath",
+      "passed": true
+    },
+    {
+      "name": "en-320: single h1",
+      "passed": true
+    },
+    {
+      "name": "en-320: language and canonical",
+      "passed": true
+    },
+    {
+      "name": "en-320: reciprocal language metadata",
+      "passed": true
+    },
+    {
+      "name": "en-320: social metadata",
+      "passed": true
+    },
+    {
+      "name": "en-320: four exact architecture download links",
+      "passed": true
+    },
+    {
+      "name": "en-320: no root-relative runtime resources",
+      "passed": true
+    },
+    {
+      "name": "en-320: every local anchor resolves",
+      "passed": true
+    },
+    {
+      "name": "en-320: no initial horizontal overflow",
+      "passed": true,
+      "detail": "{\"width\":320,\"scrollWidth\":320,\"offenders\":[]}"
+    },
+    {
+      "name": "en-320: story tab 1",
+      "passed": true
+    },
+    {
+      "name": "en-320: tab 1 stays within viewport",
+      "passed": true,
+      "detail": "{\"width\":320,\"scrollWidth\":320,\"offenders\":[]}"
+    },
+    {
+      "name": "en-320: story tab 2",
+      "passed": true
+    },
+    {
+      "name": "en-320: tab 2 stays within viewport",
+      "passed": true,
+      "detail": "{\"width\":320,\"scrollWidth\":320,\"offenders\":[]}"
+    },
+    {
+      "name": "en-320: story tab 3",
+      "passed": true
+    },
+    {
+      "name": "en-320: tab 3 stays within viewport",
+      "passed": true,
+      "detail": "{\"width\":320,\"scrollWidth\":320,\"offenders\":[]}"
+    },
+    {
+      "name": "en-320: keyboard arrow activates next tab",
+      "passed": true
+    },
+    {
+      "name": "en-320: keyboard End activates last tab",
+      "passed": true
+    },
+    {
+      "name": "en-320: keyboard Home activates first tab",
+      "passed": true
+    },
+    {
+      "name": "en-320: FAQ 1 keyboard opens",
+      "passed": true
+    },
+    {
+      "name": "en-320: FAQ 2 keyboard opens",
+      "passed": true
+    },
+    {
+      "name": "en-320: FAQ 3 keyboard opens",
+      "passed": true
+    },
+    {
+      "name": "en-320: FAQ 4 keyboard opens",
+      "passed": true
+    },
+    {
+      "name": "en-320: FAQ 5 keyboard opens",
+      "passed": true
+    },
+    {
+      "name": "en-320: FAQ 6 keyboard opens",
+      "passed": true
+    },
+    {
+      "name": "en-320: FAQ 7 keyboard opens",
+      "passed": true
+    },
+    {
+      "name": "en-320: FAQ 8 keyboard opens",
+      "passed": true
+    },
+    {
+      "name": "en-320: all FAQ answers accessible",
+      "passed": true
+    },
+    {
+      "name": "en-320: expanded FAQ stays within viewport",
+      "passed": true,
+      "detail": "{\"width\":320,\"scrollWidth\":320,\"offenders\":[]}"
+    },
+    {
+      "name": "en-320: axe WCAG A/AA has no detected violations",
+      "passed": true,
+      "detail": "Automated checks only; not a full accessibility certification."
+    },
+    {
+      "name": "en-320: FAQ closes again",
+      "passed": true
+    },
+    {
+      "name": "en-320: anchor how-it-works is not behind header",
+      "passed": true,
+      "detail": "{\"top\":100.3125,\"header\":68}"
+    },
+    {
+      "name": "en-320: nav closes after how-it-works",
+      "passed": true
+    },
+    {
+      "name": "en-320: anchor download is not behind header",
+      "passed": true,
+      "detail": "{\"top\":99.90625,\"header\":68}"
+    },
+    {
+      "name": "en-320: nav closes after download",
+      "passed": true
+    },
+    {
+      "name": "en-320: anchor get-started is not behind header",
+      "passed": true,
+      "detail": "{\"top\":99.515625,\"header\":68}"
+    },
+    {
+      "name": "en-320: nav closes after get-started",
+      "passed": true
+    },
+    {
+      "name": "en-320: anchor faq is not behind header",
+      "passed": true,
+      "detail": "{\"top\":99.640625,\"header\":68}"
+    },
+    {
+      "name": "en-320: nav closes after faq",
+      "passed": true
+    },
+    {
+      "name": "en-320: mobile menu opens",
+      "passed": true
+    },
+    {
+      "name": "en-320: Escape closes menu and returns focus",
+      "passed": true
+    },
+    {
+      "name": "en-320: hero CTA reaches download",
+      "passed": true
+    },
+    {
+      "name": "en-320: language switch preserves section and correct path",
+      "passed": true
+    },
+    {
+      "name": "zh: no-JS all downloads remain available",
+      "passed": true
+    },
+    {
+      "name": "zh: no-JS all story screenshots visible",
+      "passed": true
+    },
+    {
+      "name": "zh: no-JS navigation visible",
+      "passed": true
+    },
+    {
+      "name": "zh: no-JS native FAQ works",
+      "passed": true
+    },
+    {
+      "name": "zh: no-JS no horizontal overflow at 320px",
+      "passed": true,
+      "detail": "{\"width\":320,\"scrollWidth\":320,\"offenders\":[]}"
+    },
+    {
+      "name": "en: no-JS all downloads remain available",
+      "passed": true
+    },
+    {
+      "name": "en: no-JS all story screenshots visible",
+      "passed": true
+    },
+    {
+      "name": "en: no-JS navigation visible",
+      "passed": true
+    },
+    {
+      "name": "en: no-JS native FAQ works",
+      "passed": true
+    },
+    {
+      "name": "en: no-JS no horizontal overflow at 320px",
+      "passed": true,
+      "detail": "{\"width\":320,\"scrollWidth\":320,\"offenders\":[]}"
+    },
+    {
+      "name": "assets/og-zh.png: available from project subpath",
+      "passed": true
+    },
+    {
+      "name": "assets/og-en.png: available from project subpath",
+      "passed": true
+    },
+    {
+      "name": "robots.txt: available from project subpath",
+      "passed": true
+    },
+    {
+      "name": "sitemap.xml: available from project subpath",
+      "passed": true
+    },
+    {
+      "name": ".nojekyll: available from project subpath",
+      "passed": true
+    },
+    {
+      "name": "assets/brand/favicon.ico: available from project subpath",
+      "passed": true
+    },
+    {
+      "name": "assets/brand/apple-touch-icon.png: available from project subpath",
+      "passed": true
+    },
+    {
+      "name": "resource assets/brand/app.svg: HTTP 200",
+      "passed": true
+    },
+    {
+      "name": "resource assets/brand/favicon-32.png: HTTP 200",
+      "passed": true
+    },
+    {
+      "name": "resource assets/brand/favicon.ico: HTTP 200",
+      "passed": true
+    },
+    {
+      "name": "resource assets/brand/apple-touch-icon.png: HTTP 200",
+      "passed": true
+    },
+    {
+      "name": "resource assets/product-short.webp: HTTP 200",
+      "passed": true
+    },
+    {
+      "name": "resource assets/site.css: HTTP 200",
+      "passed": true
+    },
+    {
+      "name": "resource assets/site.js: HTTP 200",
+      "passed": true
+    },
+    {
+      "name": "resource assets/product-code.webp: HTTP 200",
+      "passed": true
+    },
+    {
+      "name": "resource assets/product-follow-up.webp: HTTP 200",
+      "passed": true
+    },
+    {
+      "name": "resource assets/product-empty.webp: HTTP 200",
+      "passed": true
+    },
+    {
+      "name": "No browser page errors or console errors",
+      "passed": true
+    },
+    {
+      "name": "No failed page-resource requests",
+      "passed": true
+    },
+    {
+      "name": "No CDN, analytics, external fonts or API requests at runtime",
+      "passed": true
+    },
+    {
+      "name": "Independent: zh-1440-keyboard first Tab reaches visible skip link",
+      "passed": true
+    },
+    {
+      "name": "Independent: zh-1440-keyboard skip link bypasses header to main CTA",
+      "passed": true
+    },
+    {
+      "name": "Independent: zh-1440-keyboard roving tabindex enters active panel",
+      "passed": true
+    },
+    {
+      "name": "Independent: zh-1440-keyboard reverse Tab returns to active tab",
+      "passed": true
+    },
+    {
+      "name": "Independent: zh-1440-keyboard ArrowUp wraps to last tab",
+      "passed": true
+    },
+    {
+      "name": "Independent: zh-1440-keyboard ArrowDown wraps to first tab",
+      "passed": true
+    },
+    {
+      "name": "Independent: zh-1440-keyboard ArrowLeft wraps to last tab",
+      "passed": true
+    },
+    {
+      "name": "Independent: zh-1440-panel-0 axe A/AA",
+      "passed": true,
+      "detail": "No detected automated WCAG 2.0/2.1 A/AA violations."
+    },
+    {
+      "name": "Independent: zh-1440-panel-1 axe A/AA",
+      "passed": true,
+      "detail": "No detected automated WCAG 2.0/2.1 A/AA violations."
+    },
+    {
+      "name": "Independent: zh-1440-panel-2 axe A/AA",
+      "passed": true,
+      "detail": "No detected automated WCAG 2.0/2.1 A/AA violations."
+    },
+    {
+      "name": "Independent: zh-1440-keyboard privacy index contrast is at least 4.5:1",
+      "passed": true,
+      "detail": "{\"foreground\":\"rgb(135, 70, 39)\",\"background\":\"rgb(219, 226, 201)\",\"ratio\":5.359820622747287}"
+    },
+    {
+      "name": "Independent: zh-390-keyboard first Tab reaches visible skip link",
+      "passed": true
+    },
+    {
+      "name": "Independent: zh-390-keyboard skip link bypasses header to main CTA",
+      "passed": true
+    },
+    {
+      "name": "Independent: zh-390-keyboard roving tabindex enters active panel",
+      "passed": true
+    },
+    {
+      "name": "Independent: zh-390-keyboard reverse Tab returns to active tab",
+      "passed": true
+    },
+    {
+      "name": "Independent: zh-390-keyboard ArrowUp wraps to last tab",
+      "passed": true
+    },
+    {
+      "name": "Independent: zh-390-keyboard ArrowDown wraps to first tab",
+      "passed": true
+    },
+    {
+      "name": "Independent: zh-390-keyboard ArrowLeft wraps to last tab",
+      "passed": true
+    },
+    {
+      "name": "Independent: zh-390-panel-0 axe A/AA",
+      "passed": true,
+      "detail": "No detected automated WCAG 2.0/2.1 A/AA violations."
+    },
+    {
+      "name": "Independent: zh-390-panel-1 axe A/AA",
+      "passed": true,
+      "detail": "No detected automated WCAG 2.0/2.1 A/AA violations."
+    },
+    {
+      "name": "Independent: zh-390-panel-2 axe A/AA",
+      "passed": true,
+      "detail": "No detected automated WCAG 2.0/2.1 A/AA violations."
+    },
+    {
+      "name": "Independent: zh-390-keyboard privacy index contrast is at least 4.5:1",
+      "passed": true,
+      "detail": "{\"foreground\":\"rgb(135, 70, 39)\",\"background\":\"rgb(219, 226, 201)\",\"ratio\":5.359820622747287}"
+    },
+    {
+      "name": "Independent: zh-390-keyboard opened menu links reachable by keyboard",
+      "passed": true
+    },
+    {
+      "name": "Independent: zh-390-keyboard keyboard menu navigation closes menu",
+      "passed": true
+    },
+    {
+      "name": "Independent: zh-320-keyboard first Tab reaches visible skip link",
+      "passed": true
+    },
+    {
+      "name": "Independent: zh-320-keyboard skip link bypasses header to main CTA",
+      "passed": true
+    },
+    {
+      "name": "Independent: zh-320-keyboard roving tabindex enters active panel",
+      "passed": true
+    },
+    {
+      "name": "Independent: zh-320-keyboard reverse Tab returns to active tab",
+      "passed": true
+    },
+    {
+      "name": "Independent: zh-320-keyboard ArrowUp wraps to last tab",
+      "passed": true
+    },
+    {
+      "name": "Independent: zh-320-keyboard ArrowDown wraps to first tab",
+      "passed": true
+    },
+    {
+      "name": "Independent: zh-320-keyboard ArrowLeft wraps to last tab",
+      "passed": true
+    },
+    {
+      "name": "Independent: zh-320-panel-0 axe A/AA",
+      "passed": true,
+      "detail": "No detected automated WCAG 2.0/2.1 A/AA violations."
+    },
+    {
+      "name": "Independent: zh-320-panel-1 axe A/AA",
+      "passed": true,
+      "detail": "No detected automated WCAG 2.0/2.1 A/AA violations."
+    },
+    {
+      "name": "Independent: zh-320-panel-2 axe A/AA",
+      "passed": true,
+      "detail": "No detected automated WCAG 2.0/2.1 A/AA violations."
+    },
+    {
+      "name": "Independent: zh-320-keyboard privacy index contrast is at least 4.5:1",
+      "passed": true,
+      "detail": "{\"foreground\":\"rgb(135, 70, 39)\",\"background\":\"rgb(219, 226, 201)\",\"ratio\":5.359820622747287}"
+    },
+    {
+      "name": "Independent: zh-320-keyboard opened menu links reachable by keyboard",
+      "passed": true
+    },
+    {
+      "name": "Independent: zh-320-keyboard keyboard menu navigation closes menu",
+      "passed": true
+    },
+    {
+      "name": "Independent: en-1440-keyboard first Tab reaches visible skip link",
+      "passed": true
+    },
+    {
+      "name": "Independent: en-1440-keyboard skip link bypasses header to main CTA",
+      "passed": true
+    },
+    {
+      "name": "Independent: en-1440-keyboard roving tabindex enters active panel",
+      "passed": true
+    },
+    {
+      "name": "Independent: en-1440-keyboard reverse Tab returns to active tab",
+      "passed": true
+    },
+    {
+      "name": "Independent: en-1440-keyboard ArrowUp wraps to last tab",
+      "passed": true
+    },
+    {
+      "name": "Independent: en-1440-keyboard ArrowDown wraps to first tab",
+      "passed": true
+    },
+    {
+      "name": "Independent: en-1440-keyboard ArrowLeft wraps to last tab",
+      "passed": true
+    },
+    {
+      "name": "Independent: en-1440-panel-0 axe A/AA",
+      "passed": true,
+      "detail": "No detected automated WCAG 2.0/2.1 A/AA violations."
+    },
+    {
+      "name": "Independent: en-1440-panel-1 axe A/AA",
+      "passed": true,
+      "detail": "No detected automated WCAG 2.0/2.1 A/AA violations."
+    },
+    {
+      "name": "Independent: en-1440-panel-2 axe A/AA",
+      "passed": true,
+      "detail": "No detected automated WCAG 2.0/2.1 A/AA violations."
+    },
+    {
+      "name": "Independent: en-1440-keyboard privacy index contrast is at least 4.5:1",
+      "passed": true,
+      "detail": "{\"foreground\":\"rgb(135, 70, 39)\",\"background\":\"rgb(219, 226, 201)\",\"ratio\":5.359820622747287}"
+    },
+    {
+      "name": "Independent: en-390-keyboard first Tab reaches visible skip link",
+      "passed": true
+    },
+    {
+      "name": "Independent: en-390-keyboard skip link bypasses header to main CTA",
+      "passed": true
+    },
+    {
+      "name": "Independent: en-390-keyboard roving tabindex enters active panel",
+      "passed": true
+    },
+    {
+      "name": "Independent: en-390-keyboard reverse Tab returns to active tab",
+      "passed": true
+    },
+    {
+      "name": "Independent: en-390-keyboard ArrowUp wraps to last tab",
+      "passed": true
+    },
+    {
+      "name": "Independent: en-390-keyboard ArrowDown wraps to first tab",
+      "passed": true
+    },
+    {
+      "name": "Independent: en-390-keyboard ArrowLeft wraps to last tab",
+      "passed": true
+    },
+    {
+      "name": "Independent: en-390-panel-0 axe A/AA",
+      "passed": true,
+      "detail": "No detected automated WCAG 2.0/2.1 A/AA violations."
+    },
+    {
+      "name": "Independent: en-390-panel-1 axe A/AA",
+      "passed": true,
+      "detail": "No detected automated WCAG 2.0/2.1 A/AA violations."
+    },
+    {
+      "name": "Independent: en-390-panel-2 axe A/AA",
+      "passed": true,
+      "detail": "No detected automated WCAG 2.0/2.1 A/AA violations."
+    },
+    {
+      "name": "Independent: en-390-keyboard privacy index contrast is at least 4.5:1",
+      "passed": true,
+      "detail": "{\"foreground\":\"rgb(135, 70, 39)\",\"background\":\"rgb(219, 226, 201)\",\"ratio\":5.359820622747287}"
+    },
+    {
+      "name": "Independent: en-390-keyboard opened menu links reachable by keyboard",
+      "passed": true
+    },
+    {
+      "name": "Independent: en-390-keyboard keyboard menu navigation closes menu",
+      "passed": true
+    },
+    {
+      "name": "Independent: en-320-keyboard first Tab reaches visible skip link",
+      "passed": true
+    },
+    {
+      "name": "Independent: en-320-keyboard skip link bypasses header to main CTA",
+      "passed": true
+    },
+    {
+      "name": "Independent: en-320-keyboard roving tabindex enters active panel",
+      "passed": true
+    },
+    {
+      "name": "Independent: en-320-keyboard reverse Tab returns to active tab",
+      "passed": true
+    },
+    {
+      "name": "Independent: en-320-keyboard ArrowUp wraps to last tab",
+      "passed": true
+    },
+    {
+      "name": "Independent: en-320-keyboard ArrowDown wraps to first tab",
+      "passed": true
+    },
+    {
+      "name": "Independent: en-320-keyboard ArrowLeft wraps to last tab",
+      "passed": true
+    },
+    {
+      "name": "Independent: en-320-panel-0 axe A/AA",
+      "passed": true,
+      "detail": "No detected automated WCAG 2.0/2.1 A/AA violations."
+    },
+    {
+      "name": "Independent: en-320-panel-1 axe A/AA",
+      "passed": true,
+      "detail": "No detected automated WCAG 2.0/2.1 A/AA violations."
+    },
+    {
+      "name": "Independent: en-320-panel-2 axe A/AA",
+      "passed": true,
+      "detail": "No detected automated WCAG 2.0/2.1 A/AA violations."
+    },
+    {
+      "name": "Independent: en-320-keyboard privacy index contrast is at least 4.5:1",
+      "passed": true,
+      "detail": "{\"foreground\":\"rgb(135, 70, 39)\",\"background\":\"rgb(219, 226, 201)\",\"ratio\":5.359820622747287}"
+    },
+    {
+      "name": "Independent: en-320-keyboard opened menu links reachable by keyboard",
+      "passed": true
+    },
+    {
+      "name": "Independent: en-320-keyboard keyboard menu navigation closes menu",
+      "passed": true
+    },
+    {
+      "name": "Independent: zh-1440-nojs real no-JS fallback active",
+      "passed": true
+    },
+    {
+      "name": "Independent: zh-1440-nojs all four downloads visible",
+      "passed": true
+    },
+    {
+      "name": "Independent: zh-1440-nojs all story panels and captions visible",
+      "passed": true
+    },
+    {
+      "name": "Independent: zh-1440-nojs every page image decodes",
+      "passed": true
+    },
+    {
+      "name": "Independent: zh-1440-nojs every FAQ and setup disclosure toggles by keyboard",
+      "passed": true
+    },
+    {
+      "name": "Independent: zh-1440-nojs navigation does not hide anchored headings",
+      "passed": true,
+      "detail": "[{\"id\":\"how-it-works\",\"top\":99.765625,\"header\":84},{\"id\":\"download\",\"top\":99.53125,\"header\":84},{\"id\":\"get-started\",\"top\":100.15625,\"header\":84},{\"id\":\"faq\",\"top\":99.90625,\"header\":84}]"
+    },
+    {
+      "name": "Independent: zh-1440-nojs no horizontal overflow",
+      "passed": true,
+      "detail": "{\"width\":1440,\"scrollWidth\":1440,\"offenders\":[]}"
+    },
+    {
+      "name": "Independent: zh-1440-nojs scanner DOM equals real no-JS DOM",
+      "passed": true
+    },
+    {
+      "name": "Independent: zh-1440-nojs axe A/AA",
+      "passed": true,
+      "detail": "No detected automated WCAG 2.0/2.1 A/AA violations."
+    },
+    {
+      "name": "Independent: zh-1440-nojs native language link resolves without JS",
+      "passed": true
+    },
+    {
+      "name": "Independent: zh-390-nojs real no-JS fallback active",
+      "passed": true
+    },
+    {
+      "name": "Independent: zh-390-nojs all four downloads visible",
+      "passed": true
+    },
+    {
+      "name": "Independent: zh-390-nojs all story panels and captions visible",
+      "passed": true
+    },
+    {
+      "name": "Independent: zh-390-nojs every page image decodes",
+      "passed": true
+    },
+    {
+      "name": "Independent: zh-390-nojs every FAQ and setup disclosure toggles by keyboard",
+      "passed": true
+    },
+    {
+      "name": "Independent: zh-390-nojs navigation does not hide anchored headings",
+      "passed": true,
+      "detail": "[{\"id\":\"how-it-works\",\"top\":99.828125,\"header\":-848},{\"id\":\"download\",\"top\":99.5625,\"header\":-2327},{\"id\":\"get-started\",\"top\":100.015625,\"header\":-3363},{\"id\":\"faq\",\"top\":100.265625,\"header\":-5216}]"
+    },
+    {
+      "name": "Independent: zh-390-nojs no horizontal overflow",
+      "passed": true,
+      "detail": "{\"width\":390,\"scrollWidth\":390,\"offenders\":[]}"
+    },
+    {
+      "name": "Independent: zh-390-nojs scanner DOM equals real no-JS DOM",
+      "passed": true
+    },
+    {
+      "name": "Independent: zh-390-nojs axe A/AA",
+      "passed": true,
+      "detail": "No detected automated WCAG 2.0/2.1 A/AA violations."
+    },
+    {
+      "name": "Independent: zh-390-nojs native language link resolves without JS",
+      "passed": true
+    },
+    {
+      "name": "Independent: zh-320-nojs real no-JS fallback active",
+      "passed": true
+    },
+    {
+      "name": "Independent: zh-320-nojs all four downloads visible",
+      "passed": true
+    },
+    {
+      "name": "Independent: zh-320-nojs all story panels and captions visible",
+      "passed": true
+    },
+    {
+      "name": "Independent: zh-320-nojs every page image decodes",
+      "passed": true
+    },
+    {
+      "name": "Independent: zh-320-nojs every FAQ and setup disclosure toggles by keyboard",
+      "passed": true
+    },
+    {
+      "name": "Independent: zh-320-nojs navigation does not hide anchored headings",
+      "passed": true,
+      "detail": "[{\"id\":\"how-it-works\",\"top\":99.65625,\"header\":-830},{\"id\":\"download\",\"top\":99.84375,\"header\":-2257},{\"id\":\"get-started\",\"top\":100.078125,\"header\":-3335},{\"id\":\"faq\",\"top\":99.578125,\"header\":-5334}]"
+    },
+    {
+      "name": "Independent: zh-320-nojs no horizontal overflow",
+      "passed": true,
+      "detail": "{\"width\":320,\"scrollWidth\":320,\"offenders\":[]}"
+    },
+    {
+      "name": "Independent: zh-320-nojs scanner DOM equals real no-JS DOM",
+      "passed": true
+    },
+    {
+      "name": "Independent: zh-320-nojs axe A/AA",
+      "passed": true,
+      "detail": "No detected automated WCAG 2.0/2.1 A/AA violations."
+    },
+    {
+      "name": "Independent: zh-320-nojs native language link resolves without JS",
+      "passed": true
+    },
+    {
+      "name": "Independent: en-1440-nojs real no-JS fallback active",
+      "passed": true
+    },
+    {
+      "name": "Independent: en-1440-nojs all four downloads visible",
+      "passed": true
+    },
+    {
+      "name": "Independent: en-1440-nojs all story panels and captions visible",
+      "passed": true
+    },
+    {
+      "name": "Independent: en-1440-nojs every page image decodes",
+      "passed": true
+    },
+    {
+      "name": "Independent: en-1440-nojs every FAQ and setup disclosure toggles by keyboard",
+      "passed": true
+    },
+    {
+      "name": "Independent: en-1440-nojs navigation does not hide anchored headings",
+      "passed": true,
+      "detail": "[{\"id\":\"how-it-works\",\"top\":100.3125,\"header\":84},{\"id\":\"download\",\"top\":100.296875,\"header\":84},{\"id\":\"get-started\",\"top\":99.703125,\"header\":84},{\"id\":\"faq\",\"top\":99.703125,\"header\":84}]"
+    },
+    {
+      "name": "Independent: en-1440-nojs no horizontal overflow",
+      "passed": true,
+      "detail": "{\"width\":1440,\"scrollWidth\":1440,\"offenders\":[]}"
+    },
+    {
+      "name": "Independent: en-1440-nojs scanner DOM equals real no-JS DOM",
+      "passed": true
+    },
+    {
+      "name": "Independent: en-1440-nojs axe A/AA",
+      "passed": true,
+      "detail": "No detected automated WCAG 2.0/2.1 A/AA violations."
+    },
+    {
+      "name": "Independent: en-1440-nojs native language link resolves without JS",
+      "passed": true
+    },
+    {
+      "name": "Independent: en-390-nojs real no-JS fallback active",
+      "passed": true
+    },
+    {
+      "name": "Independent: en-390-nojs all four downloads visible",
+      "passed": true
+    },
+    {
+      "name": "Independent: en-390-nojs all story panels and captions visible",
+      "passed": true
+    },
+    {
+      "name": "Independent: en-390-nojs every page image decodes",
+      "passed": true
+    },
+    {
+      "name": "Independent: en-390-nojs every FAQ and setup disclosure toggles by keyboard",
+      "passed": true
+    },
+    {
+      "name": "Independent: en-390-nojs navigation does not hide anchored headings",
+      "passed": true,
+      "detail": "[{\"id\":\"how-it-works\",\"top\":99.546875,\"header\":-946},{\"id\":\"download\",\"top\":100.09375,\"header\":-2566},{\"id\":\"get-started\",\"top\":99.890625,\"header\":-3656},{\"id\":\"faq\",\"top\":100.015625,\"header\":-5785}]"
+    },
+    {
+      "name": "Independent: en-390-nojs no horizontal overflow",
+      "passed": true,
+      "detail": "{\"width\":390,\"scrollWidth\":390,\"offenders\":[]}"
+    },
+    {
+      "name": "Independent: en-390-nojs scanner DOM equals real no-JS DOM",
+      "passed": true
+    },
+    {
+      "name": "Independent: en-390-nojs axe A/AA",
+      "passed": true,
+      "detail": "No detected automated WCAG 2.0/2.1 A/AA violations."
+    },
+    {
+      "name": "Independent: en-390-nojs native language link resolves without JS",
+      "passed": true
+    },
+    {
+      "name": "Independent: en-320-nojs real no-JS fallback active",
+      "passed": true
+    },
+    {
+      "name": "Independent: en-320-nojs all four downloads visible",
+      "passed": true
+    },
+    {
+      "name": "Independent: en-320-nojs all story panels and captions visible",
+      "passed": true
+    },
+    {
+      "name": "Independent: en-320-nojs every page image decodes",
+      "passed": true
+    },
+    {
+      "name": "Independent: en-320-nojs every FAQ and setup disclosure toggles by keyboard",
+      "passed": true
+    },
+    {
+      "name": "Independent: en-320-nojs navigation does not hide anchored headings",
+      "passed": true,
+      "detail": "[{\"id\":\"how-it-works\",\"top\":100.3125,\"header\":-986},{\"id\":\"download\",\"top\":100.34375,\"header\":-2644},{\"id\":\"get-started\",\"top\":99.953125,\"header\":-3850},{\"id\":\"faq\",\"top\":100.078125,\"header\":-6308}]"
+    },
+    {
+      "name": "Independent: en-320-nojs no horizontal overflow",
+      "passed": true,
+      "detail": "{\"width\":320,\"scrollWidth\":320,\"offenders\":[]}"
+    },
+    {
+      "name": "Independent: en-320-nojs scanner DOM equals real no-JS DOM",
+      "passed": true
+    },
+    {
+      "name": "Independent: en-320-nojs axe A/AA",
+      "passed": true,
+      "detail": "No detected automated WCAG 2.0/2.1 A/AA violations."
+    },
+    {
+      "name": "Independent: en-320-nojs native language link resolves without JS",
+      "passed": true
+    },
+    {
+      "name": "Independent: zh-normal-motion smooth scroll reaches unobscured download",
+      "passed": true
+    },
+    {
+      "name": "Independent: zh-normal-motion desktop resize resets mobile menu",
+      "passed": true
+    },
+    {
+      "name": "Independent: zh-normal-motion returning to mobile remains closed with horizontal tabs",
+      "passed": true
+    },
+    {
+      "name": "Independent: zh-normal-motion reduced motion disables smooth scrolling",
+      "passed": true
+    },
+    {
+      "name": "Independent: en-normal-motion smooth scroll reaches unobscured download",
+      "passed": true
+    },
+    {
+      "name": "Independent: en-normal-motion desktop resize resets mobile menu",
+      "passed": true
+    },
+    {
+      "name": "Independent: en-normal-motion returning to mobile remains closed with horizontal tabs",
+      "passed": true
+    },
+    {
+      "name": "Independent: en-normal-motion reduced motion disables smooth scrolling",
+      "passed": true
+    },
+    {
+      "name": "Independent: all deployable files serve exact local bytes under /askthis/",
+      "passed": true,
+      "detail": "{\"count\":26,\"unavailable\":[]}"
+    },
+    {
+      "name": "Independent: every deployable image format decodes in Chrome",
+      "passed": true,
+      "detail": "[{\"file\":\"assets/brand/app-192.png\",\"width\":192,\"height\":192,\"decoded\":true},{\"file\":\"assets/brand/app-512.png\",\"width\":512,\"height\":512,\"decoded\":true},{\"file\":\"assets/brand/app.svg\",\"width\":1024,\"height\":1024,\"decoded\":true},{\"file\":\"assets/brand/apple-touch-icon.png\",\"width\":180,\"height\":180,\"decoded\":true},{\"file\":\"assets/brand/favicon-32.png\",\"width\":32,\"height\":32,\"decoded\":true},{\"file\":\"assets/brand/favicon.ico\",\"width\":48,\"height\":48,\"decoded\":true},{\"file\":\"assets/brand/mark.svg\",\"width\":128,\"height\":128,\"decoded\":true},{\"file\":\"assets/og-en.png\",\"width\":1200,\"height\":630,\"decoded\":true},{\"file\":\"assets/og-zh.png\",\"width\":1200,\"height\":630,\"decoded\":true},{\"file\":\"assets/product-answer.webp\",\"width\":960,\"height\":592,\"decoded\":true},{\"file\":\"assets/product-code.webp\",\"width\":960,\"height\":526,\"decoded\":true},{\"file\":\"assets/product-dark.webp\",\"width\":960,\"height\":526,\"decoded\":true},{\"file\":\"assets/product-draft.webp\",\"width\":960,\"height\":304,\"decoded\":true},{\"file\":\"assets/product-empty.webp\",\"width\":960,\"height\":304,\"decoded\":true},{\"file\":\"assets/product-follow-up.webp\",\"width\":960,\"height\":844,\"decoded\":true},{\"file\":\"assets/product-short.webp\",\"width\":960,\"height\":526,\"decoded\":true}]"
+    },
+    {
+      "name": "Independent: both share images are exactly 1200 by 630",
+      "passed": true
+    },
+    {
+      "name": "Independent: deployable text has no user paths or raw runtime logs",
+      "passed": true
+    },
+    {
+      "name": "Independent: supplement has no browser or console errors",
+      "passed": true
+    },
+    {
+      "name": "Independent: supplement has no failed resource requests",
+      "passed": true
+    },
+    {
+      "name": "Independent: supplement has no external runtime requests",
+      "passed": true
+    }
+  ],
+  "screenshot_evidence": {
+    "deployed": false,
+    "filenames": [
+      "zh-1440-hero.png",
+      "zh-1440-full.png",
+      "zh-390-hero.png",
+      "zh-390-full.png",
+      "zh-390-faq.png",
+      "zh-320-hero.png",
+      "zh-320-full.png",
+      "en-1440-hero.png",
+      "en-1440-full.png",
+      "en-390-hero.png",
+      "en-390-full.png",
+      "en-390-faq.png",
+      "en-320-hero.png",
+      "en-320-full.png",
+      "zh-1440-nojs-hero.png",
+      "zh-1440-nojs-full.png",
+      "zh-390-nojs-hero.png",
+      "zh-390-nojs-full.png",
+      "zh-320-nojs-hero.png",
+      "zh-320-nojs-full.png",
+      "en-1440-nojs-hero.png",
+      "en-1440-nojs-full.png",
+      "en-390-nojs-hero.png",
+      "en-390-nojs-full.png",
+      "en-320-nojs-hero.png",
+      "en-320-nojs-full.png"
+    ],
+    "note": "Browser evidence and test tooling are deliberately outside the deployable website."
+  },
+  "limits": [
+    "Direct download URL format and architecture mapping were verified; public release availability is a separate release-owner check.",
+    "Local browser verification is not a claim that GitHub Pages has been deployed.",
+    "App screenshots use a local demonstration service and do not benchmark online model performance.",
+    "Automated accessibility scanning does not replace assistive-technology and human testing.",
+    "Linux is not hardware-tested; Windows v0.1.5 interactions still require a hardware retest."
+  ]
+}

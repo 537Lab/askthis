@@ -1,0 +1,4 @@
+# GitHub Pages project-site robots file. Host-wide rules belong at the origin root.
+User-agent: *
+Allow: /askthis/
+Sitemap: https://537lab.github.io/askthis/sitemap.xml

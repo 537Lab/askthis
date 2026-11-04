@@ -1,0 +1,76 @@
+{
+  "brand": "Approved B2 Dialogue a; original assets copied without redrawing",
+  "screenshots": [
+    {
+      "asset": "assets/product-short.webp",
+      "source": "docs/images/v0.1.5/lookup-light.png",
+      "source_sha256": "efe4a4ed3e1763a09f4455c677219f2b970b7517b42c647c8d3150b5fc38859c",
+      "size": [
+        960,
+        526
+      ],
+      "processing": "lossless WebP encoding only; no cropping or UI changes"
+    },
+    {
+      "asset": "assets/product-follow-up.webp",
+      "source": "docs/images/v0.1.5/follow-up-light.png",
+      "source_sha256": "19ee1cac9b4799215904ee01f2d2d0f26d36c08494a7e4945706f73e35092211",
+      "size": [
+        960,
+        844
+      ],
+      "processing": "lossless WebP encoding only; no cropping or UI changes"
+    },
+    {
+      "asset": "assets/product-empty.webp",
+      "source": "docs/images/v0.1.5/manual-empty.png",
+      "source_sha256": "ecb5cff87009b85b7262c9c89e896839bc819483a174e5d16e068d077ecdebda",
+      "size": [
+        960,
+        304
+      ],
+      "processing": "lossless WebP encoding only; no cropping or UI changes"
+    },
+    {
+      "asset": "assets/product-draft.webp",
+      "source": "docs/images/v0.1.5/manual-draft.png",
+      "source_sha256": "c4bea0e62e7047a1ba94a4b6da616c00cf73afd4145a6f23d4f25d8beff14f51",
+      "size": [
+        960,
+        304
+      ],
+      "processing": "lossless WebP encoding only; no cropping or UI changes"
+    },
+    {
+      "asset": "assets/product-answer.webp",
+      "source": "docs/images/v0.1.5/manual-answer.png",
+      "source_sha256": "fd82d52a5d2faf1a4319abb0322c2fc03d26dc53aff1a91e805498ce65f5a89a",
+      "size": [
+        960,
+        592
+      ],
+      "processing": "lossless WebP encoding only; no cropping or UI changes"
+    },
+    {
+      "asset": "assets/product-code.webp",
+      "source": "docs/images/v0.1.5/code-dark.png",
+      "source_sha256": "5be06acc7f107145af009e24163f891077bb315d10058ca52c5643f3bfb05ae3",
+      "size": [
+        960,
+        526
+      ],
+      "processing": "lossless WebP encoding only; no cropping or UI changes"
+    },
+    {
+      "asset": "assets/product-dark.webp",
+      "source": "docs/images/v0.1.5/lookup-dark.png",
+      "source_sha256": "1728f7ff1f9de89340e6d92fa53c1967cfeefb5a85b112c005b5fcf433183bf5",
+      "size": [
+        960,
+        526
+      ],
+      "processing": "lossless WebP encoding only; no cropping or UI changes"
+    }
+  ],
+  "disclosure": "Actual packaged Electron renderer, isolated configuration, local SSE demonstration; not an online model benchmark. UI is not altered."
+}
