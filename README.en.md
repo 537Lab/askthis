@@ -17,15 +17,16 @@ In the default automatic mode, no selection means waiting for your input — **n
 
 Bring your own API key and choose your AI service, or use local models through Ollama / LM Studio. No AskThis account or telemetry. **No free cloud credits or built-in ChatGPT / Codex subscription sign-in are included.** Cloud API usage is billed separately by your provider; a web-chat subscription is not API credit.
 
-## v0.2.0: In-card quick switcher, code copy & local history
+## v0.3.0: Refined quick-look workflow (v0.2.0–v0.3.0)
 
-> This page covers **v0.2.0**. Visit [Releases](https://github.com/537Lab/askthis/releases/latest) to download packages for macOS, Windows, and Linux. [Full Changelog](CHANGELOG.md)
+> This page covers **v0.3.0**. Visit [Releases](https://github.com/537Lab/askthis/releases/latest) to download packages for macOS, Windows, and Linux. [Full Changelog](CHANGELOG.md)
 
-- **Switch prompts, models & reasoning inside the card**: click the header pill to switch prompt presets, providers/models, or reasoning levels on the fly and optionally re-run the current query without leaving the popup; includes a direct Settings button in the header.
-- **One-click code block copy**: fenced code blocks render a subtle language label and a Copy Code button while keeping strict `DOMPurify` sanitization intact.
-- **Dedicated local History tab**: search across questions, follow-ups, answers, models, and prompts; inspect full multi-turn Markdown conversations, copy answers, or delete individual entries inline. Follow-ups and regenerations now update the same session entry instead of duplicating it.
-- **Keyboard workflow & long-source folding**: `⌘,` / `Ctrl+,` opens Settings, `⌘R` / `Ctrl+R` regenerates, and `⌘⇧C` / `Ctrl+Shift+C` copies the latest answer; long captured excerpts fold at 4 lines with an expand toggle while preserving full text.
-- **Live config sync & Windows / Mac polish**: Settings changes sync to the popup immediately; added API type selector, API key reveal toggle, model search & "Set active", secret-free JSON config export/import, and diagnostics copy; Windows UIA selection capture now skips unnecessary `Ctrl+C` polling on confirmed empty selections, and Windows/Linux Settings windows hide the redundant default menu bar.
+- **Pin card & reopen history**: pin the popup (`⌘P` / `Ctrl+P`) to keep it visible while writing side-by-side; click **Continue in card** from History to restore full multi-turn context and ask follow-ups.
+- **In-card quick switcher & preset hotkeys**: click the header pill to switch prompt presets, models, or reasoning levels on the fly with optional re-run; press `⌘1`–`⌘6` (`Ctrl+1`–`6`) to jump between presets.
+- **Code copy, font zoom & keyboard flow**: fenced code blocks render language tags and one-click Copy Code; scale font size (`12–18 px`) with `⌘=` / `⌘-` / `⌘0`; use `⌘R` to regenerate, `⌘⇧C` to copy, and `⌘,` for Settings; long excerpts fold at 4 lines.
+- **Searchable History & Markdown export**: search across questions, follow-ups, answers, models, and prompts; delete single entries or export filtered history to `.md` notes; follow-ups update the same session entry.
+- **Smart error diagnostics, safe retry & token insight**: clear recovery tips for auth/quota/404/offline local server/proxy errors, automatic single retry on transient failures before first token, token usage (`· N tok`), **Copy Q&A**, and tray menu prompt switching.
+- **Onboarding & cross-platform polish**: 3-step setup checklist, secret-free config import/export, live config sync, faster macOS `changeCount` selection capture, Windows UIA empty-selection skip, and clean Windows/Linux Settings windows without redundant menu bars.
 
 <details>
 <summary>See follow-up and dark-mode cards (v0.1.5 demo screenshots)</summary>

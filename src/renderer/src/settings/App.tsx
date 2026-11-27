@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import type { UiLocale } from '@shared/i18n'
 import { resolveLocale } from '@shared/i18n'
 import { LocaleProvider, useT } from '../shared/ui'
@@ -33,6 +33,7 @@ const TABS: { id: TabId; labelKey: string; icon: React.JSX.Element }[] = [
 export function App(): React.JSX.Element {
   const config = useSettingsStore((s) => s.config)
   const [tab, setTab] = useState<TabId>('general')
+  const initializedTab = useRef(false)
   const [locale, setLocale] = useState<UiLocale>(() =>
     resolveLocale('system', typeof navigator !== 'undefined' ? navigator.language : 'zh-CN')
   )
@@ -47,7 +48,15 @@ export function App(): React.JSX.Element {
   }, [])
 
   useEffect(() => {
-    if (config) setLocale(resolveLocale(config.locale, navigator.language))
+    if (!config) return
+    setLocale(resolveLocale(config.locale, navigator.language))
+    if (!initializedTab.current) {
+      initializedTab.current = true
+      const hasUsable = config.providers.some(
+        (p) => p.hasKey || /^https?:\/\/(localhost|127\.0\.0\.1|\[::1\])(?=[:/]|$)/i.test(p.baseUrl)
+      )
+      if (!hasUsable) setTab('providers')
+    }
   }, [config])
 
   return (

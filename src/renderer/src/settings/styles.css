@@ -137,6 +137,53 @@ body.is-mac .sidebar {
   margin-bottom: 22px;
 }
 
+.onboarding {
+  max-width: 720px;
+  background: var(--bg-soft);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 12px 15px;
+  margin-bottom: 20px;
+}
+.onboarding__title {
+  font-size: 12.5px;
+  font-weight: 600;
+  color: var(--text);
+  margin-bottom: 8px;
+}
+.onboarding__steps {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+.onboarding__step {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 12.5px;
+  color: var(--text-2);
+}
+.onboarding__step--done {
+  color: var(--success);
+}
+.onboarding__badge {
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 11px;
+  font-weight: 600;
+  background: var(--bg-active);
+  color: var(--text-2);
+  flex: none;
+}
+.onboarding__step--done .onboarding__badge {
+  background: rgba(44, 158, 99, 0.16);
+  color: var(--success);
+}
+
 /* ---------- providers layout ---------- */
 
 .prov-layout {

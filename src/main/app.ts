@@ -387,7 +387,12 @@ export class AskThisApp {
       const after = this.store.get()
       if (before.shortcut !== after.shortcut) this.registerHotkey()
       if (before.launchAtLogin !== after.launchAtLogin) this.applyLaunchAtLogin(after.launchAtLogin)
-      if (before.locale !== after.locale || before.launchAtLogin !== after.launchAtLogin) {
+      if (
+        before.locale !== after.locale ||
+        before.launchAtLogin !== after.launchAtLogin ||
+        before.activePromptId !== after.activePromptId ||
+        before.prompts !== after.prompts
+      ) {
         this.refreshTray()
       }
       return this.store.getPublic()
@@ -468,6 +473,7 @@ export class AskThisApp {
 
       if (Object.keys(nextPatch).length > 0) {
         this.store.patch(nextPatch)
+        if (nextPatch.activePromptId) this.refreshTray()
       }
       if (payload.requery === true && this.session) {
         void this.session.requeryWithCurrentConfig()
@@ -587,13 +593,15 @@ export class AskThisApp {
   }
 
   private locale(): UiLocale {
-    return resolveLocale(this.store.get().locale, app.getLocale())
+    return resolveLocale(this.store.get().locale, app?.getLocale?.() ?? 'zh-CN')
   }
 
   private trayOptions(): Parameters<typeof createTray>[0] {
     const loc = this.locale()
+    const cfg = this.store.get()
     const labels: TrayLabels = {
       open: t(loc, 'tray.open'),
+      prompts: t(loc, 'tray.prompts'),
       settings: t(loc, 'tray.settings'),
       launchAtLogin: t(loc, 'tray.launchAtLogin'),
       quit: t(loc, 'tray.quit'),
@@ -603,6 +611,15 @@ export class AskThisApp {
       labels,
       onOpen: () => void this.openQuickLook(),
       onSettings: () => this.openSettings(),
+      prompts: (cfg.prompts ?? []).map((p) => ({
+        id: p.id,
+        name: p.name,
+        active: p.id === cfg.activePromptId
+      })),
+      onSelectPrompt: (id: string) => {
+        this.store.patch({ activePromptId: id })
+        this.refreshTray()
+      },
       onToggleLaunchAtLogin: () => {
         const next = !this.store.get().launchAtLogin
         this.store.patch({ launchAtLogin: next })

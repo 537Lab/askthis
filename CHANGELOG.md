@@ -6,6 +6,29 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.3.0] - 2026-11-28
+
+### Added
+
+- **Pin card & history continuation (v0.2.1)**: added a Pin button (`⌘P` / `Ctrl+P`) to keep the card visible on blur and immune to external Esc; added **Continue in card** from the History tab to reopen any multi-turn conversation with full context for further follow-ups.
+- **卡片钉住对照与历史回卡续聊（v0.2.1）**：顶栏新增图钉按钮（`⌘P` / `Ctrl+P`）固定卡片，失焦不自动隐藏且免疫外部 Esc；历史记录页支持点击「在卡片中继续」，完整恢复上下文继续追问。
+- **Font zoom & instant preset shortcuts (v0.2.1)**: adjust popup answer font size (`12–18 px`) on the fly via `⌘=` / `⌘-` / `⌘0` (or `Ctrl`); switch prompt presets `1–6` directly via `⌘1`–`⌘6` / `Ctrl+1`–`6`.
+- **阅读字号缩放与数字键速切预设（v0.2.1）**：支持 `⌘=` / `⌘-` / `⌘0`（Win/Linux 用 `Ctrl`）实时缩放正文字号（12–18 px）并持久化；支持 `⌘1`–`⌘6` 秒切前 6 个提示词预设。
+- **Smart error diagnostics, safe retry & token insight (v0.2.2)**: structured diagnostics for `401/403`, `402`, `404`, `429`, `5xx`, local server offline, and network/proxy failures with one-click recovery; automatic single retry (600 ms) on transient `429/5xx`/network errors before any token is received; display token count (`· N tok`) alongside response time and added **Copy Q&A** (`**Q:** / **A:**`).
+- **智能错误诊断、安全重试与 Token 洞察（v0.2.2）**：精准区分密钥失效、额度不足、路径/模型 404、限流、上游 5xx、本地模型未启动与代理网络异常并给出引导；未输出首 token 时遇瞬时错误自动轻重试 1 次；耗时旁展示 `tok` 用量并新增「复制问答」Markdown 按钮。
+- **Onboarding checklist, history Markdown export & tray prompt switcher (v0.3.0)**: auto-focus Providers on unconfigured first launch with a 3-step checklist; export filtered query history as a clean Markdown file; switch active prompt preset directly from the tray / menu bar menu.
+- **首次上手清单、历史导出 Markdown 与托盘预设切换（v0.3.0）**：未配置模型时自动停留在服务页并展示 3 步状态清单；支持将历史记录一键导出为 Markdown 笔记；支持在菜单栏/托盘右键菜单中直接切换提示词预设。
+
+### Changed & Fixed
+
+- **Faster macOS selection capture (v0.2.2)**: `NSPasteboard.changeCount` tracking inside the simulated-copy path reliably captures selections identical to existing clipboard text and exits early when nothing was copied.
+- **macOS 模拟复制提速与重复文本修复（v0.2.2）**：通过 `NSPasteboard.changeCount` 精确判断复制是否生效，既能捕获与剪贴板内容相同的选区，也能在无选区时提前结束等待。
+
+### Verification / 验证范围
+
+- Unit tests **64/64**, both TypeScript checks (`node` + `web`), and production build (`electron-vite build`) passed. / 单元测试 **64/64**、主进程与渲染进程类型检查、生产构建全部通过。
+- Isolated macOS Electron visual & focus regression (`tests/source_presentation_e2e.py`): **18/18** passed; macOS `arm64` packaged app signed and verified with `codesign --verify --deep --strict`. / macOS 隔离真实 Electron 视觉与焦点回归 **18/18** 通过；macOS `arm64` 打包版完成签名与严格校验。
+
 ## [0.2.0] - 2026-11-28
 
 ### Added

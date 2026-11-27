@@ -18,7 +18,10 @@ export function ProvidersSection(): React.JSX.Element {
 
   const editing = config.providers.find((p) => p.id === editingId) ?? config.providers[0]
   const activeProvider = config.providers.find((p) => p.id === config.activeProviderId)
-  const hasAnyKey = config.providers.some((p) => p.hasKey)
+  const hasUsableProvider = config.providers.some(
+    (p) => p.hasKey || /^https?:\/\/(localhost|127\.0\.0\.1|\[::1\])(?=[:/]|$)/i.test(p.baseUrl)
+  )
+  const hasActiveModel = Boolean(config.activeModelId)
 
   return (
     <>
@@ -33,9 +36,23 @@ export function ProvidersSection(): React.JSX.Element {
           </div>
         </div>
       ) : null}
-      {!hasAnyKey && config.providers.length > 0 ? (
-        <div className="banner">
-          {t('providers.welcome', { keys: prettyAccelerator(config.shortcut) })}
+      {(!hasUsableProvider || !hasActiveModel) ? (
+        <div className="onboarding">
+          <div className="onboarding__title">{t('onboarding.title')}</div>
+          <div className="onboarding__steps">
+            <div className={`onboarding__step${hasUsableProvider ? ' onboarding__step--done' : ''}`}>
+              <span className="onboarding__badge">{hasUsableProvider ? '✓' : '1'}</span>
+              <span>{t('onboarding.step1')}</span>
+            </div>
+            <div className={`onboarding__step${hasActiveModel ? ' onboarding__step--done' : ''}`}>
+              <span className="onboarding__badge">{hasActiveModel ? '✓' : '2'}</span>
+              <span>{t('onboarding.step2')}</span>
+            </div>
+            <div className="onboarding__step">
+              <span className="onboarding__badge">3</span>
+              <span>{t('onboarding.step3', { keys: prettyAccelerator(config.shortcut) })}</span>
+            </div>
+          </div>
         </div>
       ) : null}
 

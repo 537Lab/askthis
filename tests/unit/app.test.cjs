@@ -102,7 +102,7 @@ test('PopupQuickSwitch enforces sender guard and strict whitelist and can trigge
     './services/session': { QuerySession: class {} },
     './windows/popup': {},
     './windows/settings': {},
-    './tray': {},
+    './tray': { refreshTrayMenu: () => {} },
     './ai/client': {},
     './services/shortcuts': {},
     './utils/paths': {

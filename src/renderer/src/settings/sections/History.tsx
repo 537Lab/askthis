@@ -1,8 +1,9 @@
 import { useEffect, useMemo, useState } from 'react'
 import type { HistoryEntry, HistoryTurn } from '@shared/types'
 import { useT, Section, Button, ConfirmButton } from '../../shared/ui'
-import { SearchIcon, CopyIcon, CheckIcon } from '../../shared/icons'
+import { SearchIcon, CopyIcon, CheckIcon, DownloadIcon } from '../../shared/icons'
 import { Markdown } from '../../shared/markdown'
+import { formatHistoryAsMarkdown } from '../../shared/history-export'
 import { useSettingsStore } from '../store'
 
 export function HistorySection(): React.JSX.Element {
@@ -13,6 +14,7 @@ export function HistorySection(): React.JSX.Element {
   const [query, setQuery] = useState('')
   const [selectedId, setSelectedId] = useState<string>('')
   const [copiedId, setCopiedId] = useState<string>('')
+  const [exported, setExported] = useState(false)
 
   useEffect(() => {
     void window.api.history.list().then((list) => {
@@ -61,6 +63,20 @@ export function HistorySection(): React.JSX.Element {
     setSelectedId('')
   }
 
+  const exportMarkdown = (): void => {
+    if (!filtered.length) return
+    const md = formatHistoryAsMarkdown(filtered)
+    const blob = new Blob([md], { type: 'text/markdown;charset=utf-8' })
+    const url = URL.createObjectURL(blob)
+    const a = document.createElement('a')
+    a.href = url
+    a.download = `askthis-history-${new Date().toISOString().slice(0, 10)}.md`
+    a.click()
+    URL.revokeObjectURL(url)
+    setExported(true)
+    window.setTimeout(() => setExported(false), 1600)
+  }
+
   const sourceLabel = (src: string): string => {
     if (src === 'selection' || src === 'clipboard' || src === 'manual') {
       return t(`popup.source.${src}`)
@@ -93,6 +109,10 @@ export function HistorySection(): React.JSX.Element {
             />
           </div>
           <span className="at-hint">{t('history.count', { n: filtered.length })}</span>
+          <Button size="sm" disabled={filtered.length === 0} onClick={exportMarkdown}>
+            <DownloadIcon size={12} />
+            <span>{exported ? t('history.exported') : t('history.exportMarkdown')}</span>
+          </Button>
           <ConfirmButton
             label={t('general.history.clear')}
             confirmLabel={t('common.confirmDelete')}
