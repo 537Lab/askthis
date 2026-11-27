@@ -2,7 +2,7 @@ import { app, clipboard, ipcMain, nativeTheme, screen, shell } from 'electron'
 import os from 'node:os'
 import { IPC } from '@shared/ipc'
 import { resolveLocale, t, type UiLocale } from '@shared/i18n'
-import type { ActivatePayload, AppConfig, PlatformInfo, QueryEvent } from '@shared/types'
+import type { ActivatePayload, AppConfig, HistoryEntry, PlatformInfo, QueryEvent } from '@shared/types'
 import { ConfigStore, type ConfigPatch } from './store'
 import { HistoryStore } from './services/history'
 import { QuerySession } from './services/session'
@@ -32,6 +32,7 @@ const ALLOWED_PATCH_KEYS = new Set([
   'hideOnBlur',
   'windowWidth',
   'maxWindowHeight',
+  'popupFontSize',
   'providers',
   'activeProviderId',
   'activeModelId',
@@ -232,6 +233,49 @@ export class AskThisApp {
     this.stopEscMonitor()
   }
 
+  /** 从历史记录重新在速查卡片中打开对话以便继续追问 */
+  private async reopenHistoryEntry(entry: HistoryEntry): Promise<void> {
+    const cfg = this.store.get()
+    if (entry.promptId && cfg.prompts.some((p) => p.id === entry.promptId)) {
+      this.store.patch({ activePromptId: entry.promptId })
+    }
+    this.session?.dispose()
+    const session = QuerySession.fromHistory(
+      {
+        store: this.store,
+        history: this.history,
+        emit: (event: QueryEvent) => this.popup.send(IPC.QueryEvent, event)
+      },
+      entry
+    )
+    this.session = session
+
+    const win = this.popup.ensureCreated(rendererEntry('popup'), preloadPath())
+    const wasVisible = this.popup.isVisible()
+    this.popup.show(wasVisible)
+    win.show()
+    win.focus()
+    this.startEscMonitor()
+
+    const turns =
+      entry.turns && entry.turns.length > 0
+        ? entry.turns
+        : [{ q: entry.question, a: entry.answer }]
+    const payload: ActivatePayload = {
+      text: entry.question,
+      source:
+        entry.source === 'selection' || entry.source === 'clipboard' || entry.source === 'none'
+          ? entry.source
+          : 'none',
+      autoQuery: false,
+      promptId: entry.promptId ?? cfg.activePromptId,
+      restoredTurns: turns,
+      restoredModel: entry.model
+    }
+    await this.waitForLoad(win)
+    this.popup.send(IPC.Activate, payload)
+  }
+
   /**
    * Esc handling that never breaks other apps:
    * a global Esc shortcut is registered ONLY while the user's attention is
@@ -269,10 +313,12 @@ export class AskThisApp {
       cursor.y >= b.y - margin &&
       cursor.y <= b.y + b.height + margin
     const focused = win.isFocused()
+    const pinned = this.popup.isPinned?.() ?? false
     const justShown = Date.now() - this.popupShownAt < 2500
     // A focused renderer handles Esc itself, including IME composition guards.
     // Global shortcuts bypass that handler and would swallow IME cancellation.
-    const should = !focused && (near || justShown)
+    // 卡片已固定时不注册全局 Esc 守卫，防止外部误关对照卡片
+    const should = !focused && !pinned && (near || justShown)
     const why = `near=${near} focused=${focused} justShown=${justShown} cursor=(${cursor.x},${cursor.y}) bounds=(${b.x},${b.y},${b.width}x${b.height})`
     if (should && !this.escapeGuardActive) this.enableEscapeGuard(why)
     else if (!should && this.escapeGuardActive) this.disableEscapeGuard(why)
@@ -368,6 +414,14 @@ export class AskThisApp {
       if (!this.guardSender(e, 'settings')) return []
       return this.history.list(limit)
     })
+    ipcMain.handle(IPC.HistoryReopen, async (e, id: unknown) => {
+      if (!this.guardSender(e, 'settings')) return false
+      if (typeof id !== 'string' || !id) return false
+      const entry = this.history.list().find((item) => item.id === id)
+      if (!entry) return false
+      await this.reopenHistoryEntry(entry)
+      return true
+    })
     ipcMain.handle(IPC.HistoryDelete, (e, id: unknown) => {
       if (!this.guardSender(e, 'settings')) return
       if (typeof id === 'string' && id) this.history.remove(id)
@@ -408,6 +462,9 @@ export class AskThisApp {
       ) {
         nextPatch.reasoningLevel = payload.reasoningLevel as AppConfig['reasoningLevel']
       }
+      if (typeof payload.popupFontSize === 'number' && Number.isFinite(payload.popupFontSize)) {
+        nextPatch.popupFontSize = Math.min(18, Math.max(12, Math.round(payload.popupFontSize)))
+      }
 
       if (Object.keys(nextPatch).length > 0) {
         this.store.patch(nextPatch)
@@ -416,6 +473,11 @@ export class AskThisApp {
         void this.session.requeryWithCurrentConfig()
       }
       return this.store.getPublic()
+    })
+    ipcMain.on(IPC.PopupSetPinned, (e, pinned: unknown) => {
+      if (!this.guardSender(e, 'popup')) return
+      this.popup.setPinned(Boolean(pinned))
+      this.evaluateEscGuard()
     })
     ipcMain.on(IPC.QuerySend, (e, text: unknown) => {
       if (!this.guardSender(e, 'popup')) return

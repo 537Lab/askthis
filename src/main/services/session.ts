@@ -1,5 +1,5 @@
 import { randomUUID } from 'node:crypto'
-import type { CaptureSource, ChatMessage, HistoryTurn, QueryEvent } from '@shared/types'
+import type { CaptureSource, ChatMessage, HistoryEntry, HistoryTurn, QueryEvent } from '@shared/types'
 import type { ConfigStore } from '../store'
 import type { HistoryStore } from './history'
 import { AIError, streamChat } from '../ai/client'
@@ -19,7 +19,7 @@ export interface SessionDeps {
  * message history for context.
  */
 export class QuerySession {
-  readonly id = randomUUID()
+  readonly id: string
   readonly source: CaptureSource
   readonly sourceText: string
 
@@ -44,12 +44,40 @@ export class QuerySession {
 
   constructor(
     private deps: SessionDeps,
-    capture: CaptureResult
+    capture: CaptureResult,
+    sessionId?: string
   ) {
+    this.id = sessionId || randomUUID()
     this.source = capture.source
     this.rawTextLength = capture.text.length
     this.sourceText =
       capture.text.length > MAX_INPUT_CHARS ? capture.text.slice(0, MAX_INPUT_CHARS) : capture.text
+  }
+
+  /** 从历史记录恢复可继续追问的会话上下文 */
+  static fromHistory(deps: SessionDeps, entry: HistoryEntry): QuerySession {
+    const turns =
+      entry.turns && entry.turns.length > 0
+        ? entry.turns
+        : [{ q: entry.question, a: entry.answer }]
+    const source: CaptureSource =
+      entry.source === 'selection' || entry.source === 'clipboard' || entry.source === 'none'
+        ? entry.source
+        : 'none'
+    const session = new QuerySession(
+      deps,
+      { text: entry.question || turns[0]?.q || '', source },
+      entry.sessionId || entry.id
+    )
+    session.started = true
+    session.initialText = entry.question || turns[0]?.q || ''
+    session.historyTurns = turns.map((t) => ({ q: t.q, a: t.a }))
+    for (const t of turns) {
+      if (t.q) session.messages.push({ role: 'user', content: t.q })
+      if (t.a) session.messages.push({ role: 'assistant', content: t.a })
+    }
+    session.currentDisplayQuestion = turns[turns.length - 1]?.q ?? session.initialText
+    return session
   }
 
   get truncated(): boolean {

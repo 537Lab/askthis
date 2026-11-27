@@ -162,6 +162,13 @@ export function HistorySection(): React.JSX.Element {
                 <div className="history-detail__actions">
                   <Button
                     size="sm"
+                    variant="primary"
+                    onClick={() => void window.api.history.reopen(selected.id)}
+                  >
+                    {t('history.reopen')}
+                  </Button>
+                  <Button
+                    size="sm"
                     onClick={() => {
                       const fullText = turnsOf(selected)
                         .map((item) => item.a)

@@ -43,4 +43,12 @@ test('fresh installs default to selection-or-input, not stale clipboard fallback
   const { store } = tempStore(t)
   assert.equal(store.get().selectionMode, 'auto')
   assert.equal(store.get().clipboardFallback, false)
+  assert.equal(store.get().popupFontSize, 14)
+})
+
+test('popupFontSize clamps within 12..18', (t) => {
+  const { store } = tempStore(t, { version: 2, popupFontSize: 40 })
+  assert.equal(store.get().popupFontSize, 18)
+  store.patch({ popupFontSize: 6 })
+  assert.equal(store.get().popupFontSize, 12)
 })

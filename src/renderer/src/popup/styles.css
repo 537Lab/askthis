@@ -68,7 +68,7 @@ html, body { background: transparent; overflow: hidden; }
 .turn__q-text--clamped { display: -webkit-box; -webkit-line-clamp: 4; -webkit-box-orient: vertical; overflow: hidden; }
 .turn__q-toggle { margin-top: 3px; padding: 0; border: 0; background: none; color: var(--accent); font: inherit; font-size: 11px; cursor: pointer; }
 .turn__q-toggle:hover { text-decoration: underline; }
-.turn__a { font-size: 14px; line-height: 1.72; color: var(--text); overflow-wrap: anywhere; user-select: text; -webkit-user-select: text; }
+.turn__a { font-size: var(--popup-font-size, 14px); line-height: 1.72; color: var(--text); overflow-wrap: anywhere; user-select: text; -webkit-user-select: text; }
 .turn__a p { margin: 0 0 .65em; }
 .turn__a p:last-child { margin-bottom: 0; }
 .turn__a strong { font-weight: 650; }

@@ -71,15 +71,27 @@ export function IconButton({
   children,
   onClick,
   title,
-  disabled
+  disabled,
+  active,
+  pressed
 }: {
   children: ReactNode
   onClick?: () => void
   title?: string
   disabled?: boolean
+  active?: boolean
+  pressed?: boolean
 }): React.JSX.Element {
   return (
-    <button type="button" className="at-iconbtn" onClick={onClick} title={title} aria-label={title} disabled={disabled}>
+    <button
+      type="button"
+      className={`at-iconbtn${active ? ' at-iconbtn--active' : ''}`}
+      onClick={onClick}
+      title={title}
+      aria-label={title}
+      aria-pressed={pressed}
+      disabled={disabled}
+    >
       {children}
     </button>
   )

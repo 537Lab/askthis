@@ -31,7 +31,8 @@ export interface PopupApi {
     copy(text: string): void
     close(): void
     resize(height: number): void
-    quickSwitch(patch: SessionOverrides & { requery?: boolean }): Promise<PublicConfig>
+    setPinned(pinned: boolean): void
+    quickSwitch(patch: SessionOverrides & { popupFontSize?: number; requery?: boolean }): Promise<PublicConfig>
   }
   app: {
     openSettings(): void
@@ -66,6 +67,7 @@ export interface SettingsApi {
   }
   history: {
     list(limit?: number): Promise<HistoryEntry[]>
+    reopen(id: string): Promise<boolean>
     delete(id: string): Promise<void>
     clear(): Promise<void>
   }

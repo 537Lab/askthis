@@ -99,6 +99,7 @@ export interface AppConfig {
   hideOnBlur: boolean
   windowWidth: number
   maxWindowHeight: number
+  popupFontSize: number
   /* Model & request */
   providers: ProviderConfig[]
   activeProviderId: string
@@ -164,6 +165,10 @@ export interface ActivatePayload {
   truncated?: boolean
   /** Active prompt id at the time of activation. */
   promptId?: string
+  /** Restored multi-turn history conversation when reopened from History. */
+  restoredTurns?: HistoryTurn[]
+  /** Restored model label when reopened from History. */
+  restoredModel?: string
 }
 
 export interface UsageInfo {

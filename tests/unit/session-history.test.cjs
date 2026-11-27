@@ -134,3 +134,58 @@ test('QuerySession passes incomplete flag cleanly, aggregates turns, and requeri
     { q: 'why?', a: 'ans-3' }
   ])
 })
+
+test('QuerySession.fromHistory restores multi-turn context for follow-ups without duplicating history', async (t) => {
+  const dir = makeTempDir(t)
+  const { HistoryStore } = loadSource('src/main/services/history.ts')
+  const history = new HistoryStore(dir)
+  const sentMessages = []
+  const store = {
+    get: () => ({
+      providers: [{ id: 'local', name: 'Local', kind: 'openai-compatible', baseUrl: 'http://127.0.0.1:8080/v1', models: [{ id: 'm1' }], reasoningStyle: 'none' }],
+      activeProviderId: 'local',
+      activeModelId: 'm1',
+      prompts: [{ id: 'p1', name: 'P1', system: 'SYS', template: '{{text}}' }],
+      activePromptId: 'p1',
+      reasoningLevel: 'off',
+      temperature: null,
+      maxTokens: 256,
+      requestTimeoutSec: 10,
+      historyEnabled: true,
+      historyLimit: 20
+    }),
+    getApiKey: () => undefined
+  }
+  const { QuerySession } = loadSource('src/main/services/session.ts', {
+    '../ai/client': {
+      AIError: class extends Error {},
+      streamChat: async (opts) => {
+        sentMessages.push(opts.messages)
+        opts.onDelta('text', 'next answer')
+        return {}
+      }
+    }
+  })
+
+  const entry = {
+    id: 'hist-1',
+    sessionId: 'sess-1',
+    ts: 1000,
+    source: 'selection',
+    question: 'Q1',
+    answer: 'A1',
+    model: 'm1',
+    turns: [{ q: 'Q1', a: 'A1' }]
+  }
+  history.upsertBySession(entry, 20)
+  const sess = QuerySession.fromHistory({ store, history, emit: () => {} }, entry)
+  await sess.submit('Q2')
+  assert.deepEqual(JSON.parse(JSON.stringify(sentMessages[0])), [
+    { role: 'system', content: 'SYS' },
+    { role: 'user', content: 'Q1' },
+    { role: 'assistant', content: 'A1' },
+    { role: 'user', content: 'Q2' }
+  ])
+  assert.equal(history.list().length, 1)
+  assert.equal(history.list()[0].turns.length, 2)
+})

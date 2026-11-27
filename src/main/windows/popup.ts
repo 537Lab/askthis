@@ -8,6 +8,7 @@ import type { AppConfig } from '@shared/types'
 export class PopupWindow {
   private win: BrowserWindow | null = null
   private userMoved = false
+  private pinned = false
   /** 记录程序最近一次设定的窗口坐标与有效期，避免漏收 moved 事件导致计数器泄漏 */
   private expectedOrigin: { x: number; y: number; until: number } | null = null
 
@@ -18,6 +19,14 @@ export class PopupWindow {
 
   get browserWindow(): BrowserWindow | null {
     return this.win
+  }
+
+  isPinned(): boolean {
+    return this.pinned
+  }
+
+  setPinned(pinned: boolean): void {
+    this.pinned = pinned
   }
 
   isVisible(): boolean {
@@ -97,10 +106,9 @@ export class PopupWindow {
       this.userMoved = true
     })
 
-    // Optional: auto-hide when the window loses focus (off by default —
-    // clicking outside must never dismiss the card accidentally).
+    // 固定状态下忽略失焦自动隐藏，便于对照阅读与输入
     win.on('blur', () => {
-      if (this.getConfig().hideOnBlur) this.onBlurHide()
+      if (this.getConfig().hideOnBlur && !this.pinned) this.onBlurHide()
     })
 
     this.win = win
@@ -201,6 +209,7 @@ export class PopupWindow {
   hide(): void {
     this.win?.hide()
     this.userMoved = false
+    this.pinned = false
   }
 
   close(): void {

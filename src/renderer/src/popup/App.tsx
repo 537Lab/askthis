@@ -3,7 +3,7 @@ import type { UiLocale } from '@shared/i18n'
 import { resolveLocale } from '@shared/i18n'
 import { usePopupStore, type PopupStatus, type Turn } from './state'
 import { LocaleProvider, useT, Button, IconButton, Spinner } from '../shared/ui'
-import { CloseIcon, CopyIcon, CheckIcon, StopIcon, LockIcon, LogoIcon, RefreshIcon, GearIcon } from '../shared/icons'
+import { CloseIcon, CopyIcon, CheckIcon, StopIcon, LockIcon, LogoIcon, RefreshIcon, GearIcon, PinIcon } from '../shared/icons'
 import { Markdown } from '../shared/markdown'
 import type { CaptureSource, PublicConfig, ReasoningLevel } from '@shared/types'
 
@@ -73,19 +73,37 @@ function PopupCard(): React.JSX.Element {
   const [draft, setDraft] = useState('')
   const [showLatest, setShowLatest] = useState(false)
   const [switcherOpen, setSwitcherOpen] = useState(false)
+  const [pinned, setPinned] = useState(false)
   const busy = store.status === 'waiting' || store.status === 'streaming'
   const hasTurns = store.turns.length > 0
   const cfg = store.config
   const maxH = cfg?.maxWindowHeight ?? 560
   const maxInputHeight = Math.min(108, Math.max(26, maxH - 170))
+  const fontSize = cfg?.popupFontSize ?? 14
   const level = cfg?.reasoningLevel
   const activePrompt = cfg?.prompts?.find((p) => p.id === cfg.activePromptId)
   const rawModel = store.model || cfg?.activeModelId || ''
   const modelText = rawModel + (level && level !== 'off' ? ` · ${level}` : '')
   const modelLabel = activePrompt?.name && modelText ? `${activePrompt.name} · ${modelText}` : (activePrompt?.name || modelText)
   const last = store.turns[store.turns.length - 1]
-  const keyContextRef = useRef({ switcherOpen, busy, hasTurns, lastAnswer: last?.a ?? '' })
-  keyContextRef.current = { switcherOpen, busy, hasTurns, lastAnswer: last?.a ?? '' }
+  const keyContextRef = useRef({
+    switcherOpen,
+    pinned,
+    busy,
+    hasTurns,
+    lastAnswer: last?.a ?? '',
+    prompts: cfg?.prompts ?? [],
+    fontSize
+  })
+  keyContextRef.current = {
+    switcherOpen,
+    pinned,
+    busy,
+    hasTurns,
+    lastAnswer: last?.a ?? '',
+    prompts: cfg?.prompts ?? [],
+    fontSize
+  }
 
   // Grow naturally up to the user's cap. Native positioning/fullscreen behavior
   // stays in PopupWindow; no animated native resizes or focus changes here.
@@ -118,6 +136,7 @@ function PopupCard(): React.JSX.Element {
     followingRef.current = true
     setShowLatest(false)
     setSwitcherOpen(false)
+    setPinned(false)
     if (!usePopupStore.getState().question) {
       const id = window.setTimeout(() => inputRef.current?.focus(), 80)
       return () => window.clearTimeout(id)
@@ -167,6 +186,31 @@ function PopupCard(): React.JSX.Element {
       if (e.shiftKey && e.key.toLowerCase() === 'c' && keyContextRef.current.lastAnswer) {
         e.preventDefault?.()
         window.api.popup.copy(keyContextRef.current.lastAnswer)
+        return
+      }
+      if (e.key.toLowerCase() === 'p') {
+        e.preventDefault?.()
+        const next = !keyContextRef.current.pinned
+        setPinned(next)
+        window.api.popup.setPinned?.(next)
+        return
+      }
+      if (/^[1-6]$/.test(e.key)) {
+        const target = keyContextRef.current.prompts[Number(e.key) - 1]
+        if (target) {
+          e.preventDefault?.()
+          void window.api.popup.quickSwitch?.({
+            promptId: target.id,
+            requery: keyContextRef.current.hasTurns && !keyContextRef.current.busy
+          })
+        }
+        return
+      }
+      if (e.key === '=' || e.key === '+' || e.key === '-' || e.key === '0') {
+        e.preventDefault?.()
+        const cur = keyContextRef.current.fontSize
+        const next = e.key === '0' ? 14 : Math.min(18, Math.max(12, cur + (e.key === '-' ? -1 : 1)))
+        void window.api.popup.quickSwitch?.({ popupFontSize: next })
       }
     }
     window.addEventListener('keydown', onKey)
@@ -186,7 +230,7 @@ function PopupCard(): React.JSX.Element {
 
   return (
     <div className={`popup-shell${hasTurns ? '' : ' popup-shell--empty'}`} ref={shellRef} style={{ maxHeight: maxH }} data-status={store.status}>
-      <div className="popup-card">
+      <div className="popup-card" style={{ '--popup-font-size': `${fontSize}px` } as React.CSSProperties}>
         <header className="head">
           <div className="head__drag">
             <span className="head__logo"><LogoIcon size={16} /></span>
@@ -207,6 +251,18 @@ function PopupCard(): React.JSX.Element {
             )}
           </div>
           <div className="head__actions">
+            <IconButton
+              title={pinned ? t('popup.unpin') : t('popup.pin')}
+              active={pinned}
+              pressed={pinned}
+              onClick={() => {
+                const next = !pinned
+                setPinned(next)
+                window.api.popup.setPinned?.(next)
+              }}
+            >
+              <PinIcon size={13} />
+            </IconButton>
             <IconButton title={t('popup.settings')} onClick={() => window.api.app?.openSettings?.()}><GearIcon size={13} /></IconButton>
             <IconButton title={t('popup.close')} onClick={() => window.api.popup.close()}><CloseIcon size={14} /></IconButton>
           </div>

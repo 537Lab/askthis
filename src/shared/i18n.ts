@@ -46,6 +46,11 @@ const zh: Record<string, string> = {
   'popup.switcher.model': '模型',
   'popup.switcher.reasoning': '推理强度',
   'popup.switcher.requery': '切换并重新生成',
+  'popup.pin': '固定卡片在屏幕最前（快捷键 ⌘P）',
+  'popup.unpin': '取消固定',
+  'popup.fontSize': '正文字号',
+  'popup.copyMarkdown': '复制问答',
+  'popup.markdownCopied': '已复制问答',
 
   /* settings shell */
   'settings.title': '设置',
@@ -94,6 +99,9 @@ const zh: Record<string, string> = {
   'history.turns': '{n} 轮对话',
   'history.copyAnswer': '复制回答',
   'history.delete': '删除此条',
+  'history.reopen': '在卡片中继续',
+  'history.exportMarkdown': '导出 Markdown',
+  'history.exported': '已导出',
   'history.disabledNotice': '当前已关闭「保存查询历史」，不会记录新的查询。',
 
   /* providers */
@@ -152,6 +160,10 @@ const zh: Record<string, string> = {
   'providers.custom': '自定义',
   'providers.welcome':
     '欢迎使用 AskThis：先为下方任一服务填入 API 密钥，然后在任意应用里选中文本、按 {keys} 即可查询。',
+  'onboarding.title': '3 步快速开始',
+  'onboarding.step1': '配置服务与 API 密钥（或本地模型）',
+  'onboarding.step2': '获取并选定默认模型',
+  'onboarding.step3': '任意位置选中文字或直接按 {keys} 开始速查',
   'providers.security.noEncryption':
     '此系统不支持安全密钥存储（系统钥匙串不可用），API 密钥将仅保存在内存中，重启后需重新输入。如确需保存到磁盘，可允许明文存储（不推荐）：',
 
@@ -245,12 +257,20 @@ const zh: Record<string, string> = {
   'err.NO_PROVIDER': '尚未配置模型服务，请在设置中添加',
   'err.NO_MODEL': '未选择模型，请在设置中选择或获取模型',
   'err.NO_API_KEY': '尚未配置 API 密钥，请打开设置填写',
+  'err.AUTH_FAILED': 'API 密钥无效或无访问权限，请检查密钥与服务商配置',
+  'err.INSUFFICIENT_QUOTA': '当前账户额度不足或未开通计费，请检查服务商账单',
+  'err.ENDPOINT_OR_MODEL_NOT_FOUND': '接口地址或模型 ID 不存在，请检查 Base URL 与模型名称',
+  'err.RATE_LIMITED': '请求过于频繁（触发限流），请稍等几秒后重试',
+  'err.UPSTREAM_UNAVAILABLE': '模型服务暂时不可用，请稍后重试',
+  'err.LOCAL_SERVER_OFFLINE': '未检测到本地模型服务，请确认 Ollama / LM Studio 已启动',
+  'err.NETWORK_ERROR': '网络连接失败，请检查网络或代理设置',
   'err.TIMEOUT': '请求超时，请检查网络或代理',
   'err.ABORTED': '已停止',
   'err.UNKNOWN': '请求失败，请稍后重试',
 
   /* tray */
   'tray.open': '打开速查',
+  'tray.prompts': '当前提示词',
   'tray.settings': '设置…',
   'tray.launchAtLogin': '开机自动启动',
   'tray.quit': '退出 AskThis',
@@ -304,6 +324,11 @@ const en: Record<string, string> = {
   'popup.switcher.model': 'Model',
   'popup.switcher.reasoning': 'Reasoning',
   'popup.switcher.requery': 'Switch & regenerate',
+  'popup.pin': 'Pin card on screen',
+  'popup.unpin': 'Unpin card',
+  'popup.fontSize': 'Font size',
+  'popup.copyMarkdown': 'Copy Q&A',
+  'popup.markdownCopied': 'Copied Q&A',
 
   'settings.title': 'Settings',
   'nav.general': 'General',
@@ -349,6 +374,9 @@ const en: Record<string, string> = {
   'history.turns': '{n} turns',
   'history.copyAnswer': 'Copy answer',
   'history.delete': 'Delete entry',
+  'history.reopen': 'Continue in card',
+  'history.exportMarkdown': 'Export Markdown',
+  'history.exported': 'Exported',
   'history.disabledNotice': 'Query history is currently disabled — new queries will not be recorded.',
 
   'providers.section.active': 'Active',
@@ -406,6 +434,10 @@ const en: Record<string, string> = {
   'providers.custom': 'Custom',
   'providers.welcome':
     'Welcome to AskThis: add an API key for one of the services below, then select text in any app and press {keys}.',
+  'onboarding.title': 'Quick start in 3 steps',
+  'onboarding.step1': 'Add a provider API key (or local model)',
+  'onboarding.step2': 'Fetch and choose an active model',
+  'onboarding.step3': 'Select text or press {keys} anywhere to look up',
   'providers.security.noEncryption':
     'Secure key storage is unavailable on this system. API keys will be kept in memory only (re-enter after restart). To persist them anyway (not recommended), allow plaintext storage:',
 
@@ -492,11 +524,19 @@ const en: Record<string, string> = {
   'err.NO_PROVIDER': 'No provider configured — add one in Settings',
   'err.NO_MODEL': 'No model selected — choose or fetch one in Settings',
   'err.NO_API_KEY': 'No API key configured — open Settings to add one',
+  'err.AUTH_FAILED': 'Authentication failed (401/403) — check your API key and permissions',
+  'err.INSUFFICIENT_QUOTA': 'Insufficient quota or billing inactive — check your provider account',
+  'err.ENDPOINT_OR_MODEL_NOT_FOUND': 'Endpoint or model not found (404) — verify Base URL and model ID',
+  'err.RATE_LIMITED': 'Rate limit reached (429) — please retry in a few seconds',
+  'err.UPSTREAM_UNAVAILABLE': 'Upstream model service temporarily unavailable — please retry shortly',
+  'err.LOCAL_SERVER_OFFLINE': 'Local model server unreachable — ensure Ollama / LM Studio is running',
+  'err.NETWORK_ERROR': 'Network connection failed — check your internet or proxy settings',
   'err.TIMEOUT': 'Request timed out — check your network or proxy',
   'err.ABORTED': 'Stopped',
   'err.UNKNOWN': 'Request failed, please retry',
 
   'tray.open': 'Open AskThis',
+  'tray.prompts': 'Active prompt',
   'tray.settings': 'Settings…',
   'tray.launchAtLogin': 'Launch at login',
   'tray.quit': 'Quit AskThis',

@@ -83,6 +83,10 @@
 .at-iconbtn:active {
   background: var(--bg-active);
 }
+.at-iconbtn--active {
+  background: var(--accent-soft);
+  color: var(--accent) !important;
+}
 
 /* ---------- inputs ---------- */
 

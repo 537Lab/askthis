@@ -77,6 +77,7 @@ export function createDefaultConfig(): AppConfig {
     hideOnBlur: false,
     windowWidth: 480,
     maxWindowHeight: 560,
+    popupFontSize: 14,
 
     providers: [],
     activeProviderId: '',

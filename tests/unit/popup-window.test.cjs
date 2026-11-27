@@ -108,3 +108,37 @@ test('syncConfig updates popup width and clamps height/position within workArea'
   assert.equal(b.width, 600)
   assert.equal(b.height, 360)
 })
+
+test('pinned popup ignores hideOnBlur until hidden and reset', () => {
+  let blurHidden = 0
+  const { PopupWindow } = loadSource('src/main/windows/popup.ts', {
+    electron: {
+      BrowserWindow: class extends EventEmitter {
+        constructor() { super(); this.webContents = new EventEmitter(); this.webContents.setWindowOpenHandler = () => {} }
+        setAlwaysOnTop() {}
+        setVisibleOnAllWorkspaces() {}
+        loadFile() {}
+        isDestroyed() { return false }
+        getBounds() { return { x: 0, y: 0, width: 480, height: 200 } }
+        setBounds() {}
+        showInactive() {}
+        show() {}
+        moveTop() {}
+        hide() {}
+      },
+      shell: {},
+      screen: { getCursorScreenPoint: () => ({ x: 0, y: 0 }), getDisplayNearestPoint: () => ({ workArea: { x: 0, y: 0, width: 1440, height: 900 } }) }
+    }
+  }, { process: { platform: 'darwin', env: {} } })
+  const popup = new PopupWindow(() => ({ windowWidth: 480, hideOnBlur: true }), () => { blurHidden++ })
+  popup.ensureCreated({ file: 'popup.html' }, 'preload.js')
+  popup.setPinned(true)
+  popup.browserWindow.emit('blur')
+  assert.equal(blurHidden, 0, 'pinned popup must stay visible on blur')
+  popup.setPinned(false)
+  popup.browserWindow.emit('blur')
+  assert.equal(blurHidden, 1)
+  popup.setPinned(true)
+  popup.hide()
+  assert.equal(popup.isPinned(), false)
+})

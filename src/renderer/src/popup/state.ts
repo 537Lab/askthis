@@ -54,19 +54,32 @@ export const usePopupStore = create<PopupStore>((set) => ({
   setConfig: (config) => set({ config }),
 
   applyActivate: (payload) =>
-    set((s) => ({
-      config: s.config,
-      activationSeq: s.activationSeq + 1,
-      status: payload.needsPermission ? 'error' : payload.autoQuery ? 'waiting' : 'idle',
-      question: payload.text,
-      questionSource: payload.source,
-      truncated: !!payload.truncated,
-      needsPermission: !!payload.needsPermission,
-      turns:
-        payload.text && !payload.needsPermission ? [newTurn(payload.text)] : [],
-      model: '',
-      copied: false
-    })),
+    set((s) => {
+      const restored = payload.restoredTurns?.length
+        ? payload.restoredTurns.map((t) => ({
+            ...newTurn(t.q),
+            a: t.a
+          }))
+        : null
+      return {
+        config: s.config,
+        activationSeq: s.activationSeq + 1,
+        status: restored
+          ? 'done'
+          : payload.needsPermission
+            ? 'error'
+            : payload.autoQuery
+              ? 'waiting'
+              : 'idle',
+        question: payload.text,
+        questionSource: payload.source,
+        truncated: !!payload.truncated,
+        needsPermission: !!payload.needsPermission,
+        turns: restored ?? (payload.text && !payload.needsPermission ? [newTurn(payload.text)] : []),
+        model: payload.restoredModel ?? '',
+        copied: false
+      }
+    }),
 
   addUserTurn: (text) =>
     set((s) => ({

@@ -13,7 +13,7 @@ function popupHarness({ needsPermission = true, draft = ' typed question ', turn
     react: { ...React, useEffect: (effect) => effects.push(effect), useLayoutEffect: (effect) => effects.push(effect), useRef: (initial) => { const ref = { current: initial }; refs.push(ref); return ref }, useState: (initial) => [initial === '' ? draft : typeof initial === 'function' ? initial() : initial, () => {}] },
     './state': { usePopupStore },
     '../shared/ui': { useT: () => (key) => key, LocaleProvider: empty, Button: empty, IconButton: empty, Spinner: empty },
-    '../shared/icons': { CloseIcon: empty, CopyIcon: empty, CheckIcon: empty, StopIcon: empty, LockIcon: empty, LogoIcon: empty, GearIcon: empty, RefreshIcon: empty },
+    '../shared/icons': { CloseIcon: empty, CopyIcon: empty, CheckIcon: empty, StopIcon: empty, LockIcon: empty, LogoIcon: empty, GearIcon: empty, RefreshIcon: empty, PinIcon: empty },
     '../shared/markdown': { Markdown: empty }
   }, { navigator: { language: 'en-US' }, window: {
     api: {
@@ -25,6 +25,7 @@ function popupHarness({ needsPermission = true, draft = ' typed question ', turn
         send: (text) => calls.push(['send', text]),
         close: () => calls.push(['close']),
         stop: () => calls.push(['stop']),
+        setPinned: (pinned) => calls.push(['setPinned', pinned]),
         quickSwitch: (patch) => { calls.push(['quickSwitch', patch]); return Promise.resolve(config) }
       }
     },
@@ -224,4 +225,22 @@ test('long source text clamps visually while preserving full DOM textContent and
   const tShort = hShort.find((el) => el.type?.name === 'TurnView')
   const rShort = tShort.type(tShort.props)
   assert.equal(hShort.inTree(rShort, (el) => el.props?.className === 'turn__q-toggle'), null)
+})
+
+test('Cmd+P toggles pin and Cmd+1 switches prompt preset and requeries when idle', () => {
+  const h = popupHarness({
+    needsPermission: false,
+    turns: [{ q: 'q', a: 'a' }],
+    status: 'done',
+    config: { prompts: [{ id: 'p1', name: 'P1' }, { id: 'p2', name: 'P2' }], popupFontSize: 14 }
+  })
+  h.effects.forEach((effect) => effect())
+  h.listeners.keydown({ key: 'p', metaKey: true, preventDefault: () => {} })
+  h.listeners.keydown({ key: '2', metaKey: true, preventDefault: () => {} })
+  h.listeners.keydown({ key: '=', metaKey: true, preventDefault: () => {} })
+  assert.deepEqual(JSON.parse(JSON.stringify(h.calls)), [
+    ['setPinned', true],
+    ['quickSwitch', { promptId: 'p2', requery: true }],
+    ['quickSwitch', { popupFontSize: 15 }]
+  ])
 })

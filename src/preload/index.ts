@@ -52,7 +52,8 @@ const popupApi: PopupApi = {
     copy: (text: string) => ipcRenderer.send(IPC.PopupCopy, text),
     close: () => ipcRenderer.send(IPC.PopupClose),
     resize: (height: number) => ipcRenderer.send(IPC.PopupResize, height),
-    quickSwitch: (patch: SessionOverrides & { requery?: boolean }): Promise<PublicConfig> =>
+    setPinned: (pinned: boolean) => ipcRenderer.send(IPC.PopupSetPinned, pinned),
+    quickSwitch: (patch: SessionOverrides & { popupFontSize?: number; requery?: boolean }): Promise<PublicConfig> =>
       ipcRenderer.invoke(IPC.PopupQuickSwitch, patch)
   },
   app: appCommon
@@ -74,6 +75,7 @@ const settingsApi: SettingsApi = {
   },
   history: {
     list: (limit?: number): Promise<HistoryEntry[]> => ipcRenderer.invoke(IPC.HistoryList, limit),
+    reopen: (id: string): Promise<boolean> => ipcRenderer.invoke(IPC.HistoryReopen, id),
     delete: (id: string): Promise<void> => ipcRenderer.invoke(IPC.HistoryDelete, id),
     clear: (): Promise<void> => ipcRenderer.invoke(IPC.HistoryClear)
   }

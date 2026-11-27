@@ -249,6 +249,7 @@ export class ConfigStore {
     if (!REASONING_LEVELS.includes(cfg.reasoningLevel)) cfg.reasoningLevel = 'low'
     cfg.windowWidth = clamp(cfg.windowWidth, 320, 720, 480)
     cfg.maxWindowHeight = clamp(cfg.maxWindowHeight, 200, 900, 560)
+    cfg.popupFontSize = clamp(cfg.popupFontSize, 12, 18, 14)
     cfg.maxTokens = clamp(cfg.maxTokens, 64, 32768, 2048)
     cfg.requestTimeoutSec = clamp(cfg.requestTimeoutSec, 5, 600, 60)
     cfg.historyLimit = clamp(cfg.historyLimit, 0, 500, 50)
