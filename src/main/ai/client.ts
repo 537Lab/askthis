@@ -1,4 +1,5 @@
 import { net } from 'electron'
+import { classifyAIError } from './errors'
 import type {
   ChatMessage,
   FetchModelsResult,
@@ -13,7 +14,10 @@ import type {
 export class AIError extends Error {
   constructor(
     message: string,
-    public readonly detail?: string
+    public readonly detail?: string,
+    public readonly status?: number,
+    public readonly code?: string,
+    public readonly retryable?: boolean
   ) {
     super(message)
     this.name = 'AIError'
@@ -193,7 +197,15 @@ async function streamOpenAICompatible(opts: StreamOptions, signal: AbortSignal):
         continue
       }
       if (json.error) {
-        throw new AIError(json.error.message ?? 'API error', JSON.stringify(json.error).slice(0, 500))
+        const errMsg = String(json.error.message ?? 'API error')
+        const classified = classifyAIError(undefined, errMsg, provider.baseUrl)
+        throw new AIError(
+          errMsg,
+          JSON.stringify(json.error).slice(0, 500),
+          undefined,
+          classified.code || undefined,
+          classified.retryable
+        )
       }
       const choice = json.choices?.[0]
       const delta = choice?.delta ?? choice?.message
@@ -294,8 +306,17 @@ async function streamAnthropic(opts: StreamOptions, signal: AbortSignal): Promis
         case 'message_stop':
           sawStopMarker = true
           break
-        case 'error':
-          throw new AIError(json.error?.message ?? 'API error', JSON.stringify(json.error).slice(0, 500))
+        case 'error': {
+          const errMsg = String(json.error?.message ?? 'API error')
+          const classified = classifyAIError(undefined, errMsg, provider.baseUrl)
+          throw new AIError(
+            errMsg,
+            JSON.stringify(json.error).slice(0, 500),
+            undefined,
+            classified.code || undefined,
+            classified.retryable
+          )
+        }
       }
     }
   } catch (err) {
@@ -323,7 +344,7 @@ async function requestStream(
       signal
     })
   } catch (err) {
-    throw toNetworkError(err, signal)
+    throw toNetworkError(err, signal, url)
   }
   if (!res.ok) {
     const detail = await safeReadText(res)
@@ -334,7 +355,8 @@ async function requestStream(
     } catch {
       /* keep the HTTP code */
     }
-    throw new AIError(message, detail.slice(0, 800))
+    const classified = classifyAIError(res.status, message, url)
+    throw new AIError(message, detail.slice(0, 800), res.status, classified.code || undefined, classified.retryable)
   }
   if (!res.body) throw new AIError('Empty response body')
   return res
@@ -355,7 +377,7 @@ async function postJson(
       signal
     })
   } catch (err) {
-    throw toNetworkError(err, signal)
+    throw toNetworkError(err, signal, url)
   }
   if (!res.ok) {
     const detail = await safeReadText(res)
@@ -366,12 +388,13 @@ async function postJson(
     } catch {
       /* keep the HTTP code */
     }
-    throw new AIError(message, detail.slice(0, 800))
+    const classified = classifyAIError(res.status, message, url)
+    throw new AIError(message, detail.slice(0, 800), res.status, classified.code || undefined, classified.retryable)
   }
   return res
 }
 
-function toNetworkError(err: unknown, signal: AbortSignal): Error {
+function toNetworkError(err: unknown, signal: AbortSignal, baseUrl = ''): Error {
   if (signal.aborted) {
     const reason = (signal.reason ?? err) as any
     if (reason?.name === 'TimeoutError') return new AIError('request timed out')
@@ -380,7 +403,8 @@ function toNetworkError(err: unknown, signal: AbortSignal): Error {
     return e
   }
   const msg = err instanceof Error ? err.message : String(err)
-  return new AIError(msg)
+  const classified = classifyAIError(undefined, msg, baseUrl)
+  return new AIError(msg, undefined, undefined, classified.code || undefined, classified.retryable)
 }
 
 /** Merge a user abort signal with a timeout into one signal. */

@@ -112,3 +112,49 @@ test('Windows unsupported UIA still copies via keybd_event and restores old clip
   assert.equal(h.commands.length, 2)
   assert.deepEqual(h.writes, ['old clipboard'])
 })
+
+test('macOS changeCount detects repeated selection matching old clipboard and skips empty unchanged copy', async () => {
+  const { captureText } = loadSource('src/main/services/selection.ts', {
+    electron: {
+      clipboard: {
+        readText: async () => 'same text',
+        writeText: async () => {},
+        read: async () => [{ types: ['text/plain'] }]
+      }
+    },
+    'node:child_process': {
+      execFile: Object.assign(() => {}, {
+        [require('node:util').promisify.custom]: async (_file, args) => {
+          const s = args.join(' ')
+          if (s.includes('AXSelectedText')) return { stdout: 'ASKTHIS_UNKNOWN', stderr: '' }
+          return { stdout: 'ASKTHIS_COPIED\n', stderr: '' }
+        }
+      })
+    }
+  }, { process: { platform: 'darwin', env: {} } })
+  const copied = await captureText('auto')
+  assert.equal(copied.text, 'same text')
+  assert.equal(copied.source, 'selection')
+
+  const { captureText: captureUnchanged } = loadSource('src/main/services/selection.ts', {
+    electron: {
+      clipboard: {
+        readText: async () => 'old',
+        writeText: async () => {},
+        read: async () => [{ types: ['text/plain'] }]
+      }
+    },
+    'node:child_process': {
+      execFile: Object.assign(() => {}, {
+        [require('node:util').promisify.custom]: async (_file, args) => {
+          const s = args.join(' ')
+          if (s.includes('AXSelectedText')) return { stdout: 'ASKTHIS_UNKNOWN', stderr: '' }
+          return { stdout: 'ASKTHIS_UNCHANGED\n', stderr: '' }
+        }
+      })
+    }
+  }, { process: { platform: 'darwin', env: {} } })
+  const empty = await captureUnchanged('auto')
+  assert.equal(empty.text, '')
+  assert.equal(empty.source, 'none')
+})

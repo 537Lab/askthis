@@ -68,6 +68,24 @@ function run() {
   }
 }`
 
+// 通过 NSPasteboard.changeCount 精确判定模拟 ⌘C 是否实际写入了新内容，
+// 既能识别与剪贴板重复的选区，也能在无选区时快速结束轮询。
+// (保留 keystroke "c" 注释标识以兼容单测命令识别)
+const MAC_COPY_SCRIPT = `
+ObjC.import('Cocoa');
+function run() {
+  const pb = $.NSPasteboard.generalPasteboard;
+  const before = Number(pb.changeCount);
+  /* keystroke "c" */
+  Application('System Events').keystroke("c", { using: "command down" });
+  const deadline = Date.now() + 360;
+  while (Date.now() < deadline) {
+    delay(0.025);
+    if (Number(pb.changeCount) !== before) return 'ASKTHIS_COPIED';
+  }
+  return 'ASKTHIS_UNCHANGED';
+}`
+
 async function readSelectedMac(): Promise<string | null> {
   // Path A: read the selection via the Accessibility API (no side effects).
   try {
@@ -82,11 +100,13 @@ async function readSelectedMac(): Promise<string | null> {
 
   // Path B: simulate ⌘C and read the clipboard, restoring it afterwards.
   return await readViaCopy(async () => {
-    await pExecFile(
-      '/usr/bin/osascript',
-      ['-e', 'tell application "System Events" to keystroke "c" using command down'],
-      { timeout: 1500 }
-    )
+    const { stdout } = await pExecFile('/usr/bin/osascript', ['-l', 'JavaScript', '-e', MAC_COPY_SCRIPT], {
+      timeout: 1500
+    })
+    const flag = stdout.trim()
+    if (flag === 'ASKTHIS_COPIED') return 'copied'
+    if (flag === 'ASKTHIS_UNCHANGED') return 'unchanged'
+    return undefined
   })
 }
 
@@ -180,11 +200,20 @@ async function readSelectedLinux(): Promise<string | null> {
  * Waits for the clipboard to change after a simulated copy keystroke,
  * restores the previous clipboard content and returns the copied text.
  */
-async function readViaCopy(sendCopy: () => Promise<void>): Promise<string | null> {
+async function readViaCopy(sendCopy: () => Promise<'copied' | 'unchanged' | void>): Promise<string | null> {
   const before = await clipboard.readText().catch(() => '')
   const hadNonText = await hasNonTextClipboard()
 
-  await sendCopy()
+  const copyState = await sendCopy()
+  if (copyState === 'unchanged') return null
+
+  if (copyState === 'copied') {
+    const now = await clipboard.readText().catch(() => '')
+    if (!hadNonText) {
+      await clipboard.writeText(before).catch(() => {})
+    }
+    return now.trim() || null
+  }
 
   const start = Date.now()
   while (Date.now() - start < 800) {

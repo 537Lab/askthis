@@ -193,6 +193,19 @@ test('NO_MODEL error localizes properly and exposes Open Settings recovery butto
   assert.ok(settingsBtn, 'NO_MODEL must show Open Settings button')
 })
 
+test('AUTH_FAILED error triggers Open Settings and token usage displays alongside elapsed time', () => {
+  const h = popupHarness({
+    needsPermission: false,
+    turns: [{ q: 'first', a: 'ok', error: 'AUTH_FAILED', elapsedMs: 250, usage: { totalTokens: 88 } }],
+    status: 'error'
+  })
+  assert.ok(h.find((el) => el.props?.children === 'popup.noKey.action'))
+  const turn = h.find((el) => el.type?.name === 'TurnView')
+  const rendered = turn.type(turn.props)
+  assert.ok(h.inTree(rendered, (el) => el.props?.className === 'turn__time' && el.props?.children === '250 ms · 88 tok'))
+  assert.ok(h.inTree(rendered, (el) => el.props?.['aria-label'] === 'popup.copyMarkdown'))
+})
+
 test('incomplete stream renders localized notice on TurnView', () => {
   const h = popupHarness({ needsPermission: false, turns: [{ q: 'first', a: 'partial', incomplete: true }], status: 'done' })
   const turn = h.find((el) => el.type?.name === 'TurnView')

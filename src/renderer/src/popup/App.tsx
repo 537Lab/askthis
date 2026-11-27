@@ -439,14 +439,21 @@ function TurnView({ turn, first, source, isLast, status, showReasoning }: {
   showReasoning: boolean
 }): React.JSX.Element {
   const t = useT()
-  const { q, a, reasoning, error, stopped, incomplete, elapsedMs } = turn
+  const { q, a, reasoning, error, stopped, incomplete, elapsedMs, usage } = turn
   const active = isLast && (status === 'waiting' || status === 'streaming')
   const [copied, setCopied] = useState(false)
+  const [copiedMd, setCopiedMd] = useState(false)
   const [sourceExpanded, setSourceExpanded] = useState(false)
   const copyTimer = useRef<number | undefined>(undefined)
   const isLongSource = q.length > 260 || q.split('\n').length > 5
+  const totalTokens =
+    usage?.totalTokens ??
+    (usage?.promptTokens != null || usage?.completionTokens != null
+      ? (usage?.promptTokens ?? 0) + (usage?.completionTokens ?? 0)
+      : undefined)
   useEffect(() => {
     setCopied(false)
+    setCopiedMd(false)
     return () => window.clearTimeout(copyTimer.current)
   }, [a])
   return (
@@ -483,11 +490,25 @@ function TurnView({ turn, first, source, isLast, status, showReasoning }: {
         {a ? <button className="turn__action" aria-label={t('popup.copy')} onClick={() => {
           window.api.popup.copy(a)
           setCopied(true)
+          setCopiedMd(false)
           window.clearTimeout(copyTimer.current)
           copyTimer.current = window.setTimeout(() => setCopied(false), 1600)
         }}>{copied ? <CheckIcon size={12} /> : <CopyIcon size={12} />}<span>{copied ? t('popup.copied') : t('popup.copy')}</span></button> : null}
+        {a && q ? <button className="turn__action" aria-label={t('popup.copyMarkdown')} onClick={() => {
+          window.api.popup.copy(`**Q:**\n${q}\n\n**A:**\n${a}`)
+          setCopiedMd(true)
+          setCopied(false)
+          window.clearTimeout(copyTimer.current)
+          copyTimer.current = window.setTimeout(() => setCopiedMd(false), 1600)
+        }}>{copiedMd ? <CheckIcon size={12} /> : <CopyIcon size={12} />}<span>{copiedMd ? t('popup.markdownCopied') : t('popup.copyMarkdown')}</span></button> : null}
         {isLast ? <button className="turn__action" aria-label={t('popup.regenerate')} onClick={() => window.api.popup.regenerate()}><RefreshIcon size={12} /><span>{t('popup.regenerate')}</span></button> : null}
-        {elapsedMs != null ? <span className="turn__time">{formatMs(elapsedMs)}</span> : null}
+        {elapsedMs != null ? (
+          <span className="turn__time">
+            {totalTokens != null && totalTokens > 0
+              ? `${formatMs(elapsedMs)} · ${totalTokens} tok`
+              : formatMs(elapsedMs)}
+          </span>
+        ) : null}
       </div> : null}
     </section>
   )
@@ -508,14 +529,34 @@ function PermissionCard(): React.JSX.Element {
   )
 }
 
-const ERROR_TOKENS = ['NO_PROVIDER', 'NO_MODEL', 'NO_API_KEY', 'TIMEOUT', 'NEEDS_PERMISSION'] as const
+const ERROR_TOKENS = [
+  'NO_PROVIDER',
+  'NO_MODEL',
+  'NO_API_KEY',
+  'AUTH_FAILED',
+  'INSUFFICIENT_QUOTA',
+  'ENDPOINT_OR_MODEL_NOT_FOUND',
+  'RATE_LIMITED',
+  'UPSTREAM_UNAVAILABLE',
+  'LOCAL_SERVER_OFFLINE',
+  'NETWORK_ERROR',
+  'TIMEOUT',
+  'NEEDS_PERMISSION'
+] as const
 function localizeError(msg: string, t: (key: string, vars?: Record<string, string | number>) => string): string {
   if ((ERROR_TOKENS as readonly string[]).includes(msg)) return t(`err.${msg}`)
   if (msg === 'request timed out') return t('err.TIMEOUT')
   return msg
 }
 function needsSettings(msg: string | null | undefined): boolean {
-  return msg === 'NO_PROVIDER' || msg === 'NO_MODEL' || msg === 'NO_API_KEY'
+  return (
+    msg === 'NO_PROVIDER' ||
+    msg === 'NO_MODEL' ||
+    msg === 'NO_API_KEY' ||
+    msg === 'AUTH_FAILED' ||
+    msg === 'INSUFFICIENT_QUOTA' ||
+    msg === 'ENDPOINT_OR_MODEL_NOT_FOUND'
+  )
 }
 function formatMs(ms: number): string {
   return ms < 1000 ? `${ms} ms` : `${(ms / 1000).toFixed(1)} s`

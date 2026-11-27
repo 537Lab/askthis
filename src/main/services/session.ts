@@ -3,6 +3,7 @@ import type { CaptureSource, ChatMessage, HistoryEntry, HistoryTurn, QueryEvent 
 import type { ConfigStore } from '../store'
 import type { HistoryStore } from './history'
 import { AIError, streamChat } from '../ai/client'
+import { sleep } from '../utils/fs'
 import type { CaptureResult } from './selection'
 
 const MAX_INPUT_CHARS = 10000
@@ -226,25 +227,49 @@ export class QuerySession {
 
     this.deps.emit({ type: 'start', requestId: reqId, model: model || '(default)' })
     const t0 = Date.now()
+    let receivedDelta = false
 
     try {
-      const result = await streamChat({
-        provider,
-        apiKey,
-        model,
-        messages: requestMessages,
-        reasoningLevel: cfg.reasoningLevel,
-        temperature: cfg.temperature,
-        maxTokens: cfg.maxTokens,
-        timeoutSec: cfg.requestTimeoutSec,
-        signal: ctrl.signal,
-        onDelta: (channel, delta) => {
-          if (this.disposed || this.currentReqId !== reqId) return
-          if (channel === 'text') this.answer += delta
-          else this.reasoning += delta
-          this.deps.emit({ type: 'delta', requestId: reqId, channel, delta })
+      let result: Awaited<ReturnType<typeof streamChat>> | null = null
+      for (let attempt = 0; attempt < 2; attempt++) {
+        try {
+          result = await streamChat({
+            provider,
+            apiKey,
+            model,
+            messages: requestMessages,
+            reasoningLevel: cfg.reasoningLevel,
+            temperature: cfg.temperature,
+            maxTokens: cfg.maxTokens,
+            timeoutSec: cfg.requestTimeoutSec,
+            signal: ctrl.signal,
+            onDelta: (channel, delta) => {
+              if (this.disposed || this.currentReqId !== reqId) return
+              receivedDelta = true
+              if (channel === 'text') this.answer += delta
+              else this.reasoning += delta
+              this.deps.emit({ type: 'delta', requestId: reqId, channel, delta })
+            }
+          })
+          break
+        } catch (err) {
+          // 仅在尚未收到任何输出且属于瞬时可重试错误时自动轻重试一次
+          if (
+            attempt === 0 &&
+            err instanceof AIError &&
+            err.retryable &&
+            !receivedDelta &&
+            !ctrl.signal.aborted &&
+            !this.disposed
+          ) {
+            await sleep(600)
+            if (ctrl.signal.aborted || this.disposed || this.currentReqId !== reqId) return
+            continue
+          }
+          throw err
         }
-      })
+      }
+      if (!result) return
 
       if (this.disposed || this.currentReqId !== reqId) return
 
@@ -291,7 +316,7 @@ export class QuerySession {
       // keep the question around so "retry" can resend it cleanly
       this.parkDanglingQuestion()
       if (err instanceof AIError) {
-        fail(err.message, err.detail)
+        fail(err.code || err.message, err.detail || err.message)
       } else if (err instanceof Error && err.name === 'TimeoutError') {
         fail('TIMEOUT')
       } else {

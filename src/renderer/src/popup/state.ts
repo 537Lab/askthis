@@ -1,5 +1,5 @@
 import { create } from 'zustand'
-import type { ActivatePayload, CaptureSource, PublicConfig, QueryEvent } from '@shared/types'
+import type { ActivatePayload, CaptureSource, PublicConfig, QueryEvent, UsageInfo } from '@shared/types'
 
 export type PopupStatus = 'idle' | 'waiting' | 'streaming' | 'done' | 'error'
 
@@ -12,6 +12,7 @@ export interface Turn {
   stopped: boolean
   incomplete: boolean
   elapsedMs: number | null
+  usage?: UsageInfo | null
 }
 
 export interface PopupStore {
@@ -36,7 +37,7 @@ export interface PopupStore {
 }
 
 function newTurn(q: string): Turn {
-  return { q, a: '', reasoning: '', error: null, stopped: false, incomplete: false, elapsedMs: null }
+  return { q, a: '', reasoning: '', error: null, stopped: false, incomplete: false, elapsedMs: null, usage: null }
 }
 
 export const usePopupStore = create<PopupStore>((set) => ({
@@ -102,6 +103,7 @@ export const usePopupStore = create<PopupStore>((set) => ({
             last.stopped = false
             last.incomplete = false
             last.elapsedMs = null
+            last.usage = null
             turns[idx] = last
           }
           return { status: 'streaming', model: event.model, turns }
@@ -118,6 +120,7 @@ export const usePopupStore = create<PopupStore>((set) => ({
           if (last) {
             last.elapsedMs = event.elapsedMs
             last.incomplete = !!event.incomplete
+            last.usage = event.usage ?? null
             turns[idx] = last
           }
           return { status: 'done', turns }
