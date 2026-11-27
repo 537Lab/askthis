@@ -81,7 +81,6 @@ export function PromptsSection(): React.JSX.Element {
             >
               {p.id === config.activePromptId ? <span className="prompt-list__active-dot" /> : null}
               <span className="prompt-list__name">{p.name}</span>
-              {p.builtin ? <span className="prompt-list__builtin">{t('prompts.builtin')}</span> : null}
             </button>
           ))}
           <button className="prov-list__add" onClick={() => void addNew()}>
@@ -92,12 +91,7 @@ export function PromptsSection(): React.JSX.Element {
         <div className="prov-detail">
           <div className="form-grid">
             <div>
-              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-                <label className="form-field__label" style={{ margin: 0 }}>
-                  {t('prompts.nameField')}
-                </label>
-                {isActive ? <span className="at-badge at-badge--accent">{t('prompts.inUse')}</span> : null}
-              </div>
+              <label className="form-field__label">{t('prompts.nameField')}</label>
               <Field value={editing.name} onCommit={(v) => update({ name: v.trim() || editing.name })} />
             </div>
 
@@ -110,7 +104,6 @@ export function PromptsSection(): React.JSX.Element {
                 mono
                 rows={9}
                 value={editing.system}
-                placeholder={t('prompts.system')}
                 onCommit={(v) => update({ system: v })}
               />
             </div>
@@ -122,9 +115,9 @@ export function PromptsSection(): React.JSX.Element {
                 mono
                 rows={3}
                 value={editing.template}
+                placeholder="{{text}}"
                 onCommit={(v) => update({ template: v })}
               />
-              <div className="form-hint">{t('prompts.template.desc')}</div>
             </div>
 
             <hr className="form-sep" />

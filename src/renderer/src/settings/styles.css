@@ -137,51 +137,13 @@ body.is-mac .sidebar {
   margin-bottom: 22px;
 }
 
-.onboarding {
-  max-width: 720px;
-  background: var(--bg-soft);
-  border: 1px solid var(--border);
-  border-radius: 10px;
-  padding: 12px 15px;
-  margin-bottom: 20px;
-}
-.onboarding__title {
-  font-size: 12.5px;
-  font-weight: 600;
-  color: var(--text);
-  margin-bottom: 8px;
-}
-.onboarding__steps {
+.active-model-row {
   display: flex;
-  flex-direction: column;
-  gap: 6px;
+  gap: 10px;
+  padding: 12px 14px;
 }
-.onboarding__step {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  font-size: 12.5px;
-  color: var(--text-2);
-}
-.onboarding__step--done {
-  color: var(--success);
-}
-.onboarding__badge {
-  width: 18px;
-  height: 18px;
-  border-radius: 50%;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 11px;
-  font-weight: 600;
-  background: var(--bg-active);
-  color: var(--text-2);
-  flex: none;
-}
-.onboarding__step--done .onboarding__badge {
-  background: rgba(44, 158, 99, 0.16);
-  color: var(--success);
+.active-model-row + .at-row {
+  border-top: 1px solid var(--border);
 }
 
 /* ---------- providers layout ---------- */
@@ -300,6 +262,38 @@ body.is-mac .sidebar {
   margin: 4px 0;
 }
 
+.form-advanced__summary {
+  cursor: pointer;
+  user-select: none;
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--text-3);
+  list-style: none;
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+}
+.form-advanced__summary::-webkit-details-marker {
+  display: none;
+}
+.form-advanced__summary::before {
+  content: '›';
+  font-size: 14px;
+  transition: transform 0.12s ease;
+}
+.form-advanced[open] .form-advanced__summary::before {
+  transform: rotate(90deg);
+}
+.form-advanced__summary:hover {
+  color: var(--text);
+}
+.form-advanced__body {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  padding-top: 10px;
+}
+
 /* ---------- provider model list ---------- */
 
 .prov-models {
@@ -404,14 +398,6 @@ body.is-mac .sidebar {
   border-radius: 50%;
   background: var(--accent);
 }
-.prompt-list__builtin {
-  flex: none;
-  font-size: 10px;
-  color: var(--text-3);
-  border: 1px solid var(--border-2);
-  border-radius: 4px;
-  padding: 1px 4px;
-}
 
 /* ---------- modal ---------- */
 
@@ -513,8 +499,8 @@ body.is-mac .sidebar {
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 5px;
-  padding: 14px 0 16px;
+  gap: 6px;
+  padding: 20px 0 24px;
 }
 .about__hero svg {
   color: var(--accent);
@@ -527,24 +513,10 @@ body.is-mac .sidebar {
   font-size: 12.5px;
   color: var(--text-3);
 }
-.about__desc {
-  max-width: 520px;
-  margin: 0 auto 24px;
-  text-align: center;
-  font-size: 13px;
-  line-height: 1.7;
-  color: var(--text-2);
-}
 .about__links {
   display: flex;
   justify-content: center;
   gap: 10px;
-  margin-bottom: 14px;
-}
-.about__made {
-  text-align: center;
-  font-size: 12px;
-  color: var(--text-3);
 }
 
 /* ---------- history ---------- */

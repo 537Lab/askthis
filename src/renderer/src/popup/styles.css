@@ -37,8 +37,8 @@ html, body { background: transparent; overflow: hidden; }
   padding: 11px 12px; border-radius: 11px;
   background: var(--bg); border: 1px solid var(--border-2); box-shadow: var(--shadow-pop);
 }
-.switcher__group { display: flex; flex-direction: column; gap: 5px; }
-.switcher__label { font-size: 10.5px; font-weight: 600; color: var(--popup-muted); }
+.switcher__row { display: flex; align-items: center; gap: 8px; }
+.switcher__label { flex: none; font-size: 11px; font-weight: 550; color: var(--popup-muted); }
 .switcher__chips { display: flex; flex-wrap: wrap; gap: 5px; }
 .switcher__chip {
   padding: 3px 8px; border-radius: 999px; border: 1px solid var(--border-2);
@@ -47,7 +47,7 @@ html, body { background: transparent; overflow: hidden; }
 .switcher__chip:hover { background: var(--bg-hover); color: var(--text); }
 .switcher__chip--active { background: var(--accent-soft); border-color: var(--accent-border); color: var(--accent); font-weight: 600; }
 .switcher__select { font-size: 12px; padding: 5px 28px 5px 8px; }
-.switcher__segments { display: grid; grid-template-columns: repeat(5, 1fr); gap: 4px; }
+.switcher__segments { flex: 1; display: grid; grid-template-columns: repeat(5, 1fr); gap: 4px; }
 .switcher__seg {
   padding: 4px 2px; border-radius: 6px; border: 1px solid var(--border);
   background: var(--bg-soft); color: var(--text-2); font: inherit; font-size: 11px; cursor: pointer;
@@ -99,7 +99,8 @@ html, body { background: transparent; overflow: hidden; }
 .cursor { display: inline-block; width: 5px; height: 12px; background: var(--accent); animation: at-blink 1s steps(1) infinite; vertical-align: text-bottom; border-radius: 2px; margin: 2px 0 0 2px; }
 @keyframes at-blink { 50% { opacity: 0; } }
 
-.turn__actions { display: flex; align-items: center; gap: 3px; margin: 10px 0 -3px; min-height: 28px; }
+.turn__actions { display: flex; align-items: center; gap: 3px; margin: 10px 0 -3px; min-height: 28px; opacity: .58; transition: opacity .15s ease; }
+.turn:hover .turn__actions, .turn__actions:focus-within { opacity: 1; }
 .turn__action { display: inline-flex; align-items: center; gap: 5px; min-height: 28px; padding: 4px 7px; border: 0; border-radius: 6px; background: none; color: var(--popup-muted); font: inherit; font-size: 11px; cursor: pointer; }
 .turn__action:hover { color: var(--text); background: var(--bg-hover); }
 .turn__time { margin-left: auto; font-size: 10px; color: var(--popup-muted); font-variant-numeric: tabular-nums; }

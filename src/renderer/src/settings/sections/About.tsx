@@ -40,8 +40,6 @@ export function AboutSection(): React.JSX.Element {
         <div className="about__tagline">{t('app.tagline')}</div>
       </div>
 
-      <p className="about__desc">{t('about.desc')}</p>
-
       <Section>
         <Row label={t('about.version')}>
           <span className="at-hint">{info?.appVersion ?? '—'}</span>
@@ -69,7 +67,6 @@ export function AboutSection(): React.JSX.Element {
           {t('about.checkUpdates')}
         </Button>
       </div>
-      <p className="about__made">{t('about.madeWith')}</p>
     </div>
   )
 }

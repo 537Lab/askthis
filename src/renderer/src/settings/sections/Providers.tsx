@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useState } from 'react'
 import type { ModelInfo, ProviderConfig, ProviderKind, ProviderPreset, PublicProvider, ReasoningStyle } from '@shared/types'
 import { PROVIDER_PRESETS, providerFromPreset } from '@shared/presets'
-import { useT, Section, Row, Button, ConfirmButton, Field, NumberField, Switch, IconButton, Spinner, prettyAccelerator } from '../../shared/ui'
+import { useT, Section, Row, Button, ConfirmButton, Field, NumberField, Switch, IconButton, Spinner } from '../../shared/ui'
 import { TrashIcon, RefreshIcon, ExternalIcon, CheckIcon, EyeIcon, EyeOffIcon, SearchIcon } from '../../shared/icons'
 import { useSettingsStore } from '../store'
 
@@ -18,10 +18,6 @@ export function ProvidersSection(): React.JSX.Element {
 
   const editing = config.providers.find((p) => p.id === editingId) ?? config.providers[0]
   const activeProvider = config.providers.find((p) => p.id === config.activeProviderId)
-  const hasUsableProvider = config.providers.some(
-    (p) => p.hasKey || /^https?:\/\/(localhost|127\.0\.0\.1|\[::1\])(?=[:/]|$)/i.test(p.baseUrl)
-  )
-  const hasActiveModel = Boolean(config.activeModelId)
 
   return (
     <>
@@ -36,69 +32,50 @@ export function ProvidersSection(): React.JSX.Element {
           </div>
         </div>
       ) : null}
-      {(!hasUsableProvider || !hasActiveModel) ? (
-        <div className="onboarding">
-          <div className="onboarding__title">{t('onboarding.title')}</div>
-          <div className="onboarding__steps">
-            <div className={`onboarding__step${hasUsableProvider ? ' onboarding__step--done' : ''}`}>
-              <span className="onboarding__badge">{hasUsableProvider ? '✓' : '1'}</span>
-              <span>{t('onboarding.step1')}</span>
-            </div>
-            <div className={`onboarding__step${hasActiveModel ? ' onboarding__step--done' : ''}`}>
-              <span className="onboarding__badge">{hasActiveModel ? '✓' : '2'}</span>
-              <span>{t('onboarding.step2')}</span>
-            </div>
-            <div className="onboarding__step">
-              <span className="onboarding__badge">3</span>
-              <span>{t('onboarding.step3', { keys: prettyAccelerator(config.shortcut) })}</span>
-            </div>
-          </div>
-        </div>
-      ) : null}
 
       <Section title={t('providers.section.active')}>
-        <Row label={t('providers.section.active')} desc={t('providers.section.active.desc')} stack>
-          <div style={{ display: 'flex', gap: 10, width: '100%' }}>
-            <select
-              className="at-select"
-              style={{ flex: 1 }}
-              value={config.activeProviderId}
-              onChange={(e) => {
-                const pid = e.target.value
-                const p = config.providers.find((x) => x.id === pid)
-                void patch({ activeProviderId: pid, activeModelId: p?.models[0]?.id ?? '' })
-              }}
-            >
-              {config.providers.length === 0 ? (
-                <option value="">{t('providers.empty.message')}</option>
-              ) : (
-                config.providers.map((p) => (
-                  <option key={p.id} value={p.id}>
-                    {p.name}
-                  </option>
-                ))
-              )}
-            </select>
-            <select
-              className="at-select"
-              style={{ flex: 1 }}
-              value={config.activeModelId}
-              disabled={!activeProvider?.models.length}
-              onChange={(e) => void patch({ activeModelId: e.target.value })}
-            >
-              {activeProvider?.models.length ? (
-                activeProvider.models.map((m) => (
-                  <option key={m.id} value={m.id}>
-                    {m.id}
-                  </option>
-                ))
-              ) : (
-                <option value="">—</option>
-              )}
-            </select>
-          </div>
-        </Row>
-        <Row label={t('models.reasoningLevel')} desc={t('models.reasoningLevel.desc')}>
+        <div className="active-model-row">
+          <select
+            className="at-select"
+            style={{ flex: 1 }}
+            aria-label={t('providers.section.services')}
+            value={config.activeProviderId}
+            onChange={(e) => {
+              const pid = e.target.value
+              const p = config.providers.find((x) => x.id === pid)
+              void patch({ activeProviderId: pid, activeModelId: p?.models[0]?.id ?? '' })
+            }}
+          >
+            {config.providers.length === 0 ? (
+              <option value="">{t('providers.empty.message')}</option>
+            ) : (
+              config.providers.map((p) => (
+                <option key={p.id} value={p.id}>
+                  {p.name}
+                </option>
+              ))
+            )}
+          </select>
+          <select
+            className="at-select"
+            style={{ flex: 1 }}
+            aria-label={t('providers.models')}
+            value={config.activeModelId}
+            disabled={!activeProvider?.models.length}
+            onChange={(e) => void patch({ activeModelId: e.target.value })}
+          >
+            {activeProvider?.models.length ? (
+              activeProvider.models.map((m) => (
+                <option key={m.id} value={m.id}>
+                  {m.id}
+                </option>
+              ))
+            ) : (
+              <option value="">—</option>
+            )}
+          </select>
+        </div>
+        <Row label={t('models.reasoningLevel')}>
           <select
             className="at-select"
             style={{ width: 140 }}
@@ -112,21 +89,22 @@ export function ProvidersSection(): React.JSX.Element {
             ))}
           </select>
         </Row>
-        <Row label={t('models.showReasoning')} desc={t('models.showReasoning.desc')}>
+        <Row label={t('models.showReasoning')}>
           <Switch checked={config.showReasoning} onChange={(v) => void patch({ showReasoning: v })} />
         </Row>
-        <Row label={t('models.maxTokens')} desc={t('models.maxTokens.desc')}>
+        <Row label={t('models.maxTokens')}>
           <NumberField
             value={config.maxTokens}
             min={64}
             max={32768}
+            suffix="tokens"
             onCommit={(v) => void patch({ maxTokens: v })}
           />
         </Row>
-        <Row label={t('models.temperature')} desc={t('models.temperature.desc')}>
+        <Row label={t('models.temperature')}>
           <Field
             width={110}
-            placeholder="—"
+            placeholder={t('common.default')}
             value={config.temperature == null ? '' : String(config.temperature)}
             onCommit={(v) => {
               const s = v.trim()
@@ -139,7 +117,7 @@ export function ProvidersSection(): React.JSX.Element {
             }}
           />
         </Row>
-        <Row label={t('models.timeout')} desc={t('models.timeout.desc')}>
+        <Row label={t('models.timeout')}>
           <NumberField
             value={config.requestTimeoutSec}
             min={5}
@@ -297,8 +275,11 @@ function ProviderForm({ provider }: { provider: PublicProvider }): React.JSX.Ele
 
       <div>
         <label className="form-field__label">{t('providers.baseUrl')}</label>
-        <Field value={provider.baseUrl} onCommit={(v) => update({ baseUrl: v.trim() })} />
-        <div className="form-hint">{t('providers.baseUrl.desc')}</div>
+        <Field
+          value={provider.baseUrl}
+          placeholder="https://api.example.com/v1"
+          onCommit={(v) => update({ baseUrl: v.trim() })}
+        />
       </div>
 
       <div>
@@ -333,7 +314,6 @@ function ProviderForm({ provider }: { provider: PublicProvider }): React.JSX.Ele
             </Button>
           ) : null}
         </div>
-        {provider.hasKey ? <div className="form-hint">{t('providers.apiKey.keep')}</div> : null}
       </div>
 
       <div className="form-actions">
@@ -381,36 +361,39 @@ function ProviderForm({ provider }: { provider: PublicProvider }): React.JSX.Ele
         ) : null}
       </div>
 
-      <div>
-        <label className="form-field__label">{t('providers.reasoningStyle')}</label>
-        <select
-          className="at-select"
-          value={provider.reasoningStyle}
-          onChange={(e) => update({ reasoningStyle: e.target.value as ReasoningStyle })}
-        >
-          <option value="auto">{t('providers.reasoningStyle.auto')}</option>
-          <option value="effort">{t('providers.reasoningStyle.effort')}</option>
-          <option value="deepseek">{t('providers.reasoningStyle.deepseek')}</option>
-          <option value="anthropic">{t('providers.reasoningStyle.anthropic')}</option>
-          <option value="openrouter">{t('providers.reasoningStyle.openrouter')}</option>
-          <option value="none">{t('providers.reasoningStyle.none')}</option>
-        </select>
-        <div className="form-hint">{t('providers.reasoningStyle.desc')}</div>
-      </div>
+      <details className="form-advanced">
+        <summary className="form-advanced__summary">{t('providers.advanced')}</summary>
+        <div className="form-advanced__body">
+          <div>
+            <label className="form-field__label">{t('providers.reasoningStyle')}</label>
+            <select
+              className="at-select"
+              value={provider.reasoningStyle}
+              onChange={(e) => update({ reasoningStyle: e.target.value as ReasoningStyle })}
+            >
+              <option value="auto">{t('providers.reasoningStyle.auto')}</option>
+              <option value="effort">{t('providers.reasoningStyle.effort')}</option>
+              <option value="deepseek">{t('providers.reasoningStyle.deepseek')}</option>
+              <option value="anthropic">{t('providers.reasoningStyle.anthropic')}</option>
+              <option value="openrouter">{t('providers.reasoningStyle.openrouter')}</option>
+              <option value="none">{t('providers.reasoningStyle.none')}</option>
+            </select>
+          </div>
 
-      <div>
-        <label className="form-field__label">{t('providers.headers')}</label>
-        <Field
-          multiline
-          mono
-          rows={3}
-          value={headersText}
-          placeholder={'X-Custom-Header: value'}
-          onCommit={(v) => update({ customHeaders: parseHeaders(v) })}
-        />
-        <div className="form-hint">{t('providers.headers.desc')}</div>
-        <div className="form-hint">{t('providers.headers.securityNote')}</div>
-      </div>
+          <div>
+            <label className="form-field__label">{t('providers.headers')}</label>
+            <Field
+              multiline
+              mono
+              rows={3}
+              value={headersText}
+              placeholder={'X-Custom-Header: value'}
+              onCommit={(v) => update({ customHeaders: parseHeaders(v) })}
+            />
+            {headersText.trim() ? <div className="form-hint">{t('providers.headers.securityNote')}</div> : null}
+          </div>
+        </div>
+      </details>
 
       <hr className="form-sep" />
 
@@ -584,9 +567,9 @@ function AddProviderModal({
           {PROVIDER_PRESETS.map((preset) => (
             <button key={preset.id} className="modal__item" onClick={() => void add(preset)}>
               <span>{preset.name}</span>
-              <span className="modal__item-hint">
-                {preset.requiresKey ? 'API key' : preset.baseUrl.includes('localhost') ? 'local' : ''}
-              </span>
+              {!preset.requiresKey && preset.baseUrl.includes('localhost') ? (
+                <span className="modal__item-hint">{t('providers.localTag')}</span>
+              ) : null}
             </button>
           ))}
         </div>

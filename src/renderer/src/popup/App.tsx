@@ -356,54 +356,49 @@ function QuickSwitcher({
     <>
       <div className="switcher-backdrop" onClick={onClose} />
       <div className="switcher" role="dialog" aria-label={t('popup.switcher.prompt')}>
-        <div className="switcher__group">
-          <div className="switcher__label">{t('popup.switcher.prompt')}</div>
-          <div className="switcher__chips">
-            {(cfg.prompts ?? []).map((p) => (
-              <button
-                key={p.id}
-                type="button"
-                className={`switcher__chip${p.id === cfg.activePromptId ? ' switcher__chip--active' : ''}`}
-                onClick={() => apply({ promptId: p.id, requery: canRequery }, true)}
-              >
-                {p.name}
-              </button>
-            ))}
-          </div>
+        <div className="switcher__chips" role="group" aria-label={t('popup.switcher.prompt')}>
+          {(cfg.prompts ?? []).map((p) => (
+            <button
+              key={p.id}
+              type="button"
+              className={`switcher__chip${p.id === cfg.activePromptId ? ' switcher__chip--active' : ''}`}
+              onClick={() => apply({ promptId: p.id, requery: canRequery }, true)}
+            >
+              {p.name}
+            </button>
+          ))}
         </div>
 
-        <div className="switcher__group">
-          <label className="switcher__label" htmlFor="popup-model-select">{t('popup.switcher.model')}</label>
-          <select
-            id="popup-model-select"
-            className="at-select switcher__select"
-            value={modelValue}
-            onChange={(e) => {
-              const raw = e.target.value
-              const idx = raw.indexOf('::')
-              if (idx <= 0) return
-              apply({ providerId: raw.slice(0, idx), modelId: raw.slice(idx + 2) })
-            }}
-          >
-            {((cfg.providers) ?? []).map((p) => (
-              <optgroup key={p.id} label={p.name}>
-                {p.models.length ? (
-                  p.models.map((m) => (
-                    <option key={`${p.id}::${m.id}`} value={`${p.id}::${m.id}`}>
-                      {m.id}
-                    </option>
-                  ))
-                ) : (
-                  <option value={`${p.id}::`} disabled>—</option>
-                )}
-              </optgroup>
-            ))}
-          </select>
-        </div>
+        <select
+          id="popup-model-select"
+          aria-label={t('popup.switcher.model')}
+          className="at-select switcher__select"
+          value={modelValue}
+          onChange={(e) => {
+            const raw = e.target.value
+            const idx = raw.indexOf('::')
+            if (idx <= 0) return
+            apply({ providerId: raw.slice(0, idx), modelId: raw.slice(idx + 2) })
+          }}
+        >
+          {((cfg.providers) ?? []).map((p) => (
+            <optgroup key={p.id} label={p.name}>
+              {p.models.length ? (
+                p.models.map((m) => (
+                  <option key={`${p.id}::${m.id}`} value={`${p.id}::${m.id}`}>
+                    {m.id}
+                  </option>
+                ))
+              ) : (
+                <option value={`${p.id}::`} disabled>—</option>
+              )}
+            </optgroup>
+          ))}
+        </select>
 
-        <div className="switcher__group">
-          <div className="switcher__label">{t('popup.switcher.reasoning')}</div>
-          <div className="switcher__segments">
+        <div className="switcher__row">
+          <span className="switcher__label">{t('popup.switcher.reasoning')}</span>
+          <div className="switcher__segments" role="group" aria-label={t('popup.switcher.reasoning')}>
             {(['off', 'low', 'medium', 'high', 'max'] as ReasoningLevel[]).map((lv) => (
               <button
                 key={lv}

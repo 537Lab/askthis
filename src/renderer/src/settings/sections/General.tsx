@@ -77,8 +77,8 @@ export function GeneralSection(): React.JSX.Element {
 
   return (
     <>
-      <Section title={t('nav.general')}>
-        <Row label={t('general.launchAtLogin')} desc={t('general.launchAtLogin.desc')}>
+      <Section>
+        <Row label={t('general.launchAtLogin')}>
           <Switch checked={config.launchAtLogin} onChange={(v) => void patch({ launchAtLogin: v })} />
         </Row>
         <Row label={t('general.language')}>
@@ -107,8 +107,8 @@ export function GeneralSection(): React.JSX.Element {
         </Row>
       </Section>
 
-      <Section title={t('general.selectionMode')}>
-        <Row label={t('general.selectionMode')} desc={t('general.selectionMode.desc')}>
+      <Section title={t('general.section.capture')}>
+        <Row label={t('general.selectionMode')}>
           <select
             className="at-select"
             style={{ width: 176 }}
@@ -121,14 +121,14 @@ export function GeneralSection(): React.JSX.Element {
           </select>
         </Row>
         {config.selectionMode === 'auto' ? (
-          <Row label={t('general.clipboardFallback')} desc={t('general.clipboardFallback.desc')}>
+          <Row label={t('general.clipboardFallback')}>
             <Switch
               checked={config.clipboardFallback}
               onChange={(v) => void patch({ clipboardFallback: v })}
             />
           </Row>
         ) : null}
-        <Row label={t('general.hideOnBlur')} desc={t('general.hideOnBlur.desc')}>
+        <Row label={t('general.hideOnBlur')}>
           <Switch checked={config.hideOnBlur} onChange={(v) => void patch({ hideOnBlur: v })} />
         </Row>
         <Row label={t('general.windowWidth')}>
@@ -152,7 +152,7 @@ export function GeneralSection(): React.JSX.Element {
       </Section>
 
       <Section title={t('general.history')}>
-        <Row label={t('general.history.enabled')} desc={t('general.history.desc')}>
+        <Row label={t('general.history.enabled')}>
           <Switch checked={config.historyEnabled} onChange={(v) => void patch({ historyEnabled: v })} />
         </Row>
         <Row label={t('general.history.limit')}>
@@ -174,15 +174,15 @@ export function GeneralSection(): React.JSX.Element {
       </Section>
 
       <Section>
-        <Row label={t('config.export')} desc={importNote ? importNote.text : undefined}>
+        <Row label={t('config.section')} desc={importNote ? importNote.text : undefined}>
           <div className="form-actions">
             <Button size="sm" onClick={exportConfig}>
               <DownloadIcon size={12} />
-              <span>{t('config.export')}</span>
+              <span>{t('common.export')}</span>
             </Button>
             <Button size="sm" onClick={() => fileInputRef.current?.click()}>
               <UploadIcon size={12} />
-              <span>{t('config.import')}</span>
+              <span>{t('common.import')}</span>
             </Button>
             <input
               ref={fileInputRef}

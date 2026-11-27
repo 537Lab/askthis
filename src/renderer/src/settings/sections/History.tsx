@@ -77,13 +77,6 @@ export function HistorySection(): React.JSX.Element {
     window.setTimeout(() => setExported(false), 1600)
   }
 
-  const sourceLabel = (src: string): string => {
-    if (src === 'selection' || src === 'clipboard' || src === 'manual') {
-      return t(`popup.source.${src}`)
-    }
-    return t('popup.source.manual')
-  }
-
   return (
     <>
       {!config.historyEnabled ? (
@@ -108,7 +101,9 @@ export function HistorySection(): React.JSX.Element {
               onChange={(e) => setQuery(e.target.value)}
             />
           </div>
-          <span className="at-hint">{t('history.count', { n: filtered.length })}</span>
+          {query.trim() ? (
+            <span className="at-hint">{filtered.length}/{entries.length}</span>
+          ) : null}
           <Button size="sm" disabled={filtered.length === 0} onClick={exportMarkdown}>
             <DownloadIcon size={12} />
             <span>{exported ? t('history.exported') : t('history.exportMarkdown')}</span>
@@ -141,9 +136,7 @@ export function HistorySection(): React.JSX.Element {
                     <div className="history-item__q">{item.question}</div>
                     <div className="history-item__meta">
                       <span>{formatTime(item.ts)}</span>
-                      {count > 1 ? (
-                        <span className="at-badge">{t('history.turns', { n: count })}</span>
-                      ) : null}
+                      {count > 1 ? <span>· {count}</span> : null}
                       {item.model ? <span className="history-item__model">{item.model}</span> : null}
                     </div>
                   </button>
@@ -154,9 +147,9 @@ export function HistorySection(): React.JSX.Element {
             {selected ? (
               <div className="history-detail">
                 <div className="history-detail__meta">
-                  <span className="at-badge">{sourceLabel(selected.source)}</span>
-                  {selected.promptName ? <span className="at-badge at-badge--accent">{selected.promptName}</span> : null}
-                  {selected.model ? <span className="at-hint">{selected.model}</span> : null}
+                  {[selected.promptName, selected.model].filter(Boolean).length ? (
+                    <span className="at-hint">{[selected.promptName, selected.model].filter(Boolean).join(' · ')}</span>
+                  ) : null}
                   <span className="at-hint" style={{ marginLeft: 'auto' }}>
                     {new Date(selected.ts).toLocaleString()}
                   </span>

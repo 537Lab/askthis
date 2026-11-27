@@ -63,10 +63,7 @@ export function InteractionSection(): React.JSX.Element {
             {recording ? (
               <span className="recording-hint">{t('shortcut.recording')}</span>
             ) : (
-              <>
-                <Kbd accelerator={config.shortcut} />
-                <span className="at-hint">{t('shortcut.desc')}</span>
-              </>
+              <Kbd accelerator={config.shortcut} />
             )}
           </div>
           <div className="form-actions">
