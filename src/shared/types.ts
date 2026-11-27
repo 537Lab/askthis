@@ -145,6 +145,13 @@ export interface ChatMessage {
 
 export type CaptureSource = 'selection' | 'clipboard' | 'none'
 
+export interface SessionOverrides {
+  providerId?: string
+  modelId?: string
+  promptId?: string
+  reasoningLevel?: ReasoningLevel
+}
+
 export interface ActivatePayload {
   /** Text captured from the front app / clipboard (may be empty). */
   text: string
@@ -155,6 +162,8 @@ export interface ActivatePayload {
   needsPermission?: boolean
   /** The captured text was truncated to the input limit. */
   truncated?: boolean
+  /** Active prompt id at the time of activation. */
+  promptId?: string
 }
 
 export interface UsageInfo {
@@ -167,7 +176,7 @@ export interface UsageInfo {
 export type QueryEvent =
   | { type: 'start'; requestId: string; model: string }
   | { type: 'delta'; requestId: string; channel: 'text' | 'reasoning'; delta: string }
-  | { type: 'done'; requestId: string; elapsedMs: number; usage?: UsageInfo }
+  | { type: 'done'; requestId: string; elapsedMs: number; usage?: UsageInfo; incomplete?: boolean }
   | { type: 'error'; requestId: string; message: string }
   | { type: 'aborted'; requestId: string }
 
@@ -200,6 +209,11 @@ export interface AccessibilityStatus {
 
 /* ============================== History ============================== */
 
+export interface HistoryTurn {
+  q: string
+  a: string
+}
+
 export interface HistoryEntry {
   id: string
   ts: number
@@ -207,4 +221,8 @@ export interface HistoryEntry {
   question: string
   answer: string
   model: string
+  sessionId?: string
+  turns?: HistoryTurn[]
+  promptId?: string
+  promptName?: string
 }

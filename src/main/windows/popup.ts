@@ -8,11 +8,8 @@ import type { AppConfig } from '@shared/types'
 export class PopupWindow {
   private win: BrowserWindow | null = null
   private userMoved = false
-  /**
-   * setBounds() also fires the window's 'moved' event — this counter lets the
-   * 'moved' handler tell programmatic resizes apart from real user drags.
-   */
-  private programmaticMoves = 0
+  /** 记录程序最近一次设定的窗口坐标与有效期，避免漏收 moved 事件导致计数器泄漏 */
+  private expectedOrigin: { x: number; y: number; until: number } | null = null
 
   constructor(
     private getConfig: () => AppConfig,
@@ -83,12 +80,20 @@ export class PopupWindow {
       event.preventDefault()
     })
 
-    // Track real user drags only (programmatic setBounds is counted out).
+    // 仅记录真实用户拖拽：若当前坐标与近期程序预期坐标一致，则判定为程序调整
     win.on('moved', () => {
-      if (this.programmaticMoves > 0) {
-        this.programmaticMoves--
+      if (!this.win || this.win.isDestroyed()) return
+      const cur = this.win.getBounds()
+      if (
+        this.expectedOrigin &&
+        Date.now() <= this.expectedOrigin.until &&
+        cur.x === this.expectedOrigin.x &&
+        cur.y === this.expectedOrigin.y
+      ) {
+        this.expectedOrigin = null
         return
       }
+      this.expectedOrigin = null
       this.userMoved = true
     })
 
@@ -113,8 +118,26 @@ export class PopupWindow {
   /** setBounds wrapper that doesn't count as a user move. */
   private applyBounds(bounds: Electron.Rectangle): void {
     if (!this.win || this.win.isDestroyed()) return
-    this.programmaticMoves++
+    this.expectedOrigin = { x: bounds.x, y: bounds.y, until: Date.now() + 250 }
     this.win.setBounds(bounds)
+  }
+
+  /** 配置变更时同步窗口宽度与最大高度，并保持在屏幕工作区内 */
+  syncConfig(): void {
+    if (!this.win || this.win.isDestroyed()) return
+    const cfg = this.getConfig()
+    const width = cfg.windowWidth || 480
+    const maxH = cfg.maxWindowHeight || 560
+    const b = this.win.getBounds()
+    const height = Math.round(Math.min(Math.max(b.height, 96), maxH))
+    const display = screen.getDisplayNearestPoint({ x: b.x, y: b.y })
+    const area = display.workArea
+    let x = Math.min(b.x, area.x + area.width - width - 12)
+    let y = Math.min(b.y, area.y + area.height - height - 8)
+    x = Math.max(x, area.x + 12)
+    y = Math.max(y, area.y + 8)
+    if (x === b.x && y === b.y && width === b.width && height === b.height) return
+    this.applyBounds({ x, y, width, height })
   }
 
   /** Position near the mouse, clamped to the display's work area. */

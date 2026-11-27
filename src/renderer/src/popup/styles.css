@@ -12,12 +12,49 @@ html, body { background: transparent; overflow: hidden; }
 }
 @media (prefers-color-scheme: dark) { .popup-card { --popup-muted: #a0a8b5; } }
 
-.head { flex: none; display: flex; align-items: center; gap: 12px; padding: 10px 12px 9px 17px; user-select: none; -webkit-app-region: drag; }
+.head { flex: none; display: flex; align-items: center; gap: 10px; padding: 10px 12px 9px 17px; user-select: none; -webkit-app-region: drag; }
 .head__drag { flex: 1; min-width: 0; display: flex; align-items: center; gap: 8px; }
 .head__logo { display: flex; color: var(--accent); }
 .head__brand { font-size: 12px; font-weight: 650; letter-spacing: -.15px; }
 .head__model { margin-left: auto; font-size: 10.5px; color: var(--popup-muted); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.head__model--btn {
+  -webkit-app-region: no-drag; display: inline-flex; align-items: center; gap: 3px;
+  max-width: 220px; padding: 2px 6px; border: none; border-radius: 5px;
+  background: transparent; font-family: inherit; cursor: pointer;
+}
+.head__model--btn:hover, .head__model--open { background: var(--bg-hover); color: var(--text); }
+.head__model-text { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.head__model-caret { flex: none; font-size: 9px; opacity: .75; }
+.head__actions { flex: none; display: flex; align-items: center; gap: 2px; }
 .head .at-iconbtn { flex: none; width: 26px; height: 26px; -webkit-app-region: no-drag; color: var(--popup-muted); }
+
+/* ---------- in-card quick switcher ---------- */
+.switcher-backdrop { position: absolute; inset: 40px 0 0; z-index: 19; background: rgba(0, 0, 0, 0.08); }
+.switcher {
+  position: absolute; top: 44px; left: 12px; right: 12px; z-index: 20;
+  max-height: calc(100% - 56px); overflow-y: auto;
+  display: flex; flex-direction: column; gap: 10px;
+  padding: 11px 12px; border-radius: 11px;
+  background: var(--bg); border: 1px solid var(--border-2); box-shadow: var(--shadow-pop);
+}
+.switcher__group { display: flex; flex-direction: column; gap: 5px; }
+.switcher__label { font-size: 10.5px; font-weight: 600; color: var(--popup-muted); }
+.switcher__chips { display: flex; flex-wrap: wrap; gap: 5px; }
+.switcher__chip {
+  padding: 3px 8px; border-radius: 999px; border: 1px solid var(--border-2);
+  background: var(--bg-soft); color: var(--text-2); font: inherit; font-size: 11px; cursor: pointer;
+}
+.switcher__chip:hover { background: var(--bg-hover); color: var(--text); }
+.switcher__chip--active { background: var(--accent-soft); border-color: var(--accent-border); color: var(--accent); font-weight: 600; }
+.switcher__select { font-size: 12px; padding: 5px 28px 5px 8px; }
+.switcher__segments { display: grid; grid-template-columns: repeat(5, 1fr); gap: 4px; }
+.switcher__seg {
+  padding: 4px 2px; border-radius: 6px; border: 1px solid var(--border);
+  background: var(--bg-soft); color: var(--text-2); font: inherit; font-size: 11px; cursor: pointer;
+}
+.switcher__seg:hover { background: var(--bg-hover); color: var(--text); }
+.switcher__seg--active { background: var(--accent-soft); border-color: var(--accent-border); color: var(--accent); font-weight: 600; }
+.switcher__foot { display: flex; justify-content: flex-end; padding-top: 2px; border-top: 1px solid var(--border); }
 
 .body { flex: 1 1 auto; min-height: 0; overflow-y: auto; overflow-x: hidden; padding: 5px 18px 16px; overflow-anchor: none; }
 .body[hidden] { display: none; }
@@ -26,7 +63,11 @@ html, body { background: transparent; overflow: hidden; }
    box, accent rail or replacement ornament; long questions wrap naturally. */
 .turn__q { display: flex; align-items: baseline; gap: 8px; margin-bottom: 12px; }
 .turn__q-badge { flex: none; font-size: 10px; font-weight: 550; color: var(--popup-muted); }
+.turn__q-wrap { flex: 1; min-width: 0; }
 .turn__q-text { color: var(--text-2); font-size: 12.5px; line-height: 1.55; white-space: pre-wrap; overflow-wrap: anywhere; }
+.turn__q-text--clamped { display: -webkit-box; -webkit-line-clamp: 4; -webkit-box-orient: vertical; overflow: hidden; }
+.turn__q-toggle { margin-top: 3px; padding: 0; border: 0; background: none; color: var(--accent); font: inherit; font-size: 11px; cursor: pointer; }
+.turn__q-toggle:hover { text-decoration: underline; }
 .turn__a { font-size: 14px; line-height: 1.72; color: var(--text); overflow-wrap: anywhere; user-select: text; -webkit-user-select: text; }
 .turn__a p { margin: 0 0 .65em; }
 .turn__a p:last-child { margin-bottom: 0; }

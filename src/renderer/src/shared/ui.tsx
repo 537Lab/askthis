@@ -61,7 +61,7 @@ export function Button({
   if (variant !== 'default') cls.push(`at-btn--${variant}`)
   if (size === 'sm') cls.push('at-btn--sm')
   return (
-    <button className={cls.join(' ')} onClick={onClick} disabled={disabled} title={title} style={style}>
+    <button type="button" className={cls.join(' ')} onClick={onClick} disabled={disabled} title={title} style={style}>
       {children}
     </button>
   )
@@ -79,9 +79,62 @@ export function IconButton({
   disabled?: boolean
 }): React.JSX.Element {
   return (
-    <button className="at-iconbtn" onClick={onClick} title={title} disabled={disabled}>
+    <button type="button" className="at-iconbtn" onClick={onClick} title={title} aria-label={title} disabled={disabled}>
       {children}
     </button>
+  )
+}
+
+/** 内联二次确认按钮：首次点击进入确认态，3 秒后自动复位 */
+export function ConfirmButton({
+  label,
+  confirmLabel,
+  cancelLabel,
+  onConfirm,
+  variant = 'danger',
+  size = 'sm',
+  disabled
+}: {
+  label: string
+  confirmLabel: string
+  cancelLabel: string
+  onConfirm: () => void | Promise<void>
+  variant?: 'default' | 'primary' | 'ghost' | 'danger'
+  size?: 'sm'
+  disabled?: boolean
+}): React.JSX.Element {
+  const [armed, setArmed] = useState(false)
+  useEffect(() => {
+    if (!armed) return
+    const id = window.setTimeout(() => setArmed(false), 3000)
+    return () => window.clearTimeout(id)
+  }, [armed])
+
+  if (armed) {
+    return (
+      <span style={{ display: 'inline-flex', alignItems: 'center', gap: 6 }}>
+        <Button
+          size={size}
+          variant="danger"
+          disabled={disabled}
+          onClick={() => {
+            setArmed(false)
+            void onConfirm()
+          }}
+        >
+          {confirmLabel}
+        </Button>
+        <Button size={size} variant="ghost" onClick={() => setArmed(false)}>
+          {cancelLabel}
+        </Button>
+      </span>
+    )
+  }
+
+  return (
+    <Button size={size} variant={variant} disabled={disabled} onClick={() => setArmed(true)}>
+      {label}
+    </Button>
   )
 }
 

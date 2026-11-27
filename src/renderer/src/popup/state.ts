@@ -10,6 +10,7 @@ export interface Turn {
   reasoning: string
   error: string | null
   stopped: boolean
+  incomplete: boolean
   elapsedMs: number | null
 }
 
@@ -29,12 +30,13 @@ export interface PopupStore {
   setConfig(config: PublicConfig): void
   applyActivate(payload: ActivatePayload): void
   applyEvent(event: QueryEvent): void
+  applyDeltas(items: Array<{ channel: 'text' | 'reasoning'; delta: string }>): void
   addUserTurn(text: string): void
   markCopied(): void
 }
 
 function newTurn(q: string): Turn {
-  return { q, a: '', reasoning: '', error: null, stopped: false, elapsedMs: null }
+  return { q, a: '', reasoning: '', error: null, stopped: false, incomplete: false, elapsedMs: null }
 }
 
 export const usePopupStore = create<PopupStore>((set) => ({
@@ -85,6 +87,7 @@ export const usePopupStore = create<PopupStore>((set) => ({
             last.reasoning = ''
             last.error = null
             last.stopped = false
+            last.incomplete = false
             last.elapsedMs = null
             turns[idx] = last
           }
@@ -101,6 +104,7 @@ export const usePopupStore = create<PopupStore>((set) => ({
         case 'done': {
           if (last) {
             last.elapsedMs = event.elapsedMs
+            last.incomplete = !!event.incomplete
             turns[idx] = last
           }
           return { status: 'done', turns }
@@ -122,6 +126,20 @@ export const usePopupStore = create<PopupStore>((set) => ({
         default:
           return {}
       }
+    }),
+
+  applyDeltas: (items) =>
+    set((s) => {
+      if (!items.length || !s.turns.length) return {}
+      const turns = [...s.turns]
+      const idx = turns.length - 1
+      const last = { ...turns[idx] }
+      for (const item of items) {
+        if (item.channel === 'text') last.a += item.delta
+        else last.reasoning += item.delta
+      }
+      turns[idx] = last
+      return { turns }
     }),
 
   markCopied: () => set({ copied: true })

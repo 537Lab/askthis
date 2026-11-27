@@ -24,7 +24,7 @@ exports.loadSource = function loadSource(entry, mocks = {}, globals = {}) {
       }
       return require(id)
     }
-    const context = vm.createContext({ module, exports: module.exports, require: localRequire, __dirname: path.dirname(filename), __filename: filename, console, process, Buffer, URL, AbortController, setTimeout, clearTimeout, setInterval, clearInterval, ...globals })
+    const context = vm.createContext({ module, exports: module.exports, require: localRequire, __dirname: path.dirname(filename), __filename: filename, console, process, Buffer, URL, TextDecoder, AbortController, AbortSignal, setTimeout, clearTimeout, setInterval, clearInterval, ...globals })
     vm.runInContext(code, context, { filename })
     return module.exports
   }

@@ -6,6 +6,7 @@ import {
   SlidersIcon,
   KeyIcon,
   MessageIcon,
+  ClockIcon,
   CommandIcon,
   InfoIcon,
   LogoIcon
@@ -14,15 +15,17 @@ import { useSettingsStore } from './store'
 import { GeneralSection } from './sections/General'
 import { ProvidersSection } from './sections/Providers'
 import { PromptsSection } from './sections/Prompts'
+import { HistorySection } from './sections/History'
 import { InteractionSection } from './sections/Interaction'
 import { AboutSection } from './sections/About'
 
-type TabId = 'general' | 'providers' | 'prompts' | 'interaction' | 'about'
+type TabId = 'general' | 'providers' | 'prompts' | 'history' | 'interaction' | 'about'
 
 const TABS: { id: TabId; labelKey: string; icon: React.JSX.Element }[] = [
   { id: 'general', labelKey: 'nav.general', icon: <SlidersIcon size={15} /> },
   { id: 'providers', labelKey: 'nav.providers', icon: <KeyIcon size={15} /> },
   { id: 'prompts', labelKey: 'nav.prompts', icon: <MessageIcon size={15} /> },
+  { id: 'history', labelKey: 'nav.history', icon: <ClockIcon size={15} /> },
   { id: 'interaction', labelKey: 'nav.interaction', icon: <CommandIcon size={15} /> },
   { id: 'about', labelKey: 'nav.about', icon: <InfoIcon size={15} /> }
 ]
@@ -94,6 +97,7 @@ function Shell({
         {tab === 'general' ? <GeneralSection /> : null}
         {tab === 'providers' ? <ProvidersSection /> : null}
         {tab === 'prompts' ? <PromptsSection /> : null}
+        {tab === 'history' ? <HistorySection /> : null}
         {tab === 'interaction' ? <InteractionSection /> : null}
         {tab === 'about' ? <AboutSection /> : null}
       </main>

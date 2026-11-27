@@ -1,4 +1,4 @@
-import { BrowserWindow, shell } from 'electron'
+import { BrowserWindow, nativeTheme, shell } from 'electron'
 
 /**
  * The settings window — a normal window (hidden inset title bar on macOS)
@@ -27,7 +27,8 @@ export class SettingsWindow {
       show: false,
       title: 'AskThis',
       titleBarStyle: process.platform === 'darwin' ? 'hiddenInset' : 'default',
-      backgroundColor: '#f6f7f9',
+      autoHideMenuBar: process.platform !== 'darwin',
+      backgroundColor: nativeTheme.shouldUseDarkColors ? '#1e1f22' : '#f6f7f9',
       webPreferences: {
         preload: opts.preload,
         sandbox: true,

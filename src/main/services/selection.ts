@@ -96,17 +96,27 @@ const WIN_UIA_SCRIPT = `
 $ErrorActionPreference = 'SilentlyContinue'
 Add-Type -AssemblyName UIAutomationClient
 Add-Type -AssemblyName UIAutomationTypes
+[Console]::OutputEncoding = [System.Text.Encoding]::UTF8
 $el = [System.Windows.Automation.AutomationElement]::FocusedElement
-if ($el -ne $null) {
-  $pattern = $el.GetCurrentPattern([System.Windows.Automation.TextPattern]::Pattern)
-  if ($pattern -ne $null) {
-    $ranges = $pattern.GetSelection()
-    if ($ranges.Count -gt 0) {
-      $text = $ranges[0].GetText(-1)
-      [Console]::OutputEncoding = [System.Text.Encoding]::UTF8
-      Write-Output $text
-    }
-  }
+if ($el -eq $null) {
+  Write-Output 'ASKTHIS_UNKNOWN'
+  exit 0
+}
+$pattern = $el.GetCurrentPattern([System.Windows.Automation.TextPattern]::Pattern)
+if ($pattern -eq $null) {
+  Write-Output 'ASKTHIS_UNKNOWN'
+  exit 0
+}
+$ranges = $pattern.GetSelection()
+if ($ranges -eq $null -or $ranges.Count -eq 0) {
+  Write-Output 'ASKTHIS_EMPTY'
+  exit 0
+}
+$text = $ranges[0].GetText(-1)
+if ([string]::IsNullOrEmpty($text)) {
+  Write-Output 'ASKTHIS_EMPTY'
+} else {
+  Write-Output ('ASKTHIS_TEXT' + "\`n" + $text)
 }`
 
 // Sends Ctrl+C via keybd_event (works in any focused window, no focus stealing).
@@ -130,8 +140,11 @@ async function readSelectedWindows(): Promise<string | null> {
       ['-NoProfile', '-NonInteractive', '-ExecutionPolicy', 'Bypass', '-Command', WIN_UIA_SCRIPT],
       { timeout: 2500, windowsHide: true }
     )
-    const text = stdout.replace(/\r\n/g, '\n').trim()
-    if (text) return text
+    const normalized = stdout.replace(/\r\n/g, '\n')
+    if (normalized.trim() === 'ASKTHIS_EMPTY') return null
+    if (normalized.startsWith('ASKTHIS_TEXT\n')) {
+      return normalized.slice('ASKTHIS_TEXT\n'.length).trim() || null
+    }
   } catch {
     /* fall through */
   }

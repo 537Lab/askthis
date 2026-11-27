@@ -313,3 +313,55 @@
 .at-hint--warn {
   color: var(--warn);
 }
+
+/* ---------- markdown code block bar ---------- */
+
+.at-code-wrap {
+  position: relative;
+}
+
+.at-code-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  margin: -4px -4px 6px;
+  padding: 2px 4px 5px;
+  border-bottom: 1px solid var(--border);
+  font-family: var(--font-sans);
+  font-size: 10.5px;
+  color: var(--text-3);
+  user-select: none;
+}
+
+.at-code-lang {
+  text-transform: lowercase;
+  letter-spacing: 0.02em;
+}
+
+.at-code-copy {
+  border: none;
+  background: transparent;
+  color: var(--text-2);
+  font: inherit;
+  padding: 2px 6px;
+  border-radius: 4px;
+  cursor: pointer;
+  opacity: 0.78;
+  transition: background 0.12s ease, color 0.12s ease, opacity 0.12s ease;
+}
+
+.at-code-wrap:hover .at-code-copy,
+.at-code-copy:focus-visible,
+.at-code-copy[data-copied='true'] {
+  opacity: 1;
+}
+
+.at-code-copy:hover {
+  background: var(--bg-hover);
+  color: var(--text);
+}
+
+.at-code-copy[data-copied='true'] {
+  color: var(--success);
+}

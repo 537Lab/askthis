@@ -6,6 +6,7 @@ import type {
   PlatformInfo,
   PublicConfig,
   QueryEvent,
+  SessionOverrides,
   TestResult
 } from './types'
 
@@ -30,6 +31,7 @@ export interface PopupApi {
     copy(text: string): void
     close(): void
     resize(height: number): void
+    quickSwitch(patch: SessionOverrides & { requery?: boolean }): Promise<PublicConfig>
   }
   app: {
     openSettings(): void
@@ -64,6 +66,7 @@ export interface SettingsApi {
   }
   history: {
     list(limit?: number): Promise<HistoryEntry[]>
+    delete(id: string): Promise<void>
     clear(): Promise<void>
   }
 }

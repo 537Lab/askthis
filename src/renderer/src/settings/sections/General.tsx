@@ -1,18 +1,78 @@
-import { useState } from 'react'
-import { useT, Row, Section, Switch, NumberField, Button } from '../../shared/ui'
+import { useRef, useState } from 'react'
+import { useT, Row, Section, Switch, NumberField, Button, ConfirmButton } from '../../shared/ui'
+import { DownloadIcon, UploadIcon } from '../../shared/icons'
 import { useSettingsStore } from '../store'
+
+const IMPORTABLE_KEYS = [
+  'locale',
+  'theme',
+  'launchAtLogin',
+  'shortcut',
+  'selectionMode',
+  'clipboardFallback',
+  'hideOnBlur',
+  'windowWidth',
+  'maxWindowHeight',
+  'providers',
+  'activeProviderId',
+  'activeModelId',
+  'reasoningLevel',
+  'temperature',
+  'maxTokens',
+  'showReasoning',
+  'requestTimeoutSec',
+  'prompts',
+  'activePromptId',
+  'historyEnabled',
+  'historyLimit'
+] as const
 
 export function GeneralSection(): React.JSX.Element {
   const t = useT()
   const config = useSettingsStore((s) => s.config)!
   const patch = useSettingsStore((s) => s.patch)
   const [cleared, setCleared] = useState(false)
+  const [importNote, setImportNote] = useState<{ ok: boolean; text: string } | null>(null)
+  const fileInputRef = useRef<HTMLInputElement>(null)
 
   const clearHistory = async (): Promise<void> => {
-    if (!window.confirm(t('general.history.clearConfirm'))) return
     await window.api.history.clear()
     setCleared(true)
     window.setTimeout(() => setCleared(false), 1600)
+  }
+
+  const exportConfig = (): void => {
+    const clean = {
+      ...config,
+      providers: config.providers.map(({ hasKey: _h, keyHint: _k, ...rest }) => rest)
+    } as Record<string, unknown>
+    delete clean.security
+    const blob = new Blob([JSON.stringify(clean, null, 2)], { type: 'application/json' })
+    const url = URL.createObjectURL(blob)
+    const a = document.createElement('a')
+    a.href = url
+    a.download = `askthis-config-${new Date().toISOString().slice(0, 10)}.json`
+    a.click()
+    URL.revokeObjectURL(url)
+  }
+
+  const importConfig = async (file: File | undefined): Promise<void> => {
+    if (!file) return
+    try {
+      const parsed = JSON.parse(await file.text()) as Record<string, unknown>
+      if (!parsed || typeof parsed !== 'object' || Array.isArray(parsed)) {
+        throw new Error('invalid')
+      }
+      const nextPatch: Record<string, unknown> = {}
+      for (const k of IMPORTABLE_KEYS) {
+        if (Object.hasOwn(parsed, k)) nextPatch[k] = parsed[k]
+      }
+      if (!Object.keys(nextPatch).length) throw new Error('empty')
+      await patch(nextPatch)
+      setImportNote({ ok: true, text: t('config.importSuccess') })
+    } catch {
+      setImportNote({ ok: false, text: t('config.importInvalid') })
+    }
   }
 
   return (
@@ -104,9 +164,38 @@ export function GeneralSection(): React.JSX.Element {
           />
         </Row>
         <Row label={t('general.history.clear')}>
-          <Button size="sm" onClick={() => void clearHistory()}>
-            {cleared ? t('general.history.cleared') : t('common.delete')}
-          </Button>
+          <ConfirmButton
+            label={cleared ? t('general.history.cleared') : t('common.delete')}
+            confirmLabel={t('common.confirmDelete')}
+            cancelLabel={t('common.cancel')}
+            onConfirm={clearHistory}
+          />
+        </Row>
+      </Section>
+
+      <Section>
+        <Row label={t('config.export')} desc={importNote ? importNote.text : undefined}>
+          <div className="form-actions">
+            <Button size="sm" onClick={exportConfig}>
+              <DownloadIcon size={12} />
+              <span>{t('config.export')}</span>
+            </Button>
+            <Button size="sm" onClick={() => fileInputRef.current?.click()}>
+              <UploadIcon size={12} />
+              <span>{t('config.import')}</span>
+            </Button>
+            <input
+              ref={fileInputRef}
+              type="file"
+              accept="application/json,.json"
+              hidden
+              onChange={(e) => {
+                const file = e.target.files?.[0]
+                e.target.value = ''
+                void importConfig(file)
+              }}
+            />
+          </div>
         </Row>
       </Section>
     </>

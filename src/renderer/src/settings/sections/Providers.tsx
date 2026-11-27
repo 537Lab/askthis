@@ -1,8 +1,8 @@
 import { useEffect, useMemo, useState } from 'react'
-import type { ModelInfo, ProviderConfig, ProviderPreset, PublicProvider, ReasoningStyle } from '@shared/types'
+import type { ModelInfo, ProviderConfig, ProviderKind, ProviderPreset, PublicProvider, ReasoningStyle } from '@shared/types'
 import { PROVIDER_PRESETS, providerFromPreset } from '@shared/presets'
-import { useT, Section, Row, Button, Field, NumberField, Switch, IconButton, Spinner, prettyAccelerator } from '../../shared/ui'
-import { TrashIcon, RefreshIcon, ExternalIcon, CheckIcon } from '../../shared/icons'
+import { useT, Section, Row, Button, ConfirmButton, Field, NumberField, Switch, IconButton, Spinner, prettyAccelerator } from '../../shared/ui'
+import { TrashIcon, RefreshIcon, ExternalIcon, CheckIcon, EyeIcon, EyeOffIcon, SearchIcon } from '../../shared/icons'
 import { useSettingsStore } from '../store'
 
 /* ============================== main section ============================== */
@@ -183,6 +183,8 @@ function ProviderForm({ provider }: { provider: PublicProvider }): React.JSX.Ele
   const config = useSettingsStore((s) => s.config)!
   const patch = useSettingsStore((s) => s.patch)
   const [keyInput, setKeyInput] = useState('')
+  const [showKey, setShowKey] = useState(false)
+  const [keySaved, setKeySaved] = useState(false)
   const [testBusy, setTestBusy] = useState(false)
   const [testNote, setTestNote] = useState<{ ok: boolean; text: string } | null>(null)
   const [modelsBusy, setModelsBusy] = useState(false)
@@ -199,6 +201,9 @@ function ProviderForm({ provider }: { provider: PublicProvider }): React.JSX.Ele
     if (!k) return
     await patch({ secrets: { [provider.id]: k } as unknown as Record<string, unknown> })
     setKeyInput('')
+    setShowKey(false)
+    setKeySaved(true)
+    window.setTimeout(() => setKeySaved(false), 1600)
   }
 
   const clearKey = async (): Promise<void> => {
@@ -208,7 +213,11 @@ function ProviderForm({ provider }: { provider: PublicProvider }): React.JSX.Ele
   const test = async (): Promise<void> => {
     setTestBusy(true)
     setTestNote(null)
-    const res = await window.api.config.testProvider(provider.id, provider.models[0]?.id)
+    const targetModel =
+      config.activeProviderId === provider.id && config.activeModelId
+        ? config.activeModelId
+        : provider.models[0]?.id
+    const res = await window.api.config.testProvider(provider.id, targetModel)
     setTestBusy(false)
     setTestNote(
       res.ok
@@ -235,7 +244,6 @@ function ProviderForm({ provider }: { provider: PublicProvider }): React.JSX.Ele
   }
 
   const removeProvider = async (): Promise<void> => {
-    if (!window.confirm(t('providers.delete.confirm', { name: provider.name }))) return
     await patch({
       providers: config.providers.filter((p) => p.id !== provider.id),
       secrets: { [provider.id]: null } as unknown as Record<string, unknown>
@@ -259,6 +267,18 @@ function ProviderForm({ provider }: { provider: PublicProvider }): React.JSX.Ele
       </div>
 
       <div>
+        <label className="form-field__label">{t('providers.kind')}</label>
+        <select
+          className="at-select"
+          value={provider.kind}
+          onChange={(e) => update({ kind: e.target.value as ProviderKind })}
+        >
+          <option value="openai-compatible">{t('providers.kind.openai')}</option>
+          <option value="anthropic">{t('providers.kind.anthropic')}</option>
+        </select>
+      </div>
+
+      <div>
         <label className="form-field__label">{t('providers.baseUrl')}</label>
         <Field value={provider.baseUrl} onCommit={(v) => update({ baseUrl: v.trim() })} />
         <div className="form-hint">{t('providers.baseUrl.desc')}</div>
@@ -266,10 +286,10 @@ function ProviderForm({ provider }: { provider: PublicProvider }): React.JSX.Ele
 
       <div>
         <label className="form-field__label">{t('providers.apiKey')}</label>
-        <div style={{ display: 'flex', gap: 8 }}>
+        <div style={{ display: 'flex', gap: 8, alignItems: 'center' }}>
           <input
             className="at-input"
-            type="password"
+            type={showKey ? 'text' : 'password'}
             value={keyInput}
             placeholder={
               provider.hasKey
@@ -281,8 +301,14 @@ function ProviderForm({ provider }: { provider: PublicProvider }): React.JSX.Ele
               if (e.key === 'Enter') void saveKey()
             }}
           />
+          <IconButton
+            title={showKey ? t('providers.apiKey.hide') : t('providers.apiKey.show')}
+            onClick={() => setShowKey((v) => !v)}
+          >
+            {showKey ? <EyeOffIcon size={14} /> : <EyeIcon size={14} />}
+          </IconButton>
           <Button size="sm" variant="primary" disabled={!keyInput.trim()} onClick={() => void saveKey()}>
-            {t('common.save')}
+            {keySaved ? t('common.saved') : t('common.save')}
           </Button>
           {provider.hasKey ? (
             <Button size="sm" onClick={() => void clearKey()}>
@@ -324,7 +350,13 @@ function ProviderForm({ provider }: { provider: PublicProvider }): React.JSX.Ele
             {t('providers.fetchModels')}
           </Button>
         </div>
-        <ModelsEditor provider={provider} onChange={(models) => update({ models })} />
+        <ModelsEditor
+          provider={provider}
+          isActiveProvider={config.activeProviderId === provider.id}
+          activeModelId={config.activeModelId}
+          onChange={(models) => update({ models })}
+          onActivateModel={(modelId) => void patch({ activeProviderId: provider.id, activeModelId: modelId })}
+        />
         {modelsNote ? (
           <div className={`form-hint ${modelsNote.ok ? 'at-hint--ok' : 'at-hint--err'}`}>
             {modelsNote.text}
@@ -360,6 +392,7 @@ function ProviderForm({ provider }: { provider: PublicProvider }): React.JSX.Ele
           onCommit={(v) => update({ customHeaders: parseHeaders(v) })}
         />
         <div className="form-hint">{t('providers.headers.desc')}</div>
+        <div className="form-hint">{t('providers.headers.securityNote')}</div>
       </div>
 
       <hr className="form-sep" />
@@ -371,9 +404,12 @@ function ProviderForm({ provider }: { provider: PublicProvider }): React.JSX.Ele
           </Button>
         ) : null}
         <span style={{ flex: 1 }} />
-        <Button size="sm" variant="danger" onClick={() => void removeProvider()}>
-          {t('providers.delete')}
-        </Button>
+        <ConfirmButton
+          label={t('providers.delete')}
+          confirmLabel={t('common.confirmDelete')}
+          cancelLabel={t('common.cancel')}
+          onConfirm={removeProvider}
+        />
       </div>
     </div>
   )
@@ -383,13 +419,26 @@ function ProviderForm({ provider }: { provider: PublicProvider }): React.JSX.Ele
 
 function ModelsEditor({
   provider,
-  onChange
+  isActiveProvider,
+  activeModelId,
+  onChange,
+  onActivateModel
 }: {
   provider: PublicProvider
+  isActiveProvider: boolean
+  activeModelId: string
   onChange: (models: ModelInfo[]) => void
+  onActivateModel: (modelId: string) => void
 }): React.JSX.Element {
   const t = useT()
   const [draft, setDraft] = useState('')
+  const [filter, setFilter] = useState('')
+
+  const visibleModels = useMemo(() => {
+    const q = filter.trim().toLowerCase()
+    if (!q) return provider.models
+    return provider.models.filter((m) => m.id.toLowerCase().includes(q))
+  }, [provider.models, filter])
 
   const add = (): void => {
     const id = draft.trim()
@@ -405,34 +454,59 @@ function ModelsEditor({
   return (
     <div>
       <div className="prov-models">
+        {provider.models.length > 6 ? (
+          <div className="prov-models__search">
+            <div className="history-search" style={{ padding: '4px 8px' }}>
+              <SearchIcon size={13} />
+              <input
+                className="history-search__input"
+                value={filter}
+                placeholder={t('providers.models.search')}
+                onChange={(e) => setFilter(e.target.value)}
+              />
+            </div>
+          </div>
+        ) : null}
         {provider.models.length === 0 ? (
           <div className="prov-models__empty">{t('providers.models.empty')}</div>
         ) : (
-          provider.models.map((m) => (
-            <div key={m.id} className="prov-models__row">
-              <span className="prov-models__id">{m.id}</span>
-              <label className="prov-models__check" title={t('providers.models.reasoningHint')}>
-                <input
-                  type="checkbox"
-                  checked={m.reasoning !== false}
-                  onChange={(e) =>
-                    onChange(
-                      provider.models.map((x) =>
-                        x.id === m.id ? { ...x, reasoning: e.target.checked } : x
-                      )
-                    )
-                  }
-                />
-                {t('providers.models.reasoning')}
-              </label>
-              <IconButton
-                title={t('common.delete')}
-                onClick={() => onChange(provider.models.filter((x) => x.id !== m.id))}
-              >
-                <TrashIcon size={12} />
-              </IconButton>
-            </div>
-          ))
+          <div className="prov-models__list">
+            {visibleModels.map((m) => {
+              const isCurrent = isActiveProvider && activeModelId === m.id
+              return (
+                <div key={m.id} className="prov-models__row">
+                  <span className="prov-models__id" title={m.id}>{m.id}</span>
+                  {isCurrent ? (
+                    <span className="at-badge at-badge--accent">{t('prompts.inUse')}</span>
+                  ) : (
+                    <Button size="sm" variant="ghost" onClick={() => onActivateModel(m.id)}>
+                      {t('providers.models.use')}
+                    </Button>
+                  )}
+                  <label className="prov-models__check" title={t('providers.models.reasoningHint')}>
+                    <input
+                      type="checkbox"
+                      checked={m.reasoning !== false}
+                      onChange={(e) =>
+                        onChange(
+                          provider.models.map((x) =>
+                            x.id === m.id ? { ...x, reasoning: e.target.checked } : x
+                          )
+                        )
+                      }
+                    />
+                    {t('providers.models.reasoning')}
+                  </label>
+                  <IconButton
+                    title={t('common.delete')}
+                    onClick={() => onChange(provider.models.filter((x) => x.id !== m.id))}
+                  >
+                    <TrashIcon size={12} />
+                  </IconButton>
+                </div>
+              )
+            })}
+          </div>
         )}
       </div>
       <div className="form-actions" style={{ marginTop: 8 }}>

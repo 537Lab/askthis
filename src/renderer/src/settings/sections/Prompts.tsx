@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import { BUILTIN_PROMPTS } from '@shared/defaults'
 import type { PromptPreset } from '@shared/types'
-import { useT, Section, Button, Field } from '../../shared/ui'
+import { useT, Section, Button, ConfirmButton, Field } from '../../shared/ui'
 import { useSettingsStore } from '../store'
 
 export function PromptsSection(): React.JSX.Element {
@@ -41,7 +41,6 @@ export function PromptsSection(): React.JSX.Element {
   }
 
   const remove = async (): Promise<void> => {
-    if (!window.confirm(t('prompts.delete.confirm', { name: editing.name }))) return
     const next = config.prompts.filter((p) => p.id !== editing.id)
     const nextActive = isActive ? (next[0]?.id ?? '') : config.activePromptId
     await patch({ prompts: next, activePromptId: nextActive })
@@ -145,9 +144,12 @@ export function PromptsSection(): React.JSX.Element {
                 </Button>
               ) : null}
               <span style={{ flex: 1 }} />
-              <Button size="sm" variant="danger" onClick={() => void remove()}>
-                {t('prompts.delete')}
-              </Button>
+              <ConfirmButton
+                label={t('prompts.delete')}
+                confirmLabel={t('common.confirmDelete')}
+                cancelLabel={t('common.cancel')}
+                onConfirm={remove}
+              />
             </div>
           </div>
         </div>

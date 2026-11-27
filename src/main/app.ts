@@ -2,7 +2,7 @@ import { app, clipboard, ipcMain, nativeTheme, screen, shell } from 'electron'
 import os from 'node:os'
 import { IPC } from '@shared/ipc'
 import { resolveLocale, t, type UiLocale } from '@shared/i18n'
-import type { ActivatePayload, PlatformInfo, QueryEvent } from '@shared/types'
+import type { ActivatePayload, AppConfig, PlatformInfo, QueryEvent } from '@shared/types'
 import { ConfigStore, type ConfigPatch } from './store'
 import { HistoryStore } from './services/history'
 import { QuerySession } from './services/session'
@@ -91,6 +91,10 @@ export class AskThisApp {
 
     this.store.onChange(() => {
       this.applyTheme()
+      this.popup.syncConfig()
+      const pub = this.store.getPublic()
+      this.popup.send(IPC.ConfigChanged, pub)
+      this.settingsWindow.send(IPC.ConfigChanged, pub)
     })
 
     // Load persisted API keys once the app is fully up (tray + shortcut live),
@@ -194,7 +198,8 @@ export class AskThisApp {
       source: capture.source,
       autoQuery: !!capture.text,
       needsPermission,
-      truncated: session.truncated
+      truncated: session.truncated,
+      promptId: cfg.activePromptId
     }
 
     await this.waitForLoad(win)
@@ -363,12 +368,55 @@ export class AskThisApp {
       if (!this.guardSender(e, 'settings')) return []
       return this.history.list(limit)
     })
+    ipcMain.handle(IPC.HistoryDelete, (e, id: unknown) => {
+      if (!this.guardSender(e, 'settings')) return
+      if (typeof id === 'string' && id) this.history.remove(id)
+    })
     ipcMain.handle(IPC.HistoryClear, (e) => {
       if (!this.guardSender(e, 'settings')) return
       this.history.clear()
     })
 
     /* popup flow */
+    ipcMain.handle(IPC.PopupQuickSwitch, (e, rawPayload: unknown) => {
+      if (!this.guardSender(e, 'popup')) return this.store.getPublic()
+      const payload =
+        rawPayload && typeof rawPayload === 'object' ? (rawPayload as Record<string, unknown>) : {}
+      const nextPatch: ConfigPatch = {}
+      const cfg = this.store.get()
+
+      if (typeof payload.providerId === 'string') {
+        const targetProvider = cfg.providers.find((p) => p.id === payload.providerId)
+        if (targetProvider) {
+          nextPatch.activeProviderId = targetProvider.id
+          if (typeof payload.modelId !== 'string') {
+            nextPatch.activeModelId = targetProvider.models[0]?.id ?? ''
+          }
+        }
+      }
+      if (typeof payload.modelId === 'string' && payload.modelId.trim()) {
+        nextPatch.activeModelId = payload.modelId.trim()
+      }
+      if (typeof payload.promptId === 'string') {
+        if (cfg.prompts.some((p) => p.id === payload.promptId)) {
+          nextPatch.activePromptId = payload.promptId
+        }
+      }
+      if (
+        typeof payload.reasoningLevel === 'string' &&
+        ['off', 'low', 'medium', 'high', 'max'].includes(payload.reasoningLevel)
+      ) {
+        nextPatch.reasoningLevel = payload.reasoningLevel as AppConfig['reasoningLevel']
+      }
+
+      if (Object.keys(nextPatch).length > 0) {
+        this.store.patch(nextPatch)
+      }
+      if (payload.requery === true && this.session) {
+        void this.session.requeryWithCurrentConfig()
+      }
+      return this.store.getPublic()
+    })
     ipcMain.on(IPC.QuerySend, (e, text: unknown) => {
       if (!this.guardSender(e, 'popup')) return
       if (typeof text === 'string') void this.session?.submit(text)

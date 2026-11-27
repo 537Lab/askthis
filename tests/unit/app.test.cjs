@@ -76,3 +76,119 @@ test('missing Accessibility still focuses a blank input while reporting the perm
   assert.equal(h.sent[0].autoQuery, false)
   assert.equal(h.sent[0].text, '')
 })
+
+test('PopupQuickSwitch enforces sender guard and strict whitelist and can trigger requery', () => {
+  const handlers = {}
+  const patched = []
+  let requeried = 0
+  const cfg = {
+    providers: [
+      { id: 'p1', models: [{ id: 'm1' }] },
+      { id: 'p2', models: [{ id: 'm2a' }, { id: 'm2b' }] }
+    ],
+    prompts: [{ id: 'pr1' }, { id: 'pr2' }],
+    activeProviderId: 'p1',
+    activeModelId: 'm1',
+    activePromptId: 'pr1',
+    reasoningLevel: 'low'
+  }
+  const { AskThisApp } = loadSource('src/main/app.ts', {
+    electron: {
+      ipcMain: { handle: (ch, fn) => { handlers[ch] = fn }, on: (ch, fn) => { handlers[ch] = fn } },
+      screen: { getCursorScreenPoint: () => ({ x: 0, y: 0 }) }
+    },
+    './services/permissions': { getAccessibilityStatus: () => ({ trusted: true }) },
+    './services/selection': { captureText: async () => ({ text: '', source: 'none' }) },
+    './services/session': { QuerySession: class {} },
+    './windows/popup': {},
+    './windows/settings': {},
+    './tray': {},
+    './ai/client': {},
+    './services/shortcuts': {},
+    './utils/paths': {
+      rendererEntry: () => 'popup',
+      preloadPath: () => 'preload',
+      isTrustedRendererUrl: (url, page) => url === `file:///app/${page}.html`
+    }
+  }, { process: { platform: 'darwin' } })
+
+  const app = Object.create(AskThisApp.prototype)
+  app.store = {
+    get: () => cfg,
+    getPublic: () => ({ ...cfg }),
+    patch: (p) => patched.push(p)
+  }
+  app.history = { list: () => [], remove: () => true, clear: () => {} }
+  app.popup = { syncConfig: () => {}, send: () => {} }
+  app.settingsWindow = { send: () => {} }
+  app.session = { requeryWithCurrentConfig: () => { requeried++ } }
+  app.setupIpc()
+
+  const handler = handlers['popup:quick-switch']
+  assert.ok(handler)
+
+  // 非 popup 页面不可调用
+  handler({ senderFrame: { url: 'file:///app/settings.html' } }, { promptId: 'pr2' })
+  assert.equal(patched.length, 0)
+
+  // 允许的白名单字段生效，敏感字段被丢弃
+  handler(
+    { senderFrame: { url: 'file:///app/popup.html' } },
+    { providerId: 'p2', promptId: 'pr2', reasoningLevel: 'high', secrets: { p2: 'hack' }, providers: [], requery: true }
+  )
+  assert.deepEqual(JSON.parse(JSON.stringify(patched[0])), {
+    activeProviderId: 'p2',
+    activeModelId: 'm2a',
+    activePromptId: 'pr2',
+    reasoningLevel: 'high'
+  })
+  assert.equal(requeried, 1)
+})
+
+test('store change syncs theme, popup bounds, and broadcasts ConfigChanged to both windows', () => {
+  const listeners = []
+  const calls = []
+  const { AskThisApp } = loadSource('src/main/app.ts', {
+    electron: {
+      app: { getLoginItemSettings: () => ({ wasOpenedAtLogin: true }), setLoginItemSettings: () => {}, getLocale: () => 'zh-CN' },
+      ipcMain: { handle: () => {}, on: () => {} },
+      nativeTheme: { themeSource: 'system' },
+      screen: { getCursorScreenPoint: () => ({ x: 0, y: 0 }) }
+    },
+    './services/permissions': { getAccessibilityStatus: () => ({ trusted: true }) },
+    './services/selection': { captureText: async () => ({ text: '', source: 'none' }) },
+    './services/session': { QuerySession: class {} },
+    './windows/popup': {},
+    './windows/settings': {},
+    './tray': { createTray: () => {} },
+    './ai/client': {},
+    './services/shortcuts': { registerShortcut: () => true },
+    './utils/paths': { rendererEntry: () => 'popup', preloadPath: () => 'preload' }
+  }, { process: { platform: 'darwin' }, setTimeout: () => 0 })
+
+  const app = Object.create(AskThisApp.prototype)
+  const pub = { theme: 'dark' }
+  app.store = {
+    get: () => ({ theme: 'dark', launchAtLogin: false, shortcut: 'Alt+Shift+D', locale: 'zh-CN' }),
+    getPublic: () => pub,
+    onChange: (cb) => listeners.push(cb),
+    isFirstRun: false
+  }
+  app.popup = {
+    syncConfig: () => calls.push(['syncConfig']),
+    send: (ch, payload) => calls.push(['popup', ch, payload])
+  }
+  app.settingsWindow = {
+    send: (ch, payload) => calls.push(['settings', ch, payload])
+  }
+  app.quitting = true
+  app.start()
+
+  assert.equal(listeners.length, 1)
+  listeners[0]()
+  assert.deepEqual(calls, [
+    ['syncConfig'],
+    ['popup', 'config:changed', pub],
+    ['settings', 'config:changed', pub]
+  ])
+})

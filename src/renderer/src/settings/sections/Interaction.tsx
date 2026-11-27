@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react'
 import type { AccessibilityStatus } from '@shared/types'
 import { DEFAULT_SHORTCUT } from '@shared/defaults'
-import { useT, Section, Row, Button, Kbd, prettyAccelerator } from '../../shared/ui'
+import { useT, Section, Row, Button, Kbd } from '../../shared/ui'
 import { useSettingsStore } from '../store'
 
 export function InteractionSection(): React.JSX.Element {
@@ -9,6 +9,7 @@ export function InteractionSection(): React.JSX.Element {
   const config = useSettingsStore((s) => s.config)!
   const patch = useSettingsStore((s) => s.patch)
   const [recording, setRecording] = useState(false)
+  const [invalidKey, setInvalidKey] = useState(false)
   const [conflict, setConflict] = useState(false)
   const [accStatus, setAccStatus] = useState<AccessibilityStatus | null>(null)
 
@@ -35,10 +36,16 @@ export function InteractionSection(): React.JSX.Element {
       e.stopPropagation()
       if (e.key === 'Escape') {
         setRecording(false)
+        setInvalidKey(false)
         return
       }
+      if (['Shift', 'Control', 'Alt', 'Meta'].includes(e.key)) return
       const accel = buildAccelerator(e)
-      if (!accel) return
+      if (!accel) {
+        setInvalidKey(true)
+        return
+      }
+      setInvalidKey(false)
       setRecording(false)
       void patch({ shortcut: accel }).then(() => {
         void window.api.app.shortcutStatus().then((s) => setConflict(!s.ok))
@@ -64,11 +71,24 @@ export function InteractionSection(): React.JSX.Element {
           </div>
           <div className="form-actions">
             {recording ? (
-              <Button size="sm" onClick={() => setRecording(false)}>
+              <Button
+                size="sm"
+                onClick={() => {
+                  setRecording(false)
+                  setInvalidKey(false)
+                }}
+              >
                 {t('common.cancel')}
               </Button>
             ) : (
-              <Button size="sm" variant="primary" onClick={() => setRecording(true)}>
+              <Button
+                size="sm"
+                variant="primary"
+                onClick={() => {
+                  setInvalidKey(false)
+                  setRecording(true)
+                }}
+              >
                 {t('shortcut.change')}
               </Button>
             )}
@@ -76,6 +96,7 @@ export function InteractionSection(): React.JSX.Element {
               <Button
                 size="sm"
                 onClick={() => {
+                  setInvalidKey(false)
                   void patch({ shortcut: DEFAULT_SHORTCUT }).then(() => {
                     void window.api.app.shortcutStatus().then((s) => setConflict(!s.ok))
                   })
@@ -86,6 +107,11 @@ export function InteractionSection(): React.JSX.Element {
             ) : null}
           </div>
         </div>
+        {invalidKey ? (
+          <Row label={t('shortcut.invalid')}>
+            <span className="at-badge at-badge--danger">!</span>
+          </Row>
+        ) : null}
         {conflict ? (
           <Row label={t('shortcut.conflict')}>
             <span className="at-badge at-badge--danger">!</span>

@@ -17,19 +17,18 @@ In the default automatic mode, no selection means waiting for your input — **n
 
 Bring your own API key and choose your AI service, or use local models through Ollama / LM Studio. No AskThis account or telemetry. **No free cloud credits or built-in ChatGPT / Codex subscription sign-in are included.** Cloud API usage is billed separately by your provider; a web-chat subscription is not API credit.
 
-## v0.1.5: a lighter lookup, smoother follow-ups
+## v0.2.0: In-card quick switcher, code copy & local history
 
-> This page describes v0.1.5. Visit [Releases](https://github.com/537Lab/askthis/releases/latest) for the version actually available to download. [Full bilingual release notes](docs/releases/v0.1.5.md)
+> This page covers **v0.2.0**. Visit [Releases](https://github.com/537Lab/askthis/releases/latest) to download packages for macOS, Windows, and Linux. [Full Changelog](CHANGELOG.md)
 
-- **Read first, follow up when needed**: keep a discoverable single-line composer, hide keyboard help when there is no draft, and grow with multiline input. Focusing alone does not increase the card's height.
-- **Quieter source, clearer answer**: source text aligns with the answer and wraps naturally, without decorative boxes or accent rails. Input focus uses a neutral thin border.
-- **Draft without interrupting**: use `Shift+Enter` for a new line or the explicit Send button. You can draft while an answer streams, but nothing is queued or sent concurrently; send explicitly after completion or stopping.
-- **Copy and keep talking**: copy each existing answer independently **without closing the card**. Regenerate the latest turn, even after an empty response or stopping before the first answer text.
-- **Read earlier turns without being pulled back**: scrolling up pauses stream-following; **Back to latest** resumes it.
-- **Consistent identity and Mac fixes**: the new “Dialogue a” identity across app and tray; fixes for candidates hidden behind the popup and an undraggable Settings window. This round's separate packaged checks cover macOS system Pinyin / Shuangpin only, not every IME.
+- **Switch prompts, models & reasoning inside the card**: click the header pill to switch prompt presets, providers/models, or reasoning levels on the fly and optionally re-run the current query without leaving the popup; includes a direct Settings button in the header.
+- **One-click code block copy**: fenced code blocks render a subtle language label and a Copy Code button while keeping strict `DOMPurify` sanitization intact.
+- **Dedicated local History tab**: search across questions, follow-ups, answers, models, and prompts; inspect full multi-turn Markdown conversations, copy answers, or delete individual entries inline. Follow-ups and regenerations now update the same session entry instead of duplicating it.
+- **Keyboard workflow & long-source folding**: `⌘,` / `Ctrl+,` opens Settings, `⌘R` / `Ctrl+R` regenerates, and `⌘⇧C` / `Ctrl+Shift+C` copies the latest answer; long captured excerpts fold at 4 lines with an expand toggle while preserving full text.
+- **Live config sync & Windows / Mac polish**: Settings changes sync to the popup immediately; added API type selector, API key reveal toggle, model search & "Set active", secret-free JSON config export/import, and diagnostics copy; Windows UIA selection capture now skips unnecessary `Ctrl+C` polling on confirmed empty selections, and Windows/Linux Settings windows hide the redundant default menu bar.
 
 <details>
-<summary>See follow-up and dark-mode cards</summary>
+<summary>See follow-up and dark-mode cards (v0.1.5 demo screenshots)</summary>
 
 ![AskThis v0.1.5 follow-up conversation](docs/images/v0.1.5/follow-up-light.png)
 
@@ -39,7 +38,7 @@ Bring your own API key and choose your AI service, or use local models through O
 
 </details>
 
-Screenshots show the actual macOS app UI from the current packaged build. Answers come from a local SSE demo service, and header model names are demo labels—not model-performance claims or hardware validation on other platforms. A clipboard source label in a demo does not mean old clipboard text is queried automatically by default. **No-selection typing, selection lookup, multiple providers, streaming and local history already existed; they are not new in v0.1.5.**
+Screenshots show the actual macOS app UI from the v0.1.5 packaged build. Answers come from a local SSE demo service, and header model names are demo labels—not model-performance claims or hardware validation on other platforms. A clipboard source label in a demo does not mean old clipboard text is queried automatically by default. **No-selection typing, selection lookup, multiple providers, streaming and local history logging already existed; they are not new in v0.2.0.**
 
 ## One shortcut, two ways to ask
 

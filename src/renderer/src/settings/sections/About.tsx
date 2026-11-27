@@ -2,15 +2,35 @@ import { useEffect, useState } from 'react'
 import type { PlatformInfo } from '@shared/types'
 import { GITHUB_URL, RELEASES_URL } from '@shared/constants'
 import { useT, Section, Row, Button } from '../../shared/ui'
-import { LogoIcon } from '../../shared/icons'
+import { LogoIcon, CopyIcon, CheckIcon } from '../../shared/icons'
+import { useSettingsStore } from '../store'
 
 export function AboutSection(): React.JSX.Element {
   const t = useT()
+  const config = useSettingsStore((s) => s.config)
   const [info, setInfo] = useState<PlatformInfo | null>(null)
+  const [copied, setCopied] = useState(false)
 
   useEffect(() => {
     void window.api.app.platformInfo().then(setInfo)
   }, [])
+
+  const copyDiagnostics = (): void => {
+    const activeProvider = config?.providers.find((p) => p.id === config.activeProviderId)
+    const lines = [
+      `AskThis: ${info?.appVersion ?? 'unknown'}`,
+      `Electron: ${info?.electronVersion ?? 'unknown'}`,
+      `OS: ${info ? `${info.osVersion} (${info.arch}, ${info.platform})` : 'unknown'}`,
+      `Locale: ${config?.locale ?? 'unknown'}`,
+      `Theme: ${config?.theme ?? 'unknown'}`,
+      `SelectionMode: ${config?.selectionMode ?? 'unknown'} (clipboardFallback=${String(config?.clipboardFallback)})`,
+      `Provider: ${activeProvider ? `${activeProvider.name} (${activeProvider.kind})` : 'none'}`,
+      `Model: ${config?.activeModelId || 'none'} (reasoning=${config?.reasoningLevel ?? 'unknown'})`
+    ]
+    void navigator.clipboard?.writeText(lines.join('\n')).catch(() => {})
+    setCopied(true)
+    window.setTimeout(() => setCopied(false), 1600)
+  }
 
   return (
     <div className="about">
@@ -40,6 +60,10 @@ export function AboutSection(): React.JSX.Element {
       <div className="about__links">
         <Button size="sm" onClick={() => window.api.app.openExternal(GITHUB_URL)}>
           {t('about.github')}
+        </Button>
+        <Button size="sm" onClick={copyDiagnostics}>
+          {copied ? <CheckIcon size={12} /> : <CopyIcon size={12} />}
+          <span>{copied ? t('about.diagnosticsCopied') : t('about.copyDiagnostics')}</span>
         </Button>
         <Button size="sm" variant="primary" onClick={() => window.api.app.openExternal(RELEASES_URL)}>
           {t('about.checkUpdates')}

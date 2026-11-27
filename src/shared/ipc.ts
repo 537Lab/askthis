@@ -22,6 +22,7 @@ export const IPC = {
   PopupCopy: 'popup:copy',
   PopupClose: 'popup:close',
   PopupResize: 'popup:resize',
+  PopupQuickSwitch: 'popup:quick-switch',
 
   /* app */
   AppOpenSettings: 'app:open-settings',
@@ -35,6 +36,7 @@ export const IPC = {
 
   /* history */
   HistoryList: 'history:list',
+  HistoryDelete: 'history:delete',
   HistoryClear: 'history:clear'
 } as const
 

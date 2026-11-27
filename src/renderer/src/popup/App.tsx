@@ -3,9 +3,9 @@ import type { UiLocale } from '@shared/i18n'
 import { resolveLocale } from '@shared/i18n'
 import { usePopupStore, type PopupStatus, type Turn } from './state'
 import { LocaleProvider, useT, Button, IconButton, Spinner } from '../shared/ui'
-import { CloseIcon, CopyIcon, CheckIcon, StopIcon, LockIcon, LogoIcon, RefreshIcon } from '../shared/icons'
+import { CloseIcon, CopyIcon, CheckIcon, StopIcon, LockIcon, LogoIcon, RefreshIcon, GearIcon } from '../shared/icons'
 import { Markdown } from '../shared/markdown'
-import type { CaptureSource } from '@shared/types'
+import type { CaptureSource, PublicConfig, ReasoningLevel } from '@shared/types'
 
 export function App(): React.JSX.Element {
   const config = usePopupStore((s) => s.config)
@@ -13,13 +13,49 @@ export function App(): React.JSX.Element {
     resolveLocale('system', typeof navigator !== 'undefined' ? navigator.language : 'zh-CN')
   )
   useEffect(() => {
+    let pending: Array<{ channel: 'text' | 'reasoning'; delta: string }> = []
+    let frameId = 0
+    const flush = (): void => {
+      if (frameId) {
+        if (typeof cancelAnimationFrame === 'function') cancelAnimationFrame(frameId)
+        else window.clearTimeout(frameId)
+        frameId = 0
+      }
+      if (!pending.length) return
+      const batch = pending
+      pending = []
+      usePopupStore.getState().applyDeltas?.(batch)
+    }
+    const scheduleFlush = (): void => {
+      if (frameId) return
+      frameId =
+        typeof requestAnimationFrame === 'function'
+          ? requestAnimationFrame(() => flush())
+          : window.setTimeout(() => flush(), 0)
+    }
+
     const un = window.api.popup.onActivate((payload) => {
+      flush()
       usePopupStore.getState().applyActivate(payload)
       void window.api.config.get().then((cfg) => usePopupStore.getState().setConfig(cfg))
     })
-    const unEvents = window.api.popup.onQueryEvent((event) => usePopupStore.getState().applyEvent(event))
+    const unEvents = window.api.popup.onQueryEvent((event) => {
+      if (event.type === 'delta' && typeof usePopupStore.getState().applyDeltas === 'function') {
+        pending.push({ channel: event.channel, delta: event.delta })
+        scheduleFlush()
+        return
+      }
+      flush()
+      usePopupStore.getState().applyEvent(event)
+    })
+    const unConfig = window.api.config?.onChanged?.((cfg) => usePopupStore.getState().setConfig(cfg))
     void window.api.config.get().then((cfg) => usePopupStore.getState().setConfig(cfg))
-    return () => { un(); unEvents() }
+    return () => {
+      flush()
+      un()
+      unEvents()
+      unConfig?.()
+    }
   }, [])
   useEffect(() => {
     if (config) setLocale(resolveLocale(config.locale, navigator.language))
@@ -36,14 +72,20 @@ function PopupCard(): React.JSX.Element {
   const followingRef = useRef(true)
   const [draft, setDraft] = useState('')
   const [showLatest, setShowLatest] = useState(false)
+  const [switcherOpen, setSwitcherOpen] = useState(false)
   const busy = store.status === 'waiting' || store.status === 'streaming'
   const hasTurns = store.turns.length > 0
   const cfg = store.config
   const maxH = cfg?.maxWindowHeight ?? 560
   const maxInputHeight = Math.min(108, Math.max(26, maxH - 170))
   const level = cfg?.reasoningLevel
-  const modelLabel = (store.model || cfg?.activeModelId || '') + (level && level !== 'off' ? ` · ${level}` : '')
+  const activePrompt = cfg?.prompts?.find((p) => p.id === cfg.activePromptId)
+  const rawModel = store.model || cfg?.activeModelId || ''
+  const modelText = rawModel + (level && level !== 'off' ? ` · ${level}` : '')
+  const modelLabel = activePrompt?.name && modelText ? `${activePrompt.name} · ${modelText}` : (activePrompt?.name || modelText)
   const last = store.turns[store.turns.length - 1]
+  const keyContextRef = useRef({ switcherOpen, busy, hasTurns, lastAnswer: last?.a ?? '' })
+  keyContextRef.current = { switcherOpen, busy, hasTurns, lastAnswer: last?.a ?? '' }
 
   // Grow naturally up to the user's cap. Native positioning/fullscreen behavior
   // stays in PopupWindow; no animated native resizes or focus changes here.
@@ -75,6 +117,7 @@ function PopupCard(): React.JSX.Element {
     setDraft('')
     followingRef.current = true
     setShowLatest(false)
+    setSwitcherOpen(false)
     if (!usePopupStore.getState().question) {
       const id = window.setTimeout(() => inputRef.current?.focus(), 80)
       return () => window.clearTimeout(id)
@@ -98,8 +141,33 @@ function PopupCard(): React.JSX.Element {
 
   useEffect(() => {
     const onKey = (e: KeyboardEvent): void => {
-      if (e.key !== 'Escape' || e.isComposing || e.keyCode === 229) return
-      window.api.popup.close()
+      if (e.isComposing || e.keyCode === 229) return
+      if (e.key === 'Escape') {
+        if (keyContextRef.current.switcherOpen) {
+          setSwitcherOpen(false)
+          return
+        }
+        window.api.popup.close()
+        return
+      }
+      const mod = e.metaKey || e.ctrlKey
+      if (!mod) return
+      if (e.key === ',') {
+        e.preventDefault?.()
+        window.api.app?.openSettings?.()
+        return
+      }
+      if (e.key.toLowerCase() === 'r') {
+        e.preventDefault?.()
+        if (!keyContextRef.current.busy && keyContextRef.current.hasTurns) {
+          window.api.popup.regenerate()
+        }
+        return
+      }
+      if (e.shiftKey && e.key.toLowerCase() === 'c' && keyContextRef.current.lastAnswer) {
+        e.preventDefault?.()
+        window.api.popup.copy(keyContextRef.current.lastAnswer)
+      }
     }
     window.addEventListener('keydown', onKey)
     return () => window.removeEventListener('keydown', onKey)
@@ -123,10 +191,34 @@ function PopupCard(): React.JSX.Element {
           <div className="head__drag">
             <span className="head__logo"><LogoIcon size={16} /></span>
             <span className="head__brand">AskThis</span>
-            <span className="head__model" title={modelLabel}>{modelLabel}</span>
+            {cfg ? (
+              <button
+                type="button"
+                className={`head__model head__model--btn${switcherOpen ? ' head__model--open' : ''}`}
+                title={modelLabel}
+                aria-expanded={switcherOpen}
+                onClick={() => setSwitcherOpen((v) => !v)}
+              >
+                <span className="head__model-text">{modelLabel}</span>
+                <span className="head__model-caret" aria-hidden="true">▾</span>
+              </button>
+            ) : (
+              <span className="head__model" title={modelLabel}>{modelLabel}</span>
+            )}
           </div>
-          <IconButton title={t('popup.close')} onClick={() => window.api.popup.close()}><CloseIcon size={14} /></IconButton>
+          <div className="head__actions">
+            <IconButton title={t('popup.settings')} onClick={() => window.api.app?.openSettings?.()}><GearIcon size={13} /></IconButton>
+            <IconButton title={t('popup.close')} onClick={() => window.api.popup.close()}><CloseIcon size={14} /></IconButton>
+          </div>
         </header>
+
+        {switcherOpen && cfg ? (
+          <QuickSwitcher
+            cfg={cfg}
+            canRequery={hasTurns && !busy}
+            onClose={() => setSwitcherOpen(false)}
+          />
+        ) : null}
 
         <div className="body" ref={bodyRef} hidden={!hasTurns && !store.needsPermission}
           onScroll={() => {
@@ -186,6 +278,102 @@ function PopupCard(): React.JSX.Element {
   )
 }
 
+function QuickSwitcher({
+  cfg,
+  canRequery,
+  onClose
+}: {
+  cfg: PublicConfig
+  canRequery: boolean
+  onClose: () => void
+}): React.JSX.Element {
+  const t = useT()
+  const modelValue = `${cfg.activeProviderId}::${cfg.activeModelId}`
+  const apply = (patch: Parameters<typeof window.api.popup.quickSwitch>[0], closeAfter = false): void => {
+    void window.api.popup.quickSwitch?.(patch).then((next) => {
+      if (next) usePopupStore.getState().setConfig(next)
+    })
+    if (closeAfter) onClose()
+  }
+
+  return (
+    <>
+      <div className="switcher-backdrop" onClick={onClose} />
+      <div className="switcher" role="dialog" aria-label={t('popup.switcher.prompt')}>
+        <div className="switcher__group">
+          <div className="switcher__label">{t('popup.switcher.prompt')}</div>
+          <div className="switcher__chips">
+            {(cfg.prompts ?? []).map((p) => (
+              <button
+                key={p.id}
+                type="button"
+                className={`switcher__chip${p.id === cfg.activePromptId ? ' switcher__chip--active' : ''}`}
+                onClick={() => apply({ promptId: p.id, requery: canRequery }, true)}
+              >
+                {p.name}
+              </button>
+            ))}
+          </div>
+        </div>
+
+        <div className="switcher__group">
+          <label className="switcher__label" htmlFor="popup-model-select">{t('popup.switcher.model')}</label>
+          <select
+            id="popup-model-select"
+            className="at-select switcher__select"
+            value={modelValue}
+            onChange={(e) => {
+              const raw = e.target.value
+              const idx = raw.indexOf('::')
+              if (idx <= 0) return
+              apply({ providerId: raw.slice(0, idx), modelId: raw.slice(idx + 2) })
+            }}
+          >
+            {((cfg.providers) ?? []).map((p) => (
+              <optgroup key={p.id} label={p.name}>
+                {p.models.length ? (
+                  p.models.map((m) => (
+                    <option key={`${p.id}::${m.id}`} value={`${p.id}::${m.id}`}>
+                      {m.id}
+                    </option>
+                  ))
+                ) : (
+                  <option value={`${p.id}::`} disabled>—</option>
+                )}
+              </optgroup>
+            ))}
+          </select>
+        </div>
+
+        <div className="switcher__group">
+          <div className="switcher__label">{t('popup.switcher.reasoning')}</div>
+          <div className="switcher__segments">
+            {(['off', 'low', 'medium', 'high', 'max'] as ReasoningLevel[]).map((lv) => (
+              <button
+                key={lv}
+                type="button"
+                className={`switcher__seg${cfg.reasoningLevel === lv ? ' switcher__seg--active' : ''}`}
+                onClick={() => apply({ reasoningLevel: lv })}
+              >
+                {t(`level.${lv}`)}
+              </button>
+            ))}
+          </div>
+        </div>
+
+        {canRequery ? (
+          <div className="switcher__foot">
+            <Button size="sm" variant="primary" onClick={() => apply({ requery: true }, true)}>
+              <RefreshIcon size={11} />
+              <span>{t('popup.switcher.requery')}</span>
+            </Button>
+          </div>
+        ) : null}
+      </div>
+    </>
+  )
+}
+
 function TurnView({ turn, first, source, isLast, status, showReasoning }: {
   turn: Turn
   first: boolean
@@ -195,10 +383,12 @@ function TurnView({ turn, first, source, isLast, status, showReasoning }: {
   showReasoning: boolean
 }): React.JSX.Element {
   const t = useT()
-  const { q, a, reasoning, error, stopped, elapsedMs } = turn
+  const { q, a, reasoning, error, stopped, incomplete, elapsedMs } = turn
   const active = isLast && (status === 'waiting' || status === 'streaming')
   const [copied, setCopied] = useState(false)
+  const [sourceExpanded, setSourceExpanded] = useState(false)
   const copyTimer = useRef<number | undefined>(undefined)
+  const isLongSource = q.length > 260 || q.split('\n').length > 5
   useEffect(() => {
     setCopied(false)
     return () => window.clearTimeout(copyTimer.current)
@@ -207,15 +397,31 @@ function TurnView({ turn, first, source, isLast, status, showReasoning }: {
     <section className={`turn${first ? ' turn--first' : ''}`}>
       {q ? <div className="turn__q">
         <span className="turn__q-badge">{first ? t(`popup.source.${source && source !== 'none' ? source : 'manual'}`) : t('popup.followup')}</span>
-        <div className="turn__q-text">{q}</div>
+        <div className="turn__q-wrap">
+          <div className={`turn__q-text${isLongSource && !sourceExpanded ? ' turn__q-text--clamped' : ''}`}>{q}</div>
+          {isLongSource ? (
+            <button type="button" className="turn__q-toggle" onClick={() => setSourceExpanded((v) => !v)}>
+              {sourceExpanded ? t('popup.collapseSource') : t('popup.expandSource')}
+            </button>
+          ) : null}
+        </div>
       </div> : null}
       {showReasoning && reasoning ? <details className="reason">
         <summary>{t('popup.reasoning')}</summary><div className="reason__body">{reasoning}</div>
       </details> : null}
       {active && !a ? <div className="waiting" role="status"><Spinner size={12} /><span>{t('popup.thinking')}</span></div> : null}
-      {a ? <Markdown className="turn__a" text={a} /> : null}
+      {a ? (
+        <Markdown
+          className="turn__a"
+          text={a}
+          copyLabel={t('popup.copyCode')}
+          copiedLabel={t('popup.codeCopied')}
+          onCopyCode={(code) => window.api.popup.copy(code)}
+        />
+      ) : null}
       {active && a ? <span className="cursor" aria-label={t('popup.answering')} /> : null}
       {error ? <div className="turn__error" role="alert">{localizeError(error, t)}</div> : null}
+      {incomplete ? <div className="turn__note">{t('popup.incomplete')}</div> : null}
       {stopped ? <div className="turn__note">{t('err.ABORTED')}</div> : null}
       {!active && (a || (isLast && status === 'done')) ? <div className="turn__actions">
         {a ? <button className="turn__action" aria-label={t('popup.copy')} onClick={() => {
@@ -246,14 +452,14 @@ function PermissionCard(): React.JSX.Element {
   )
 }
 
-const ERROR_TOKENS = ['NO_PROVIDER', 'NO_API_KEY', 'TIMEOUT', 'NEEDS_PERMISSION'] as const
+const ERROR_TOKENS = ['NO_PROVIDER', 'NO_MODEL', 'NO_API_KEY', 'TIMEOUT', 'NEEDS_PERMISSION'] as const
 function localizeError(msg: string, t: (key: string, vars?: Record<string, string | number>) => string): string {
   if ((ERROR_TOKENS as readonly string[]).includes(msg)) return t(`err.${msg}`)
   if (msg === 'request timed out') return t('err.TIMEOUT')
   return msg
 }
 function needsSettings(msg: string | null | undefined): boolean {
-  return msg === 'NO_PROVIDER' || msg === 'NO_API_KEY'
+  return msg === 'NO_PROVIDER' || msg === 'NO_MODEL' || msg === 'NO_API_KEY'
 }
 function formatMs(ms: number): string {
   return ms < 1000 ? `${ms} ms` : `${(ms / 1000).toFixed(1)} s`

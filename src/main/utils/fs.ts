@@ -1,4 +1,4 @@
-import { mkdirSync, readFileSync, writeFileSync, renameSync } from 'node:fs'
+import { mkdirSync, readFileSync, writeFileSync, renameSync, unlinkSync } from 'node:fs'
 import { dirname } from 'node:path'
 
 export function ensureDir(dir: string): void {
@@ -20,9 +20,18 @@ export function readJsonSafe<T>(path: string): T | null {
  */
 export function writeFileAtomic(path: string, data: string, mode?: number): void {
   ensureDir(dirname(path))
-  const tmp = `${path}.${process.pid}.tmp`
-  writeFileSync(tmp, data, mode != null ? { mode } : undefined)
-  renameSync(tmp, path)
+  const tmp = `${path}.${process.pid}.${Math.random().toString(36).slice(2, 8)}.tmp`
+  try {
+    writeFileSync(tmp, data, mode != null ? { mode } : undefined)
+    renameSync(tmp, path)
+  } catch (err) {
+    try {
+      unlinkSync(tmp)
+    } catch {
+      /* 忽略清理失败 */
+    }
+    throw err
+  }
 }
 
 export function sleep(ms: number): Promise<void> {

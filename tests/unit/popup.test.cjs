@@ -13,10 +13,21 @@ function popupHarness({ needsPermission = true, draft = ' typed question ', turn
     react: { ...React, useEffect: (effect) => effects.push(effect), useLayoutEffect: (effect) => effects.push(effect), useRef: (initial) => { const ref = { current: initial }; refs.push(ref); return ref }, useState: (initial) => [initial === '' ? draft : typeof initial === 'function' ? initial() : initial, () => {}] },
     './state': { usePopupStore },
     '../shared/ui': { useT: () => (key) => key, LocaleProvider: empty, Button: empty, IconButton: empty, Spinner: empty },
-    '../shared/icons': { CloseIcon: empty, CopyIcon: empty, CheckIcon: empty, StopIcon: empty, LockIcon: empty, LogoIcon: empty },
+    '../shared/icons': { CloseIcon: empty, CopyIcon: empty, CheckIcon: empty, StopIcon: empty, LockIcon: empty, LogoIcon: empty, GearIcon: empty, RefreshIcon: empty },
     '../shared/markdown': { Markdown: empty }
   }, { navigator: { language: 'en-US' }, window: {
-    api: { popup: { copy: (text) => calls.push(['copy', text]), regenerate: () => calls.push(['regenerate']), send: (text) => calls.push(['send', text]), close: () => calls.push(['close']), stop: () => calls.push(['stop']) } },
+    api: {
+      config: { get: () => Promise.resolve(config), onChanged: () => () => {} },
+      app: { openSettings: () => calls.push(['openSettings']) },
+      popup: {
+        copy: (text) => calls.push(['copy', text]),
+        regenerate: () => calls.push(['regenerate']),
+        send: (text) => calls.push(['send', text]),
+        close: () => calls.push(['close']),
+        stop: () => calls.push(['stop']),
+        quickSwitch: (patch) => { calls.push(['quickSwitch', patch]); return Promise.resolve(config) }
+      }
+    },
     setTimeout: (callback) => { timers.push(callback); return timers.length }, clearTimeout: () => {},
     addEventListener: (type, callback) => { listeners[type] = callback }, removeEventListener: () => {}
   } })
@@ -169,4 +180,48 @@ test('streaming keeps the draft editable but never submits another request', () 
     h.input.props.onKeyDown({ key: 'Enter', nativeEvent: {}, preventDefault() {} })
     assert.equal(h.calls.length, 0)
   }
+})
+
+test('NO_MODEL error localizes properly and exposes Open Settings recovery button', () => {
+  const h = popupHarness({ needsPermission: false, turns: [{ q: 'first', a: '', error: 'NO_MODEL' }], status: 'error' })
+  const turn = h.find((el) => el.type?.name === 'TurnView')
+  const rendered = turn.type(turn.props)
+  const errEl = h.inTree(rendered, (el) => el.props?.role === 'alert')
+  assert.equal(errEl.props.children, 'err.NO_MODEL')
+  const settingsBtn = h.find((el) => el.props?.children === 'popup.noKey.action')
+  assert.ok(settingsBtn, 'NO_MODEL must show Open Settings button')
+})
+
+test('incomplete stream renders localized notice on TurnView', () => {
+  const h = popupHarness({ needsPermission: false, turns: [{ q: 'first', a: 'partial', incomplete: true }], status: 'done' })
+  const turn = h.find((el) => el.type?.name === 'TurnView')
+  const rendered = turn.type(turn.props)
+  const note = h.inTree(rendered, (el) => el.props?.className === 'turn__note' && el.props?.children === 'popup.incomplete')
+  assert.ok(note)
+})
+
+test('keyboard shortcuts support Cmd+R regenerate and Cmd+, settings while guarding browser reload', () => {
+  const h = popupHarness({ needsPermission: false, turns: [{ q: 'first', a: 'ans' }], status: 'done' })
+  h.effects.forEach((effect) => effect())
+  let prevented = false
+  h.listeners.keydown({ key: 'r', metaKey: true, preventDefault: () => { prevented = true } })
+  assert.equal(prevented, true)
+  h.listeners.keydown({ key: ',', metaKey: true, preventDefault: () => {} })
+  assert.deepEqual(h.calls, [['regenerate'], ['openSettings']])
+})
+
+test('long source text clamps visually while preserving full DOM textContent and toggle control', () => {
+  const longQ = 'a'.repeat(280)
+  const hLong = popupHarness({ needsPermission: false, turns: [{ q: longQ, a: 'ans' }], status: 'done' })
+  const tLong = hLong.find((el) => el.type?.name === 'TurnView')
+  const rLong = tLong.type(tLong.props)
+  const qText = hLong.inTree(rLong, (el) => typeof el.props?.className === 'string' && el.props.className.includes('turn__q-text--clamped'))
+  assert.ok(qText)
+  assert.equal(qText.props.children, longQ)
+  assert.ok(hLong.inTree(rLong, (el) => el.props?.className === 'turn__q-toggle'))
+
+  const hShort = popupHarness({ needsPermission: false, turns: [{ q: 'short', a: 'ans' }], status: 'done' })
+  const tShort = hShort.find((el) => el.type?.name === 'TurnView')
+  const rShort = tShort.type(tShort.props)
+  assert.equal(hShort.inTree(rShort, (el) => el.props?.className === 'turn__q-toggle'), null)
 })

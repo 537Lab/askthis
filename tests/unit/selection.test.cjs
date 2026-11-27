@@ -94,3 +94,21 @@ test('confirmed empty AX selection opens blank without copying or waiting', asyn
   assert.equal(h.commands.length, 1, 'must not send Cmd+C when AX confirms no selection')
   assert.equal(h.reads, 0, 'must not touch the old clipboard')
 })
+
+test('Windows confirmed empty UIA selection opens blank without copying or touching clipboard', async () => {
+  const h = selectionHarness({ platform: 'win32', probe: 'ASKTHIS_EMPTY\r\n' })
+  const result = await h.captureText('auto', false)
+  assert.equal(result.text, '')
+  assert.equal(result.source, 'none')
+  assert.equal(h.commands.length, 1, 'must not send Ctrl+C when UIA confirms no selection')
+  assert.equal(h.reads, 0, 'must not touch old clipboard')
+})
+
+test('Windows unsupported UIA still copies via keybd_event and restores old clipboard', async () => {
+  const h = selectionHarness({ platform: 'win32', probe: 'ASKTHIS_UNKNOWN\r\n', copiedText: 'win selection' })
+  const result = await h.captureText('auto')
+  assert.equal(result.text, 'win selection')
+  assert.equal(result.source, 'selection')
+  assert.equal(h.commands.length, 2)
+  assert.deepEqual(h.writes, ['old clipboard'])
+})

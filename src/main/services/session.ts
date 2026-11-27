@@ -1,5 +1,5 @@
 import { randomUUID } from 'node:crypto'
-import type { CaptureSource, ChatMessage, QueryEvent, UsageInfo } from '@shared/types'
+import type { CaptureSource, ChatMessage, HistoryTurn, QueryEvent } from '@shared/types'
 import type { ConfigStore } from '../store'
 import type { HistoryStore } from './history'
 import { AIError, streamChat } from '../ai/client'
@@ -37,6 +37,10 @@ export class QuerySession {
   private rawTextLength: number
   /** Last question that failed or was aborted — used by regenerate(). */
   private pendingQuestion: string | null = null
+  /** 已完成轮次的原始提问与回答，用于按会话聚合持久化历史 */
+  private historyTurns: HistoryTurn[] = []
+  private currentDisplayQuestion = ''
+  private isRegenerating = false
 
   constructor(
     private deps: SessionDeps,
@@ -57,7 +61,7 @@ export class QuerySession {
     if (!this.sourceText) return
     this.started = true
     this.initialText = this.sourceText
-    await this.run(this.wrap(this.sourceText))
+    await this.run(this.wrap(this.sourceText), this.sourceText)
   }
 
   /** User typed something manually (no capture) — becomes the first question. */
@@ -67,9 +71,9 @@ export class QuerySession {
     if (!this.started) {
       this.started = true
       this.initialText = t
-      await this.run(this.wrap(t))
+      await this.run(this.wrap(t), t)
     } else {
-      await this.run(t)
+      await this.run(t, t)
     }
   }
 
@@ -86,7 +90,29 @@ export class QuerySession {
     }
     if (!content) return
     this.pendingQuestion = null
-    await this.run(content)
+    this.isRegenerating = true
+    const displayQ =
+      this.currentDisplayQuestion ||
+      (this.historyTurns.length > 0 ? this.historyTurns[this.historyTurns.length - 1].q : this.initialText || content)
+    await this.run(content, displayQ)
+  }
+
+  /** 在快速切换模型/提示词/推理强度后，以最新配置重新生成当前或首轮回答 */
+  async requeryWithCurrentConfig(): Promise<void> {
+    if (this.disposed) return
+    if (!this.started) {
+      if (this.sourceText) await this.start()
+      return
+    }
+    const userMsgCount = this.messages.filter((m) => m.role === 'user').length
+    if (userMsgCount <= 1 && this.historyTurns.length <= 1 && this.initialText) {
+      this.messages = []
+      this.pendingQuestion = null
+      this.isRegenerating = this.historyTurns.length > 0
+      await this.run(this.wrap(this.initialText), this.initialText)
+      return
+    }
+    await this.regenerate()
   }
 
   stop(): void {
@@ -117,7 +143,7 @@ export class QuerySession {
     return text
   }
 
-  private async run(userContent: string): Promise<void> {
+  private async run(userContent: string, displayQuestion?: string): Promise<void> {
     if (this.disposed) return
     const cfg = this.deps.store.get()
     const provider = cfg.providers.find((p) => p.id === cfg.activeProviderId)
@@ -126,6 +152,10 @@ export class QuerySession {
     this.currentReqId = reqId
     this.answer = ''
     this.reasoning = ''
+    const questionLabel = displayQuestion ?? (this.currentDisplayQuestion || userContent)
+    this.currentDisplayQuestion = questionLabel
+    const wasRegenerating = this.isRegenerating
+    this.isRegenerating = false
 
     const fail = (message: string, detail?: string): void => {
       // Keep the raw server detail in the local log only; renderer gets the friendly code.
@@ -137,6 +167,11 @@ export class QuerySession {
       // remember the question so the "Retry" button can resend it later
       this.pendingQuestion = userContent
       fail('NO_PROVIDER')
+      return
+    }
+    if (!model || !model.trim()) {
+      this.pendingQuestion = userContent
+      fail('NO_MODEL')
       return
     }
     const apiKey = this.deps.store.getApiKey(provider.id)
@@ -186,32 +221,34 @@ export class QuerySession {
       if (this.disposed || this.currentReqId !== reqId) return
 
       this.messages.push({ role: 'assistant', content: this.answer })
-      if (result.incomplete && this.answer) {
-        // connection dropped mid-answer — keep what we have, mark it
-        this.answer += '\n\n…（连接中断，回答可能不完整）'
-        this.deps.emit({
-          type: 'delta',
-          requestId: reqId,
-          channel: 'text',
-          delta: '\n\n…（连接中断，回答可能不完整）'
-        })
-      }
+      const incomplete = Boolean(result.incomplete && this.answer)
       this.deps.emit({
         type: 'done',
         requestId: reqId,
         elapsedMs: Date.now() - t0,
-        usage: result.usage
+        usage: result.usage,
+        incomplete
       })
 
       if (cfg.historyEnabled && this.answer) {
-        this.deps.history.add(
+        const turnRecord: HistoryTurn = { q: questionLabel, a: this.answer }
+        if (wasRegenerating && this.historyTurns.length > 0) {
+          this.historyTurns[this.historyTurns.length - 1] = turnRecord
+        } else {
+          this.historyTurns.push(turnRecord)
+        }
+        this.deps.history.upsertBySession(
           {
-            id: randomUUID(),
+            id: this.id,
+            sessionId: this.id,
             ts: Date.now(),
             source: this.source,
-            question: this.initialText || userContent,
+            question: this.initialText || questionLabel,
             answer: this.answer,
-            model
+            model,
+            turns: this.historyTurns.map((x) => ({ ...x })),
+            promptId: prompt?.id,
+            promptName: prompt?.name
           },
           cfg.historyLimit
         )

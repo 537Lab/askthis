@@ -8,6 +8,7 @@ import type {
   PlatformInfo,
   PublicConfig,
   QueryEvent,
+  SessionOverrides,
   TestResult
 } from '@shared/types'
 
@@ -50,7 +51,9 @@ const popupApi: PopupApi = {
     stop: () => ipcRenderer.send(IPC.QueryStop),
     copy: (text: string) => ipcRenderer.send(IPC.PopupCopy, text),
     close: () => ipcRenderer.send(IPC.PopupClose),
-    resize: (height: number) => ipcRenderer.send(IPC.PopupResize, height)
+    resize: (height: number) => ipcRenderer.send(IPC.PopupResize, height),
+    quickSwitch: (patch: SessionOverrides & { requery?: boolean }): Promise<PublicConfig> =>
+      ipcRenderer.invoke(IPC.PopupQuickSwitch, patch)
   },
   app: appCommon
 }
@@ -71,6 +74,7 @@ const settingsApi: SettingsApi = {
   },
   history: {
     list: (limit?: number): Promise<HistoryEntry[]> => ipcRenderer.invoke(IPC.HistoryList, limit),
+    delete: (id: string): Promise<void> => ipcRenderer.invoke(IPC.HistoryDelete, id),
     clear: (): Promise<void> => ipcRenderer.invoke(IPC.HistoryClear)
   }
 }

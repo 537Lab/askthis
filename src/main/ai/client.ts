@@ -63,13 +63,18 @@ export async function testProvider(
         anthropicHeaders(provider, apiKey),
         {
           model,
-          max_tokens: 32,
+          max_tokens: 64,
           messages: [{ role: 'user', content: 'Say "ok" in one word.' }]
         },
         combineSignals(undefined, timeoutSec)
       )
       const json = (await res.json()) as any
-      const sample: string = json.content?.[0]?.text ?? ''
+      const blocks: any[] = Array.isArray(json.content) ? json.content : []
+      const textBlock = blocks.find((b) => b?.type === 'text' && typeof b.text === 'string' && b.text)
+      const thinkingBlock = blocks.find(
+        (b) => b?.type === 'thinking' && typeof b.thinking === 'string' && b.thinking
+      )
+      const sample: string = textBlock?.text ?? thinkingBlock?.thinking ?? ''
       return { ok: true, message: 'OK', latencyMs: Date.now() - started, sample: sample.slice(0, 80) }
     }
 
@@ -77,7 +82,7 @@ export async function testProvider(
       model,
       messages: [{ role: 'user', content: 'Say "ok" in one word.' }],
       stream: false,
-      ...maxTokensField(provider, 32)
+      ...maxTokensField(provider, 64)
     }
     const res = await postJson(
       openaiUrl(provider.baseUrl, 'chat/completions'),
@@ -86,7 +91,9 @@ export async function testProvider(
       combineSignals(undefined, timeoutSec)
     )
     const json = (await res.json()) as any
-    const sample: string = json.choices?.[0]?.message?.content ?? ''
+    const msg = json.choices?.[0]?.message
+    const sample: string =
+      msg?.content || msg?.reasoning_content || msg?.reasoning || msg?.reasoning_text || ''
     return {
       ok: true,
       message: 'OK',
@@ -119,13 +126,24 @@ export async function fetchModels(
       throw new AIError(`HTTP ${res.status}`, detail)
     }
     const json = (await res.json()) as any
-    const list: any[] = Array.isArray(json.data) ? json.data : []
-    const models: ModelInfo[] = list
-      .map((m) => (typeof m?.id === 'string' ? m.id : typeof m?.name === 'string' ? m.name : null))
-      .filter((id): id is string => !!id)
-      .filter((id) => !isNonChatModel(id))
-      .sort()
-      .map((id) => ({ id }))
+    const list: any[] = Array.isArray(json.data)
+      ? json.data
+      : Array.isArray(json.models)
+        ? json.models
+        : []
+    const byId = new Map<string, ModelInfo>()
+    for (const m of list) {
+      const id = typeof m?.id === 'string' ? m.id : typeof m?.name === 'string' ? m.name : null
+      if (!id || isNonChatModel(id) || byId.has(id)) continue
+      const ctx =
+        typeof m?.context_window === 'number' && Number.isFinite(m.context_window)
+          ? m.context_window
+          : typeof m?.context_length === 'number' && Number.isFinite(m.context_length)
+            ? m.context_length
+            : undefined
+      byId.set(id, ctx != null ? { id, contextWindow: ctx } : { id })
+    }
+    const models: ModelInfo[] = Array.from(byId.values()).sort((a, b) => a.id.localeCompare(b.id))
     return { ok: true, models }
   } catch (err) {
     return { ok: false, models: [], message: errorMessage(err) }
@@ -159,39 +177,44 @@ async function streamOpenAICompatible(opts: StreamOptions, signal: AbortSignal):
   let sawStopMarker = false
   let receivedAny = false
 
-  for await (const line of readSSE(res)) {
-    if (!line.startsWith('data:')) continue
-    const payload = line.slice(5).trim()
-    if (!payload) continue
-    if (payload === '[DONE]') {
-      sawStopMarker = true
-      continue
-    }
-    let json: any
-    try {
-      json = JSON.parse(payload)
-    } catch {
-      continue
-    }
-    if (json.error) {
-      throw new AIError(json.error.message ?? 'API error', JSON.stringify(json.error).slice(0, 500))
-    }
-    const choice = json.choices?.[0]
-    const delta = choice?.delta ?? choice?.message
-    if (delta) {
-      const rc = delta.reasoning_content ?? delta.reasoning
-      if (typeof rc === 'string' && rc) {
-        receivedAny = true
-        opts.onDelta('reasoning', rc)
+  try {
+    for await (const line of readSSE(res)) {
+      if (!line.startsWith('data:')) continue
+      const payload = line.slice(5).trim()
+      if (!payload) continue
+      if (payload === '[DONE]') {
+        sawStopMarker = true
+        continue
       }
-      const content = delta.content
-      if (typeof content === 'string' && content) {
-        receivedAny = true
-        opts.onDelta('text', content)
+      let json: any
+      try {
+        json = JSON.parse(payload)
+      } catch {
+        continue
       }
+      if (json.error) {
+        throw new AIError(json.error.message ?? 'API error', JSON.stringify(json.error).slice(0, 500))
+      }
+      const choice = json.choices?.[0]
+      const delta = choice?.delta ?? choice?.message
+      if (delta) {
+        const rc = delta.reasoning_content ?? delta.reasoning ?? delta.reasoning_text
+        if (typeof rc === 'string' && rc) {
+          receivedAny = true
+          opts.onDelta('reasoning', rc)
+        }
+        const content = delta.content
+        if (typeof content === 'string' && content) {
+          receivedAny = true
+          opts.onDelta('text', content)
+        }
+      }
+      if (choice?.finish_reason) sawStopMarker = true
+      if (json.usage) usage = normalizeUsage(json.usage)
     }
-    if (choice?.finish_reason) sawStopMarker = true
-    if (json.usage) usage = normalizeUsage(json.usage)
+  } catch (err) {
+    if (err instanceof AIError) throw err
+    throw toNetworkError(err, signal)
   }
 
   return { usage, incomplete: !sawStopMarker && receivedAny }
@@ -215,10 +238,11 @@ async function streamAnthropic(opts: StreamOptions, signal: AbortSignal): Promis
     stream: true
   }
   if (system) body.system = system
-  if (temperature != null) body.temperature = temperature
   if (modelSupportsReasoning(provider, model)) {
     applyAnthropicThinking(body, provider.reasoningStyle, reasoningLevel, model, provider)
   }
+  // Anthropic 启用 thinking 时不接受自定义 temperature
+  if (temperature != null && !body.thinking) body.temperature = temperature
 
   const res = await requestStream(
     anthropicUrl(provider.baseUrl, 'messages'),
@@ -231,47 +255,52 @@ async function streamAnthropic(opts: StreamOptions, signal: AbortSignal): Promis
   let sawStopMarker = false
   let receivedAny = false
 
-  for await (const line of readSSE(res)) {
-    if (!line.startsWith('data:')) continue
-    const payload = line.slice(5).trim()
-    if (!payload) continue
-    let json: any
-    try {
-      json = JSON.parse(payload)
-    } catch {
-      continue
-    }
-    switch (json.type) {
-      case 'message_start': {
-        const u = json.message?.usage
-        if (u) {
-          usage.promptTokens = u.input_tokens
+  try {
+    for await (const line of readSSE(res)) {
+      if (!line.startsWith('data:')) continue
+      const payload = line.slice(5).trim()
+      if (!payload) continue
+      let json: any
+      try {
+        json = JSON.parse(payload)
+      } catch {
+        continue
+      }
+      switch (json.type) {
+        case 'message_start': {
+          const u = json.message?.usage
+          if (u) {
+            usage.promptTokens = u.input_tokens
+          }
+          break
         }
-        break
-      }
-      case 'content_block_delta': {
-        const d = json.delta
-        if (d?.type === 'text_delta' && typeof d.text === 'string') {
-          receivedAny = true
-          opts.onDelta('text', d.text)
-        } else if (d?.type === 'thinking_delta' && typeof d.thinking === 'string') {
-          receivedAny = true
-          opts.onDelta('reasoning', d.thinking)
+        case 'content_block_delta': {
+          const d = json.delta
+          if (d?.type === 'text_delta' && typeof d.text === 'string') {
+            receivedAny = true
+            opts.onDelta('text', d.text)
+          } else if (d?.type === 'thinking_delta' && typeof d.thinking === 'string') {
+            receivedAny = true
+            opts.onDelta('reasoning', d.thinking)
+          }
+          break
         }
-        break
+        case 'message_delta': {
+          const u = json.usage
+          if (u) usage.completionTokens = u.output_tokens
+          if (json.delta?.stop_reason) sawStopMarker = true
+          break
+        }
+        case 'message_stop':
+          sawStopMarker = true
+          break
+        case 'error':
+          throw new AIError(json.error?.message ?? 'API error', JSON.stringify(json.error).slice(0, 500))
       }
-      case 'message_delta': {
-        const u = json.usage
-        if (u) usage.completionTokens = u.output_tokens
-        if (json.delta?.stop_reason) sawStopMarker = true
-        break
-      }
-      case 'message_stop':
-        sawStopMarker = true
-        break
-      case 'error':
-        throw new AIError(json.error?.message ?? 'API error', JSON.stringify(json.error).slice(0, 500))
     }
+  } catch (err) {
+    if (err instanceof AIError) throw err
+    throw toNetworkError(err, signal)
   }
 
   return { usage, incomplete: !sawStopMarker && receivedAny }
@@ -377,6 +406,7 @@ async function* readSSE(res: Response): AsyncGenerator<string> {
         if (line.trim()) yield line
       }
     }
+    buf += decoder.decode()
     if (buf.trim()) yield buf.trim()
   } finally {
     try {
@@ -411,13 +441,26 @@ function anthropicUrl(baseUrl: string, path: string): string {
   return `${base}/v1/${path}`
 }
 
+/** 安全合并自定义请求头：过滤 CRLF 注入，且禁止覆盖 Content-Type */
+function mergeCustomHeaders(
+  headers: Record<string, string>,
+  customHeaders?: Record<string, string>
+): Record<string, string> {
+  if (!customHeaders) return headers
+  for (const [rawKey, rawVal] of Object.entries(customHeaders)) {
+    const key = rawKey.trim()
+    const val = String(rawVal)
+    if (!key || /[\r\n]/.test(key) || /[\r\n]/.test(val)) continue
+    if (key.toLowerCase() === 'content-type') continue
+    headers[key] = val
+  }
+  return headers
+}
+
 function openaiHeaders(provider: ProviderConfig, apiKey: string | undefined): Record<string, string> {
   const headers: Record<string, string> = { 'User-Agent': 'AskThis/1.0' }
   if (apiKey) headers.Authorization = `Bearer ${apiKey}`
-  for (const [k, v] of Object.entries(provider.customHeaders ?? {})) {
-    if (k.trim()) headers[k.trim()] = String(v)
-  }
-  return headers
+  return mergeCustomHeaders(headers, provider.customHeaders)
 }
 
 function anthropicHeaders(provider: ProviderConfig, apiKey: string | undefined): Record<string, string> {
@@ -426,10 +469,7 @@ function anthropicHeaders(provider: ProviderConfig, apiKey: string | undefined):
     'anthropic-version': '2023-06-01'
   }
   if (apiKey) headers['x-api-key'] = apiKey
-  for (const [k, v] of Object.entries(provider.customHeaders ?? {})) {
-    if (k.trim()) headers[k.trim()] = String(v)
-  }
-  return headers
+  return mergeCustomHeaders(headers, provider.customHeaders)
 }
 
 function maxTokensField(provider: ProviderConfig, maxTokens: number): Record<string, number> {
